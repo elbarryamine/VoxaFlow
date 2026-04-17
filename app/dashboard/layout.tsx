@@ -1,4 +1,4 @@
-import { Sidebar } from "@/src/shared/ui";
+import { Sidebar } from "@/src/shared/ui/Sidebar";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 

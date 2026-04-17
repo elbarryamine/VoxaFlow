@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { Robot, GitBranch, Phone, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout, StatCard } from "@/src/shared/ui";
-import { RecentActivity } from "@/src/features/dashboard";
-import { AgentCard, MOCK_AGENTS } from "@/src/features/agents";
-import { WorkflowCard, MOCK_WORKFLOWS } from "@/src/features/workflows";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { StatCard } from "@/src/shared/ui/StatCard";
+import { RecentActivity } from "@/src/features/dashboard/ui/RecentActivity";
+import { AgentCard } from "@/src/features/agents/ui/AgentCard";
+import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
+import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
+import { MOCK_WORKFLOWS } from "@/src/features/workflows/constants/MOCK_WORKFLOWS";
 
 export default function DashboardPage() {
   const agents = MOCK_AGENTS;

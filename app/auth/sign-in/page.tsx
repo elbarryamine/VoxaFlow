@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CheckCircle, Headphones, ShieldCheck, Sparkle } from "@phosphor-icons/react/dist/ssr";
-import { SignInForm } from "@/src/features/auth";
+import { SignInForm } from "@/src/features/auth/ui/SignInForm";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 
 export const metadata: Metadata = {

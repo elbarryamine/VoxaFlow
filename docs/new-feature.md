@@ -1,6 +1,6 @@
 # New feature template (Next.js App Router)
 
-Use this when adding a user-facing feature screen in this Next.js app. Route entry points live in `app/`; feature code can live in `src/features/` (or the project's chosen feature directory) and stay UI/business-logic focused.
+Use this when adding a user-facing feature screen in this Next.js app. Route entry points live in `app/`; frontend feature code lives in `src/features/`; backend domain logic lives in `src/server/modules/`.
 
 ## Layout
 
@@ -20,10 +20,61 @@ src/features/<feature-name>/         # optional, recommended for non-trivial fea
 ├── constants/                       # feature constants
 ├── store/                           # optional client state (e.g. Zustand)
 ├── types/                           # feature-only types
-└── index.ts                         # feature public API (named exports)
+└── ...                              # no index.ts re-export barrel
+
+src/server/                          # backend only
+└── modules/
+    └── <module-name>/
+        ├── <module-name>.controller.ts # class-based request + business logic
+        ├── <module-name>.types.ts      # module input/output/domain types
+        └── ...                         # import files directly, no index.ts barrel
 ```
 
 Use **kebab-case** for `<route-segment>` and `<feature-name>`.
+Use **kebab-case** for `<module-name>` as well.
+
+## Backend controller style (simple)
+
+- Use `route.ts` as a very thin pass-through adapter.
+- Put request handling and business logic in a **controller** class.
+- Name controller classes in **PascalCase** with `Controller` suffix (example: `ModuleController`).
+- Keep each class focused on one module responsibility.
+- Return `NextResponse` from controller methods.
+- Service files are optional; add them only if controller methods become too large.
+- Import module files directly (no `index.ts` re-export barrels).
+
+## API usage example
+
+```ts
+// src/server/modules/<module-name>/<module-name>.controller.ts
+export class ModuleController {
+  async list() {
+    try {
+      const { user } = await getAuthenticatedUser();
+      // Business logic can live here directly (or call optional service/repository)
+      const items = [{ id: "item-1", label: "Example Item", userId: user.id }];
+      return NextResponse.json({ items });
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error:
+            error instanceof Error ? error.message : "Unable to list items",
+        },
+        { status: 400 },
+      );
+    }
+  }
+}
+```
+
+```ts
+// app/api/<module-name>/route.ts
+const moduleController = new ModuleController();
+
+export async function GET() {
+  return moduleController.list();
+}
+```
 
 ## Screen pattern
 
@@ -37,9 +88,10 @@ Use **kebab-case** for `<route-segment>` and `<feature-name>`.
 
 1. **Route** — add `app/<route-segment>/page.tsx` (and optional `layout.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx`).
 2. **Feature module** — add/update `src/features/<feature-name>/` folders only as needed (`ui`, `hooks`, `utils`, `constants`, `store`, `types`).
-3. **Exports** — use named exports for feature components/hooks and re-export from `src/features/<feature-name>/index.ts`.
-4. **Copy** — add user-facing text via the project's i18n setup (if enabled) instead of hardcoding repeated strings.
-5. **Docs** — update [`architecture.md`](../architecture.md) in the same change when files under `src/` or `scripts/` are added, removed, or materially changed.
+3. **Server module** — add/update `src/server/modules/<module-name>/` with class-based `<module-name>.controller.ts` that contains module logic and returns responses.
+4. **Exports** — use named exports and direct file imports (no `index.ts` re-export barrels).
+5. **Copy** — add user-facing text via the project's i18n setup (if enabled) instead of hardcoding repeated strings.
+6. **Docs** — update [`architecture.md`](../architecture.md) in the same change when files under `src/` or `scripts/` are added, removed, or materially changed.
 
 ## References
 

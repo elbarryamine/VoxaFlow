@@ -4,11 +4,9 @@ import { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Link, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout } from "@/src/shared/ui";
-import {
-  ConnectionForm,
-  useConnectionsStore,
-} from "@/src/features/connections";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { ConnectionForm } from "@/src/features/connections/ui/ConnectionForm";
+import { useConnectionsStore } from "@/src/features/connections/store/useConnectionsStore";
 
 export default function ConnectionDetailPage() {
   const params = useParams<{ id: string }>();

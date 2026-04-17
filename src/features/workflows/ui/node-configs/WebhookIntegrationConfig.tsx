@@ -2,7 +2,7 @@
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextAreaInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections";
+import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 const METHOD_OPTIONS = [
   { value: "POST", label: "POST" },

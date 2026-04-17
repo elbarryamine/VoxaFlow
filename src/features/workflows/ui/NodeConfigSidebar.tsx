@@ -8,22 +8,24 @@ import type {
   WorkflowNodeDataValue,
   WorkflowNodeType,
 } from "../types/Workflow.types";
+import { InboundCallConfig } from "./node-configs/InboundCallConfig";
+import { OutboundCallConfig } from "./node-configs/OutboundCallConfig";
+import { ShopifyTriggerConfig } from "./node-configs/ShopifyTriggerConfig";
+import { LightfunnelsTriggerConfig } from "./node-configs/LightfunnelsTriggerConfig";
+import { YoucanTriggerConfig } from "./node-configs/YoucanTriggerConfig";
+import { CustomWebhookTriggerConfig } from "./node-configs/CustomWebhookTriggerConfig";
+import { AICustomModelConfig } from "./node-configs/AICustomModelConfig";
+import { ConditionConfig } from "./node-configs/ConditionConfig";
+import { SlackIntegrationConfig } from "./node-configs/SlackIntegrationConfig";
+import { SpreadsheetIntegrationConfig } from "./node-configs/SpreadsheetIntegrationConfig";
+import { EmailIntegrationConfig } from "./node-configs/EmailIntegrationConfig";
+import { WebhookIntegrationConfig } from "./node-configs/WebhookIntegrationConfig";
 import {
-  InboundCallConfig,
-  OutboundCallConfig,
-  ShopifyTriggerConfig,
-  LightfunnelsTriggerConfig,
-  YoucanTriggerConfig,
-  CustomWebhookTriggerConfig,
-  AICustomModelConfig,
-  ConditionConfig,
-  SlackIntegrationConfig,
-  SpreadsheetIntegrationConfig,
-  EmailIntegrationConfig,
-  WebhookIntegrationConfig,
+  FieldLabel,
+  TextInput,
+  TextAreaInput,
   type NodeConfigProps,
-} from "./node-configs";
-import { FieldLabel, TextInput, TextAreaInput } from "./node-configs/shared";
+} from "./node-configs/shared";
 
 interface NodeConfigSidebarProps {
   node: Node<WorkflowNodeData> | null;

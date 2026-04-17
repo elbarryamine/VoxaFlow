@@ -1,5 +1,5 @@
-import { PageLayout } from "@/src/shared/ui";
-import { AgentForm } from "@/src/features/agents";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { AgentForm } from "@/src/features/agents/ui/AgentForm";
 
 export default function NewAgentPage() {
   return (

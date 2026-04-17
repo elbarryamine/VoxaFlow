@@ -1,6 +1,6 @@
 "use client";
 
-import { MOCK_AGENTS } from "@/src/features/agents";
+import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextInput } from "./shared";

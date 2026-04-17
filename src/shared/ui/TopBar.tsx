@@ -6,7 +6,7 @@ import {
   Bell,
   ArrowLeft,
 } from "@phosphor-icons/react/dist/ssr";
-import { ThemeToggle } from "@/src/shared/theme";
+import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
 
 interface TopBarProps {
   title: string;

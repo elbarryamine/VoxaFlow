@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Phone } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout } from "@/src/shared/ui";
-import { MOCK_PHONE_NUMBERS, PhoneNumberCard, type PhoneNumber as AppPhoneNumber } from "@/src/features/phone-numbers";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { MOCK_PHONE_NUMBERS } from "@/src/features/phone-numbers/constants/MOCK_PHONE_NUMBERS";
+import { PhoneNumberCard } from "@/src/features/phone-numbers/ui/PhoneNumberCard";
+import type { PhoneNumber as AppPhoneNumber } from "@/src/features/phone-numbers/types/PhoneNumber.types";
 
 export default function PhoneNumbersPage() {
   const [phoneNumbers, setPhoneNumbers] = useState<AppPhoneNumber[]>(MOCK_PHONE_NUMBERS);

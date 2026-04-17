@@ -46,9 +46,12 @@ proxy.ts                                # Middleware auth gate for /dashboard/*
 
 ```
 src/
+├── server/
+│   └── modules/
+│       └── auth/
+│           ├── auth.service.ts         # Auth module helper — returns authenticated user + Supabase server client
+│           └── ...                     # Direct file imports (no index.ts re-export barrel)
 ├── shared/
-│   ├── server/
-│   │   └── auth.ts                     # Server auth helper — returns authenticated user + Supabase server client
 │   ├── utils/
 │   │   ├── cn.ts                       # Class name helper
 │   │   ├── supabase-client.ts          # Browser Supabase client

@@ -3,13 +3,11 @@
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
-import { PageLayout } from "@/src/shared/ui";
-import type { Connection, ConnectionType } from "@/src/features/connections";
-import {
-  ConnectionCard,
-  CONNECTION_TYPE_LABELS,
-  useConnectionsStore,
-} from "@/src/features/connections";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import type { Connection, ConnectionType } from "@/src/features/connections/types/Connection.types";
+import { CONNECTION_TYPE_LABELS } from "@/src/features/connections/types/Connection.types";
+import { useConnectionsStore } from "@/src/features/connections/store/useConnectionsStore";
+import { ConnectionCard } from "@/src/features/connections/ui/ConnectionCard";
 
 const TYPE_ORDER: ConnectionType[] = [
   "openai",

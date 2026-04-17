@@ -8,7 +8,7 @@ import {
   FloppyDisk,
 } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout } from "@/src/shared/ui";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
 
 export default function SettingsPage() {
   return (

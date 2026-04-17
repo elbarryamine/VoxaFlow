@@ -2,7 +2,7 @@
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextAreaInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections";
+import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 const MODEL_OPTIONS = [
   { value: "gpt-4.1", label: "GPT-4.1" },

@@ -1,7 +1,7 @@
-import { PageLayout } from "@/src/shared/ui";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { Play, FloppyDisk } from "@phosphor-icons/react/dist/ssr";
 
-import { WorkflowCanvas } from "@/src/features/workflows";
+import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
 
 export default function NewWorkflowPage() {
   return (

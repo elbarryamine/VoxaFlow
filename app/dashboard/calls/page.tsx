@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { PageLayout } from "@/src/shared/ui";
-import { MOCK_AGENTS } from "@/src/features/agents";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
 
 interface CallItem {
   id: string;

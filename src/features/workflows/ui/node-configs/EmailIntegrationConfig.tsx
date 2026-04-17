@@ -2,7 +2,7 @@
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, TextAreaInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections";
+import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 export const EmailIntegrationConfig = ({ data, onUpdate }: NodeConfigProps) => {
   return (

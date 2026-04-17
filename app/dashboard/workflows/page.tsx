@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout } from "@/src/shared/ui";
-import { WorkflowCard, MOCK_WORKFLOWS } from "@/src/features/workflows";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
+import { MOCK_WORKFLOWS } from "@/src/features/workflows/constants/MOCK_WORKFLOWS";
 
 export default function WorkflowsPage() {
   return (

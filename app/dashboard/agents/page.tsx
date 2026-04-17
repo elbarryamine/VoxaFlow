@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 
-import { PageLayout } from "@/src/shared/ui";
-import { AgentCard, MOCK_AGENTS } from "@/src/features/agents";
+import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { AgentCard } from "@/src/features/agents/ui/AgentCard";
+import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
 
 export default function AgentsPage() {
   return (

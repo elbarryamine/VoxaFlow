@@ -2,7 +2,7 @@
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections";
+import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 const WRITE_MODE_OPTIONS = [
   { value: "append", label: "Append Row" },
