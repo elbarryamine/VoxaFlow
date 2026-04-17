@@ -1,0 +1,68 @@
+import type { Connection } from "../types/Connection.types";
+
+export const MOCK_CONNECTIONS: Connection[] = [
+  {
+    id: "conn-openai-1",
+    name: "OpenAI Production",
+    type: "openai",
+    status: "connected",
+    createdAt: "2026-03-10T08:00:00Z",
+    credentials: { apiKey: "sk-••••••••••••••••••••••••••••••••", orgId: "org-example" },
+  },
+  {
+    id: "conn-openai-2",
+    name: "OpenAI Staging",
+    type: "openai",
+    status: "connected",
+    createdAt: "2026-04-01T12:00:00Z",
+    credentials: { apiKey: "sk-••••••••••••••••••••••••••••••••" },
+  },
+  {
+    id: "conn-anthropic-1",
+    name: "Anthropic Main",
+    type: "anthropic",
+    status: "connected",
+    createdAt: "2026-03-15T09:30:00Z",
+    credentials: { apiKey: "sk-ant-••••••••••••••••••••••••••••••" },
+  },
+  {
+    id: "conn-slack-1",
+    name: "Sales Workspace",
+    type: "slack",
+    status: "connected",
+    createdAt: "2026-02-20T14:00:00Z",
+    credentials: { botToken: "xoxb-••••••••••••••••••••••••••••••", defaultChannel: "#sales-alerts" },
+  },
+  {
+    id: "conn-slack-2",
+    name: "Support Workspace",
+    type: "slack",
+    status: "error",
+    createdAt: "2026-03-28T10:00:00Z",
+    credentials: { botToken: "xoxb-••••••••••••••••••••••••••••••" },
+  },
+  {
+    id: "conn-sheets-1",
+    name: "Sales Leads Sheet",
+    type: "google-sheets",
+    status: "connected",
+    createdAt: "2026-02-10T11:00:00Z",
+    credentials: { serviceAccountJson: '{"type":"service_account",...}' },
+  },
+  {
+    id: "conn-email-1",
+    name: "Transactional Email",
+    type: "email",
+    status: "connected",
+    createdAt: "2026-01-15T08:00:00Z",
+    credentials: { host: "smtp.sendgrid.net", port: "587", username: "apikey", password: "••••••••" },
+  },
+  {
+    id: "conn-webhook-1",
+    name: "CRM Webhook",
+    type: "webhook",
+    status: "connected",
+    createdAt: "2026-04-05T16:00:00Z",
+    credentials: { baseUrl: "https://crm.example.com/api", authHeader: "Bearer ••••••••" },
+  },
+];
