@@ -1,56 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Robot, GitBranch, Phone, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
 import { PageLayout, StatCard } from "@/src/shared/ui";
 import { RecentActivity } from "@/src/features/dashboard";
-import { AgentCard, type Agent } from "@/src/features/agents";
-import { WorkflowCard, type Workflow } from "@/src/features/workflows";
+import { AgentCard, MOCK_AGENTS } from "@/src/features/agents";
+import { WorkflowCard, MOCK_WORKFLOWS } from "@/src/features/workflows";
 
 export default function DashboardPage() {
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
-  const [callsCount, setCallsCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadData() {
-      try {
-        const [agentsResponse, workflowsResponse, callsResponse] = await Promise.all([
-          fetch("/api/agents"),
-          fetch("/api/workflows"),
-          fetch("/api/calls"),
-        ]);
-
-        const agentsPayload = (await agentsResponse.json()) as { agents?: Agent[] };
-        const workflowsPayload = (await workflowsResponse.json()) as {
-          workflows?: Workflow[];
-        };
-        const callsPayload = (await callsResponse.json()) as { calls?: Array<{ id: string }> };
-
-        if (!mounted) {
-          return;
-        }
-
-        setAgents(agentsPayload.agents ?? []);
-        setWorkflows(workflowsPayload.workflows ?? []);
-        setCallsCount(callsPayload.calls?.length ?? 0);
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadData();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const agents = MOCK_AGENTS;
+  const workflows = MOCK_WORKFLOWS;
+  const callsCount = 12;
 
   const successRate = useMemo(() => {
     if (!callsCount) {
@@ -69,7 +31,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Total Agents"
-          value={isLoading ? "..." : String(agents.length)}
+          value={String(agents.length)}
           change="Live"
           changeType="neutral"
           icon={Robot}
@@ -77,9 +39,7 @@ export default function DashboardPage() {
         <StatCard
           label="Active Workflows"
           value={
-            isLoading
-              ? "..."
-              : String(workflows.filter((workflow) => workflow.status === "active").length)
+            String(workflows.filter((workflow) => workflow.status === "active").length)
           }
           change="Live"
           changeType="neutral"
@@ -87,14 +47,14 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Calls Today"
-          value={isLoading ? "..." : String(callsCount)}
+          value={String(callsCount)}
           change="Live"
           changeType="neutral"
           icon={Phone}
         />
         <StatCard
           label="Success Rate"
-          value={isLoading ? "..." : successRate}
+          value={successRate}
           change="Live"
           changeType="neutral"
           icon={TrendUp}

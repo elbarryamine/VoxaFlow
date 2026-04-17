@@ -30,12 +30,12 @@ const CAPABILITY_ICONS: Record<PhoneNumberCapability, React.ElementType> = {
 
 const PROVIDER_STYLES = {
   ours: "bg-secondary text-primary",
-  twilio: "bg-warning/10 text-warning",
+  external: "bg-warning/10 text-warning",
 } as const;
 
 const PROVIDER_LABELS = {
-  ours: "VoiceFlow",
-  twilio: "Twilio",
+  ours: "App",
+  external: "External",
 } as const;
 
 const FLAG_EMOJIS: Record<string, string> = {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PageLayout } from "@/src/shared/ui";
+import { MOCK_AGENTS } from "@/src/features/agents";
 
 interface CallItem {
   id: string;
@@ -9,7 +10,7 @@ interface CallItem {
   fromNumber: string;
   status: string;
   createdAt: string;
-  vapiCallId: string | null;
+  externalCallId: string | null;
 }
 
 interface AgentOption {
@@ -18,68 +19,30 @@ interface AgentOption {
 }
 
 export default function CallsPage() {
-  const [calls, setCalls] = useState<CallItem[]>([]);
-  const [agents, setAgents] = useState<AgentOption[]>([]);
-  const [selectedAgentId, setSelectedAgentId] = useState("");
+  const [calls, setCalls] = useState<CallItem[]>([
+    {
+      id: "call-1",
+      toNumber: "+15555550123",
+      fromNumber: "+14155550101",
+      status: "completed",
+      createdAt: new Date(Date.now() - 3_600_000).toISOString(),
+      externalCallId: null,
+    },
+    {
+      id: "call-2",
+      toNumber: "+15555550124",
+      fromNumber: "+14155550101",
+      status: "in_progress",
+      createdAt: new Date(Date.now() - 900_000).toISOString(),
+      externalCallId: null,
+    },
+  ]);
+  const agents: AgentOption[] = MOCK_AGENTS.map((agent) => ({ id: agent.id, name: agent.name }));
+  const [selectedAgentId, setSelectedAgentId] = useState(agents[0]?.id ?? "");
   const [toNumber, setToNumber] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const loadCalls = async () => {
-    const response = await fetch("/api/calls");
-    const payload = (await response.json()) as { calls?: CallItem[]; error?: string };
-    if (!response.ok) {
-      throw new Error(payload.error ?? "Unable to fetch calls");
-    }
-    setCalls(payload.calls ?? []);
-  };
-
-  useEffect(() => {
-    let mounted = true;
-    async function bootstrap() {
-      try {
-        const [callsResponse, agentsResponse] = await Promise.all([
-          fetch("/api/calls"),
-          fetch("/api/agents"),
-        ]);
-        const callsPayload = (await callsResponse.json()) as {
-          calls?: CallItem[];
-          error?: string;
-        };
-        const agentsPayload = (await agentsResponse.json()) as {
-          agents?: AgentOption[];
-          error?: string;
-        };
-
-        if (!callsResponse.ok) {
-          throw new Error(callsPayload.error ?? "Unable to fetch calls");
-        }
-
-        if (!agentsResponse.ok) {
-          throw new Error(agentsPayload.error ?? "Unable to fetch agents");
-        }
-
-        if (!mounted) {
-          return;
-        }
-
-        setCalls(callsPayload.calls ?? []);
-        const nextAgents = agentsPayload.agents ?? [];
-        setAgents(nextAgents);
-        setSelectedAgentId(nextAgents[0]?.id ?? "");
-      } catch (error) {
-        if (mounted) {
-          setErrorMessage(error instanceof Error ? error.message : "Unable to load calls");
-        }
-      }
-    }
-
-    void bootstrap();
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleStartCall = async () => {
     setIsSubmitting(true);
@@ -87,23 +50,23 @@ export default function CallsPage() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch("/api/calls/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agentId: selectedAgentId,
-          toNumber,
-        }),
-      });
-      const payload = (await response.json()) as { error?: string };
-
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to start call");
+      if (!selectedAgentId || !toNumber.trim()) {
+        throw new Error("Select an agent and enter a destination number");
       }
 
-      setSuccessMessage("Call started successfully.");
+      setCalls((prev) => [
+        {
+          id: `call-${Date.now()}`,
+          toNumber,
+          fromNumber: "+14155550101",
+          status: "queued",
+          createdAt: new Date().toISOString(),
+          externalCallId: null,
+        },
+        ...prev,
+      ]);
+      setSuccessMessage("Demo mode: call added to mock history.");
       setToNumber("");
-      await loadCalls();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to start call");
     } finally {

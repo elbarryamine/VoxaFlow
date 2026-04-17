@@ -30,7 +30,7 @@ export type WorkflowNodeData = {
   description?: string;
   icon?: string;
   configured?: boolean;
-  // Shared trigger assignment (Vapi call target agent)
+  // Shared trigger assignment (call target agent)
   agentId?: string;
   agentName?: string;
   // Trigger specifics

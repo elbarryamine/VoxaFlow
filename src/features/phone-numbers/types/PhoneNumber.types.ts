@@ -1,4 +1,4 @@
-export type PhoneNumberProvider = "ours" | "twilio";
+export type PhoneNumberProvider = "ours" | "external";
 export type PhoneNumberStatus = "active" | "inactive" | "pending";
 export type PhoneNumberCapability = "voice" | "sms" | "fax";
 
