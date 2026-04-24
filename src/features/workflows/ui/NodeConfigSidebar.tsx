@@ -8,8 +8,6 @@ import type {
   WorkflowNodeDataValue,
   WorkflowNodeType,
 } from "../types/Workflow.types";
-import { InboundCallConfig } from "./node-configs/InboundCallConfig";
-import { OutboundCallConfig } from "./node-configs/OutboundCallConfig";
 import { ShopifyTriggerConfig } from "./node-configs/ShopifyTriggerConfig";
 import { LightfunnelsTriggerConfig } from "./node-configs/LightfunnelsTriggerConfig";
 import { YoucanTriggerConfig } from "./node-configs/YoucanTriggerConfig";
@@ -34,8 +32,6 @@ interface NodeConfigSidebarProps {
 }
 
 const TYPE_LABELS: Record<WorkflowNodeType, string> = {
-  "inbound-call": "Inbound Call",
-  "outbound-call": "Outbound Call",
   "webhook-shopify": "Shopify Trigger",
   "webhook-lightfunnels": "Lightfunnels Trigger",
   "webhook-youcan": "YouCan Trigger",
@@ -52,8 +48,6 @@ const CONFIG_MAP: Record<
   WorkflowNodeType,
   React.ComponentType<NodeConfigProps>
 > = {
-  "inbound-call": InboundCallConfig,
-  "outbound-call": OutboundCallConfig,
   "webhook-shopify": ShopifyTriggerConfig,
   "webhook-lightfunnels": LightfunnelsTriggerConfig,
   "webhook-youcan": YoucanTriggerConfig,

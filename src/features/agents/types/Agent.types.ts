@@ -5,7 +5,6 @@ export interface Agent {
   voice: string;
   language: string;
   status: "active" | "inactive" | "draft";
-  callsHandled: number;
   avgDuration: string;
   successRate: number;
   createdAt: string;

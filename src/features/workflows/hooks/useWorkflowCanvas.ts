@@ -33,10 +33,9 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
     type: "workflowNode",
     position: { x: 300, y: 50 },
     data: {
-      label: "Incoming Call",
-      type: "inbound-call",
-      description: "Customer inbound line",
-      phoneNumber: "+1 (628) 555-0174",
+      label: "Webhook Trigger",
+      type: "webhook-custom",
+      description: "Trigger from external event",
       agentId: "agent-1",
       agentName: "Sales Qualifier",
     },
@@ -48,7 +47,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
     data: {
       label: "Lead Intent Model",
       type: "ai-custom-model",
-      description: "Classify call intent",
+      description: "Classify lead intent",
       modelName: "gpt-4.1",
     },
   },

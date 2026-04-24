@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { Robot, GitBranch, Phone, TrendUp } from "@phosphor-icons/react/dist/ssr";
+import { Robot, GitBranch, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { StatCard } from "@/src/shared/ui/StatCard";
@@ -15,14 +15,12 @@ import { MOCK_WORKFLOWS } from "@/src/features/workflows/constants/MOCK_WORKFLOW
 export default function DashboardPage() {
   const agents = MOCK_AGENTS;
   const workflows = MOCK_WORKFLOWS;
-  const callsCount = 12;
 
   const successRate = useMemo(() => {
-    if (!callsCount) {
-      return "0%";
-    }
-    return "100%";
-  }, [callsCount]);
+    const activeAgents = agents.filter((a) => a.status === "active").length;
+    if (!activeAgents) return "0%";
+    return `${Math.round((activeAgents / agents.length) * 100)}%`;
+  }, [agents]);
 
   return (
     <PageLayout
@@ -47,13 +45,6 @@ export default function DashboardPage() {
           change="Live"
           changeType="neutral"
           icon={GitBranch}
-        />
-        <StatCard
-          label="Calls Today"
-          value={String(callsCount)}
-          change="Live"
-          changeType="neutral"
-          icon={Phone}
         />
         <StatCard
           label="Success Rate"
@@ -101,7 +92,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Activity */}
-      <RecentActivity callsCount={callsCount} />
+      <RecentActivity />
     </PageLayout>
   );
 }

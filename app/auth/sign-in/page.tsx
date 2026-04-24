@@ -47,18 +47,18 @@ export default async function SignInPage() {
             <li className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
               <Sparkle className="mt-0.5 h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm font-medium">Design call workflows visually</p>
+                <p className="text-sm font-medium">Design AI workflows visually</p>
                 <p className="text-sm text-muted-foreground">
-                  Launch inbound and outbound automations with a node-based workflow canvas.
+                  Build event-driven AI automations with a node-based workflow canvas.
                 </p>
               </div>
             </li>
             <li className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
               <CheckCircle className="mt-0.5 h-5 w-5 text-success" />
               <div>
-                <p className="text-sm font-medium">Connect numbers and integrations</p>
+                <p className="text-sm font-medium">Connect integrations and channels</p>
                 <p className="text-sm text-muted-foreground">
-                  Manage phone numbers, webhooks, Slack, email, and other channel connections.
+                  Connect webhooks, Slack, email, and other integrations to your AI agents.
                 </p>
               </div>
             </li>

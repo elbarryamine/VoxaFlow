@@ -4,7 +4,7 @@ export const MOCK_WORKFLOWS: Workflow[] = [
   {
     id: "wf-1",
     name: "Lead Qualification Pipeline",
-    description: "Qualify leads, run AI call, then update CRM and notify sales",
+    description: "Qualify leads via AI, then update CRM and notify sales",
     status: "active",
     agentId: "agent-1",
     agentName: "Sales Qualifier",
@@ -15,7 +15,7 @@ export const MOCK_WORKFLOWS: Workflow[] = [
   {
     id: "wf-2",
     name: "Support Escalation Flow",
-    description: "Triage support calls and escalate unresolved issues to Slack",
+    description: "Triage support requests and escalate unresolved issues to Slack",
     status: "active",
     agentId: "agent-2",
     agentName: "Support Triage",
@@ -26,7 +26,7 @@ export const MOCK_WORKFLOWS: Workflow[] = [
   {
     id: "wf-3",
     name: "Appointment Reminder",
-    description: "Call patients 24h before appointment, update spreadsheet",
+    description: "Remind patients 24h before appointment via AI, update spreadsheet",
     status: "inactive",
     agentId: "agent-3",
     agentName: "Appointment Setter",

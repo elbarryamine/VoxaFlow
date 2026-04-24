@@ -11,8 +11,6 @@ export interface Workflow {
 }
 
 export type WorkflowNodeType =
-  | "inbound-call"
-  | "outbound-call"
   | "webhook-shopify"
   | "webhook-lightfunnels"
   | "webhook-youcan"
@@ -30,12 +28,10 @@ export type WorkflowNodeData = {
   description?: string;
   icon?: string;
   configured?: boolean;
-  // Shared trigger assignment (call target agent)
+  // Shared trigger assignment
   agentId?: string;
   agentName?: string;
   // Trigger specifics
-  phoneNumber?: string;
-  callerId?: string;
   webhookPath?: string;
   // Intelligent actions
   modelName?: string;

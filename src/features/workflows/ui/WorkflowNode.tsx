@@ -3,8 +3,6 @@
 import { Handle, Position } from "@xyflow/react";
 import type { NodeProps, Node } from "@xyflow/react";
 import {
-  PhoneIncoming,
-  PhoneOutgoing,
   Robot,
   GitFork,
   FileXls,
@@ -20,8 +18,6 @@ import type { WorkflowNodeData } from "../types/Workflow.types";
 type WorkflowNodeProps = NodeProps<Node<WorkflowNodeData>>;
 
 const ICON_MAP = {
-  "inbound-call": PhoneIncoming,
-  "outbound-call": PhoneOutgoing,
   "webhook-shopify": ShoppingBag,
   "webhook-lightfunnels": Lightning,
   "webhook-youcan": Globe,
@@ -35,16 +31,6 @@ const ICON_MAP = {
 } as const;
 
 const COLOR_MAP = {
-  "inbound-call": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
-  },
-  "outbound-call": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
-  },
   "webhook-shopify": {
     bg: "bg-orange-50 dark:bg-orange-500/10",
     border: "border-orange-200 dark:border-orange-400/30",
@@ -99,8 +85,6 @@ const COLOR_MAP = {
 
 const getConfigSummary = (data: WorkflowNodeData): string | null => {
   switch (data.type) {
-    case "inbound-call":
-    case "outbound-call":
     case "webhook-shopify":
     case "webhook-lightfunnels":
     case "webhook-youcan":
@@ -156,8 +140,6 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
   const Icon = ICON_MAP[nodeType] ?? Globe;
   const colors = COLOR_MAP[nodeType] ?? COLOR_MAP["integration-webhook"];
   const isTrigger =
-    nodeType === "inbound-call" ||
-    nodeType === "outbound-call" ||
     nodeType === "webhook-shopify" ||
     nodeType === "webhook-lightfunnels" ||
     nodeType === "webhook-youcan" ||

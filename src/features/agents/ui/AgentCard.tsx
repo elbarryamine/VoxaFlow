@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  Phone,
   Clock,
   TrendUp,
   DotsThreeVertical,
@@ -54,10 +53,6 @@ export const AgentCard = ({ agent }: AgentCardProps) => {
       </p>
 
       <div className="mt-5 flex items-center gap-5 text-sm text-muted-foreground">
-        <div className="flex items-center gap-1.5">
-          <Phone className="h-3.5 w-3.5" />
-          <span>{agent.callsHandled.toLocaleString()}</span>
-        </div>
         <div className="flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5" />
           <span>{agent.avgDuration}</span>

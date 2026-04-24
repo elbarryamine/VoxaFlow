@@ -9,18 +9,6 @@ export interface NodeTemplate {
 
 export const NODE_TEMPLATES: NodeTemplate[] = [
   {
-    type: "inbound-call",
-    label: "Incoming Call",
-    description: "Start when a customer calls your number",
-    category: "trigger",
-  },
-  {
-    type: "outbound-call",
-    label: "Outbound Call",
-    description: "Start by placing an outbound call",
-    category: "trigger",
-  },
-  {
     type: "webhook-shopify",
     label: "Shopify Trigger",
     description: "Trigger from Shopify events",

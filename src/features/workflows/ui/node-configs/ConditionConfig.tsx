@@ -20,7 +20,6 @@ const CONDITION_FIELD_OPTIONS = [
   { value: "leadScore", label: "leadScore" },
   { value: "intent", label: "intent" },
   { value: "sentiment", label: "sentiment" },
-  { value: "callDuration", label: "callDuration" },
 ];
 
 const CONDITION_OPERATOR_OPTIONS = [

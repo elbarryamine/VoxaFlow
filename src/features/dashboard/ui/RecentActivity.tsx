@@ -1,5 +1,5 @@
 import {
-  Phone,
+  Robot,
   CheckCircle,
   XCircle,
   Clock,
@@ -9,7 +9,7 @@ const ACTIVITIES = [
   {
     id: "1",
     agent: "Sales Qualifier",
-    action: "Completed call with +1 (555) 0147",
+    action: "Qualified lead from Shopify webhook — booked meeting",
     outcome: "qualified",
     time: "2 min ago",
   },
@@ -23,7 +23,7 @@ const ACTIVITIES = [
   {
     id: "3",
     agent: "Sales Qualifier",
-    action: "Call dropped — no answer from +1 (555) 9283",
+    action: "Lead scoring failed — missing intent data",
     outcome: "failed",
     time: "15 min ago",
   },
@@ -50,18 +50,11 @@ const OUTCOME_ICON = {
   pending: <Clock className="h-4 w-4 text-warning" />,
 } as const;
 
-interface RecentActivityProps {
-  callsCount?: number;
-}
-
-export const RecentActivity = ({ callsCount = 0 }: RecentActivityProps) => {
+export const RecentActivity = () => {
   return (
     <div className="rounded-xl border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-6 py-4">
         <h3 className="font-semibold">Recent Activity</h3>
-        <span className="text-sm font-medium text-muted-foreground">
-          {callsCount} logged calls
-        </span>
       </div>
       <div className="divide-y divide-border">
         {ACTIVITIES.map((activity) => (
@@ -70,7 +63,7 @@ export const RecentActivity = ({ callsCount = 0 }: RecentActivityProps) => {
             className="flex items-center gap-4 px-6 py-3.5"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary">
-              <Phone className="h-4 w-4 text-primary" />
+              <Robot className="h-4 w-4 text-primary" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{activity.action}</p>

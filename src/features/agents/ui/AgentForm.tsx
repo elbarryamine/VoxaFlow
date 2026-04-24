@@ -72,7 +72,7 @@ export const AgentForm = () => {
     <div className="mx-auto w-full max-w-5xl px-8 py-8">
       <h2 className="text-2xl font-bold">Create Professional Voice Agent</h2>
       <p className="mt-1 text-muted-foreground">
-        Configure voice, behavior, and knowledge sources for production calls.
+        Configure voice, behavior, and knowledge sources for AI-powered conversations.
       </p>
 
       <div className="mt-8 grid grid-cols-3 gap-6">

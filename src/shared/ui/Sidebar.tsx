@@ -7,7 +7,6 @@ import {
   SquaresFour,
   Robot,
   GitBranch,
-  Phone,
   Gear,
   Headphones,
   Link as LinkIcon,
@@ -18,9 +17,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: SquaresFour },
   { href: "/dashboard/agents", label: "Agents", icon: Robot },
   { href: "/dashboard/workflows", label: "Workflows", icon: GitBranch },
-  { href: "/dashboard/calls", label: "Calls", icon: Phone },
   { href: "/dashboard/connections", label: "Connections", icon: LinkIcon },
-  { href: "/dashboard/phone-numbers", label: "Phone Numbers", icon: Phone },
   { href: "/dashboard/settings", label: "Settings", icon: Gear },
 ];
 
@@ -81,7 +78,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
       <div className="border-t border-sidebar-border p-4">
         <div className="space-y-3">
           <div className="flex items-center justify-center gap-3 xl:justify-start">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-active/30 text-sm font-semibold text-sidebar-active">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sidebar-active/30 text-sm font-semibold text-primary-foreground">
               {initial}
             </div>
             <div className="min-w-0 flex-1 hidden xl:block">

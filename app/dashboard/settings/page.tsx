@@ -89,10 +89,6 @@ export default function SettingsPage() {
           </div>
           <div className="space-y-3 text-sm">
             <label className="flex items-center justify-between">
-              <span>Email for failed calls</span>
-              <input type="checkbox" defaultChecked className="h-4 w-4 accent-primary" />
-            </label>
-            <label className="flex items-center justify-between">
               <span>Weekly usage digest</span>
               <input type="checkbox" defaultChecked className="h-4 w-4 accent-primary" />
             </label>
@@ -107,20 +103,12 @@ export default function SettingsPage() {
           <div className="mb-4 flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-primary" />
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Call & Compliance
+              AI & Compliance
             </h2>
           </div>
           <div className="space-y-4 text-sm">
-            <div>
-              <label className="mb-1.5 block font-medium">Call Recording Policy</label>
-              <select className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20">
-                <option>Always ask for consent</option>
-                <option>Record without prompt</option>
-                <option>Never record</option>
-              </select>
-            </div>
             <label className="flex items-center justify-between">
-              <span>Store transcripts by default</span>
+              <span>Store conversation transcripts by default</span>
               <input type="checkbox" defaultChecked className="h-4 w-4 accent-primary" />
             </label>
           </div>

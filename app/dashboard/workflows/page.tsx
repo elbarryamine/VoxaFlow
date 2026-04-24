@@ -11,7 +11,7 @@ export default function WorkflowsPage() {
   return (
     <PageLayout
       title="Workflows"
-      description="Automate calls and post-call actions"
+      description="Automate AI-driven processes and integrations"
       actions={
         <Link
           href="/dashboard/workflows/new"

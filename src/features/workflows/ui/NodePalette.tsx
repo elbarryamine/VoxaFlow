@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  PhoneIncoming,
-  PhoneOutgoing,
   Robot,
   GitFork,
   FileXls,
@@ -24,8 +22,6 @@ const CATEGORY_LABELS = {
 } as const;
 
 const TYPE_ICONS = {
-  "inbound-call": PhoneIncoming,
-  "outbound-call": PhoneOutgoing,
   "webhook-shopify": ShoppingBag,
   "webhook-lightfunnels": Lightning,
   "webhook-youcan": Globe,
