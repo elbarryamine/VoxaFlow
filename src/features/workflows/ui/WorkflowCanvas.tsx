@@ -80,6 +80,8 @@ const CanvasInner = () => {
 
         <NodeConfigSidebar
           node={selectedNode}
+          nodes={nodes}
+          edges={edges}
           onUpdateNode={onUpdateSelectedNode}
           onClose={onPaneClick}
         />

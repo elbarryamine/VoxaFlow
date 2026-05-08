@@ -57,12 +57,10 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
     position: { x: 650, y: 150 },
     data: {
       label: "Qualified?",
-      type: "condition",
+      type: "ai-custom-model",
       description: "Route by qualification result",
-      conditionType: "field",
-      conditionField: "leadScore",
-      conditionOperator: ">=",
-      conditionValue: "70",
+      outputFormat: "branch",
+      modelPrompt: "Is the lead qualified based on the intent and conversation?",
     },
   },
   {

@@ -16,7 +16,6 @@ export type WorkflowNodeType =
   | "webhook-youcan"
   | "webhook-custom"
   | "ai-custom-model"
-  | "condition"
   | "integration-slack"
   | "integration-spreadsheet"
   | "integration-email"
@@ -35,11 +34,10 @@ export type WorkflowNodeData = {
   webhookPath?: string;
   // Intelligent actions
   modelName?: string;
+  customModelName?: string;
   modelPrompt?: string;
-  conditionType?: "field" | "ai";
-  conditionField?: string;
-  conditionOperator?: string;
-  conditionValue?: string;
+  outputFormat?: "text" | "json" | "branch";
+  jsonSchemaFields?: { name: string; type: string; description: string }[];
   aiConditionPrompt?: string;
   // Integrations
   slackChannel?: string;
@@ -52,4 +50,4 @@ export type WorkflowNodeData = {
   [key: string]: unknown;
 };
 
-export type WorkflowNodeDataValue = string | number | boolean | undefined;
+export type WorkflowNodeDataValue = string | number | boolean | unknown[] | Record<string, unknown> | undefined;

@@ -39,12 +39,6 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     category: "intelligent-action",
   },
   {
-    type: "condition",
-    label: "Condition",
-    description: "Branch flow with rules or AI decision",
-    category: "intelligent-action",
-  },
-  {
     type: "integration-slack",
     label: "Slack",
     description: "Send a Slack notification",

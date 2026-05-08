@@ -5,7 +5,7 @@ import { CaretDown } from "@phosphor-icons/react/dist/ssr";
 interface FieldLabelProps {
   children: React.ReactNode;
   htmlFor?: string;
-  hint?: string;
+  hint?: React.ReactNode;
 }
 
 export const FieldLabel = ({ children, htmlFor, hint }: FieldLabelProps) => (
@@ -17,7 +17,7 @@ export const FieldLabel = ({ children, htmlFor, hint }: FieldLabelProps) => (
       {children}
     </label>
     {hint && (
-      <span className="text-[10px] text-muted-foreground/60">{hint}</span>
+      <div className="flex-shrink-0">{hint}</div>
     )}
   </div>
 );
@@ -123,10 +123,194 @@ export const SectionDivider = ({ label }: SectionDividerProps) => (
   </div>
 );
 
+export const MODEL_OPTIONS = [
+  { value: "gpt-4.1", label: "GPT-4.1" },
+  { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
+  { value: "claude-sonnet", label: "Claude Sonnet" },
+  { value: "custom", label: "Custom (Override)" },
+];
+
+export const getConnectionType = (modelName: string) =>
+  modelName.startsWith("claude") ? "anthropic" : "openai";
+
 export interface NodeConfigProps {
   data: Record<string, unknown>;
   onUpdate: (
     field: string,
-    value: string | number | boolean | undefined,
+    value: string | number | boolean | unknown[] | Record<string, unknown> | undefined,
   ) => void;
+  inputVariables?: { 
+    nodeId: string; 
+    nodeLabel: string; 
+    fields: { name: string; type: string; description: string }[];
+  }[];
 }
+
+import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { useState, useRef, KeyboardEvent, useEffect } from "react";
+
+export interface AutocompleteOption {
+  label: string;
+  value: string;
+  type?: string;
+  description?: string;
+}
+
+interface AutocompleteTextAreaProps {
+  id?: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: AutocompleteOption[];
+  placeholder?: string;
+  rows?: number;
+}
+
+export const AutocompleteTextArea = ({
+  id,
+  value,
+  onChange,
+  options,
+  placeholder,
+  rows = 3,
+}: AutocompleteTextAreaProps) => {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [filterText, setFilterText] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const checkCursor = () => {
+    if (!textareaRef.current) return;
+    const cursorPosition = textareaRef.current.selectionStart;
+    const textBeforeCursor = value.slice(0, cursorPosition);
+    
+    // Match {{ followed by anything except whitespace/braces, up to the cursor
+    const match = textBeforeCursor.match(/\{\{([^{}\s]*)$/);
+    if (match) {
+      setShowSuggestions(true);
+      setFilterText(match[1]);
+      setSelectedIndex(0);
+    } else {
+      setShowSuggestions(false);
+    }
+  };
+
+  // Check cursor position when value changes (e.g. typing)
+  useEffect(() => {
+    checkCursor();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
+  const filteredOptions = options.filter(
+    (o) =>
+      o.label.toLowerCase().includes(filterText.toLowerCase()) ||
+      o.value.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const insertOption = (option: AutocompleteOption) => {
+    if (!textareaRef.current) return;
+    const cursorPosition = textareaRef.current.selectionStart;
+    const textBeforeCursor = value.slice(0, cursorPosition);
+    const textAfterCursor = value.slice(cursorPosition);
+    
+    const match = textBeforeCursor.match(/\{\{([^{}\s]*)$/);
+    if (match) {
+      const startPos = cursorPosition - match[0].length;
+      const newBefore = value.slice(0, startPos);
+      const inserted = `{{${option.value}}}`;
+      const newValue = newBefore + inserted + textAfterCursor;
+      
+      onChange(newValue);
+      setShowSuggestions(false);
+      
+      // Restore focus and put cursor after the inserted variable
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          const newPos = startPos + inserted.length;
+          textareaRef.current.setSelectionRange(newPos, newPos);
+        }
+      }, 0);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (!showSuggestions || filteredOptions.length === 0) return;
+    
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((s) => (s + 1) % filteredOptions.length);
+      scrollSelectedIntoView(selectedIndex + 1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((s) => (s - 1 + filteredOptions.length) % filteredOptions.length);
+      scrollSelectedIntoView(selectedIndex - 1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      insertOption(filteredOptions[selectedIndex]);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  };
+
+  const scrollSelectedIntoView = (index: number) => {
+    if (!menuRef.current) return;
+    const items = menuRef.current.querySelectorAll("li");
+    const normalizedIndex = (index + filteredOptions.length) % filteredOptions.length;
+    const item = items[normalizedIndex];
+    if (item) {
+      item.scrollIntoView({ block: "nearest" });
+    }
+  };
+
+  return (
+    <div className="relative">
+      <textarea
+        id={id}
+        ref={textareaRef}
+        value={value}
+        placeholder={placeholder}
+        rows={rows}
+        onChange={(e) => onChange(e.currentTarget.value)}
+        onKeyDown={handleKeyDown}
+        onClick={checkCursor}
+        onKeyUp={checkCursor}
+        className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-ring"
+      />
+      
+      {showSuggestions && filteredOptions.length > 0 && (
+        <div 
+          ref={menuRef}
+          className="absolute left-0 right-0 z-50 mt-1 max-h-[200px] overflow-y-auto rounded-md border border-border bg-card shadow-lg"
+        >
+          <ul className="py-1">
+            {filteredOptions.map((opt, i) => (
+              <li
+                key={opt.value}
+                onClick={() => insertOption(opt)}
+                onMouseEnter={() => setSelectedIndex(i)}
+                className={`flex cursor-pointer flex-col px-3 py-1.5 transition-colors ${
+                  i === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-foreground">
+                    {opt.label}
+                  </span>
+                  {opt.type && (
+                    <span className="rounded bg-muted px-1 py-0.5 font-mono text-[9px] font-medium uppercase text-muted-foreground">
+                      {opt.type}
+                    </span>
+                  )}
+                </div>
+                <span className="font-mono text-[10px] text-muted-foreground/70">
+                  {`{{${opt.value}}}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};

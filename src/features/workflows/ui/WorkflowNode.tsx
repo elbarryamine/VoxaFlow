@@ -23,7 +23,6 @@ const ICON_MAP = {
   "webhook-youcan": Globe,
   "webhook-custom": Link,
   "ai-custom-model": Robot,
-  condition: GitFork,
   "integration-spreadsheet": FileXls,
   "integration-email": Envelope,
   "integration-slack": ChatCircleText,
@@ -56,11 +55,7 @@ const COLOR_MAP = {
     border: "border-indigo-200 dark:border-indigo-400/30",
     icon: "text-indigo-500 dark:text-indigo-300",
   },
-  condition: {
-    bg: "bg-amber-50 dark:bg-amber-500/10",
-    border: "border-amber-200 dark:border-amber-400/30",
-    icon: "text-amber-500 dark:text-amber-300",
-  },
+
   "integration-spreadsheet": {
     bg: "bg-emerald-50 dark:bg-emerald-500/10",
     border: "border-emerald-200 dark:border-emerald-400/30",
@@ -96,18 +91,10 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
     }
     case "ai-custom-model": {
       const modelName = data.modelName as string | undefined;
-      return modelName ?? null;
-    }
-    case "condition": {
-      const conditionType = data.conditionType as string | undefined;
-      if (conditionType === "field") {
-        const field = data.conditionField as string | undefined;
-        const op = data.conditionOperator as string | undefined;
-        const value = data.conditionValue as string | undefined;
-        if (field && op && value) return `${field} ${op} ${value}`;
+      if (data.outputFormat === "branch") {
+        return "Branch Yes/No";
       }
-      if (conditionType === "ai") return "AI condition";
-      return null;
+      return modelName ?? null;
     }
     case "integration-spreadsheet": {
       const sheet = data.spreadsheetId as string | undefined;
@@ -144,7 +131,7 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
     nodeType === "webhook-lightfunnels" ||
     nodeType === "webhook-youcan" ||
     nodeType === "webhook-custom";
-  const isCondition = nodeType === "condition";
+  const isCondition = data.outputFormat === "branch";
   const configSummary = getConfigSummary(data);
 
   return (

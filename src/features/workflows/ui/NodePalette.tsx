@@ -27,7 +27,6 @@ const TYPE_ICONS = {
   "webhook-youcan": Globe,
   "webhook-custom": Link,
   "ai-custom-model": Robot,
-  condition: GitFork,
   "integration-spreadsheet": FileXls,
   "integration-email": Envelope,
   "integration-slack": ChatCircleText,
