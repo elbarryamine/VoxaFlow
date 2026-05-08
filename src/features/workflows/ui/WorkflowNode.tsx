@@ -149,28 +149,35 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
 
   return (
     <div
-      className={`min-w-[200px] max-w-[260px] rounded-xl border-2 ${colors.border} ${colors.bg} p-4 shadow-sm transition-all hover:shadow-md ${selected ? "ring-2 ring-ring/50" : ""}`}
+      className={`min-w-[140px] max-w-[180px] rounded-lg border-2 ${colors.border} ${colors.bg} p-2 shadow-sm transition-all hover:shadow-md ${selected ? "ring-2 ring-ring/50" : ""}`}
     >
       {!isTrigger && (
-        <Handle
-          type="target"
-          position={Position.Top}
-          className="h-3! w-3! border-2! border-white! bg-primary!"
-        />
+        <>
+          <div className="pointer-events-none absolute left-0 top-1/2 h-[2px] w-10 -translate-x-full -translate-y-1/2 bg-foreground" />
+          <div className="pointer-events-none absolute left-[-20px] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
+            IN
+          </div>
+          <Handle
+            type="target"
+            position={Position.Left}
+            className="h-3! w-3! border-2! border-background! bg-foreground!"
+            style={{ left: "-40px" }}
+          />
+        </>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${colors.icon} bg-white/80 dark:bg-white/10`}
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${colors.icon} bg-white/80 dark:bg-white/10`}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-foreground">
+          <p className="truncate text-[13px] font-semibold leading-tight text-foreground">
             {data.label}
           </p>
           {data.description && (
-            <p className="truncate text-xs text-muted-foreground">
+            <p className="truncate text-[11px] leading-tight text-muted-foreground">
               {data.description}
             </p>
           )}
@@ -178,40 +185,54 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
       </div>
 
       {configSummary && (
-        <div className="mt-2.5 truncate rounded-md bg-white/60 px-2 py-1 text-[11px] font-medium text-foreground/70 dark:bg-white/5">
+        <div className="mt-1.5 truncate rounded bg-white/60 px-1.5 py-0.5 text-[10px] font-medium text-foreground/70 dark:bg-white/5">
           {configSummary}
         </div>
       )}
 
       {isCondition && (
         <>
+          {/* No Branch */}
+          <div className="pointer-events-none absolute right-0 top-[30%] h-[2px] w-10 translate-x-full -translate-y-1/2 bg-foreground" />
+          <div className="pointer-events-none absolute right-[-20px] top-[30%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
+            NO
+          </div>
           <Handle
             id="no"
             type="source"
-            position={Position.Bottom}
-            style={{ left: "30%" }}
-            className="h-3! w-3! border-2! border-white! bg-primary!"
+            position={Position.Right}
+            className="h-3! w-3! border-2! border-background! bg-foreground!"
+            style={{ top: "30%", right: "-40px" }}
           />
+
+          {/* Yes Branch */}
+          <div className="pointer-events-none absolute right-0 top-[70%] h-[2px] w-10 translate-x-full -translate-y-1/2 bg-foreground" />
+          <div className="pointer-events-none absolute right-[-20px] top-[70%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
+            YES
+          </div>
           <Handle
             id="yes"
             type="source"
-            position={Position.Bottom}
-            style={{ left: "70%" }}
-            className="h-3! w-3! border-2! border-white! bg-primary!"
+            position={Position.Right}
+            className="h-3! w-3! border-2! border-background! bg-foreground!"
+            style={{ top: "70%", right: "-40px" }}
           />
-          <div className="pointer-events-none mt-3 flex justify-between px-7 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-            <span>No</span>
-            <span>Yes</span>
-          </div>
         </>
       )}
 
       {!isCondition && (
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          className="h-3! w-3! border-2! border-white! bg-primary!"
-        />
+        <>
+          <div className="pointer-events-none absolute right-0 top-1/2 h-[2px] w-10 translate-x-full -translate-y-1/2 bg-foreground" />
+          <div className="pointer-events-none absolute right-[-20px] top-1/2 z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
+            OUT
+          </div>
+          <Handle
+            type="source"
+            position={Position.Right}
+            className="h-3! w-3! border-2! border-background! bg-foreground!"
+            style={{ right: "-40px" }}
+          />
+        </>
       )}
     </div>
   );

@@ -31,7 +31,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
   {
     id: "1",
     type: "workflowNode",
-    position: { x: 300, y: 50 },
+    position: { x: 50, y: 150 },
     data: {
       label: "Webhook Trigger",
       type: "webhook-custom",
@@ -43,7 +43,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
   {
     id: "2",
     type: "workflowNode",
-    position: { x: 300, y: 200 },
+    position: { x: 350, y: 150 },
     data: {
       label: "Lead Intent Model",
       type: "ai-custom-model",
@@ -54,7 +54,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
   {
     id: "3",
     type: "workflowNode",
-    position: { x: 150, y: 380 },
+    position: { x: 650, y: 150 },
     data: {
       label: "Qualified?",
       type: "condition",
@@ -68,7 +68,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
   {
     id: "4",
     type: "workflowNode",
-    position: { x: 50, y: 550 },
+    position: { x: 950, y: 50 },
     data: {
       label: "Log to Spreadsheet",
       type: "integration-spreadsheet",
@@ -79,7 +79,7 @@ const INITIAL_NODES: Node<WorkflowNodeData>[] = [
   {
     id: "5",
     type: "workflowNode",
-    position: { x: 350, y: 550 },
+    position: { x: 950, y: 250 },
     data: {
       label: "Notify Sales Team",
       type: "integration-slack",
