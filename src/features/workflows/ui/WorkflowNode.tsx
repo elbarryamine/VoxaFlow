@@ -31,50 +31,58 @@ const ICON_MAP = {
 
 const COLOR_MAP = {
   "webhook-shopify": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
+    gradient: "from-orange-500/20 to-rose-500/20 dark:from-orange-500/20 dark:to-rose-500/20",
+    border: "border-orange-500/30 dark:border-orange-500/40",
+    iconBg: "bg-orange-500/10 dark:bg-orange-500/20",
+    icon: "text-orange-600 dark:text-orange-400",
   },
   "webhook-lightfunnels": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
+    gradient: "from-amber-500/20 to-orange-500/20 dark:from-amber-500/20 dark:to-orange-500/20",
+    border: "border-amber-500/30 dark:border-amber-500/40",
+    iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
+    icon: "text-amber-600 dark:text-amber-400",
   },
   "webhook-youcan": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
+    gradient: "from-sky-500/20 to-blue-500/20 dark:from-sky-500/20 dark:to-blue-500/20",
+    border: "border-sky-500/30 dark:border-sky-500/40",
+    iconBg: "bg-sky-500/10 dark:bg-sky-500/20",
+    icon: "text-sky-600 dark:text-sky-400",
   },
   "webhook-custom": {
-    bg: "bg-orange-50 dark:bg-orange-500/10",
-    border: "border-orange-200 dark:border-orange-400/30",
-    icon: "text-orange-500 dark:text-orange-300",
+    gradient: "from-zinc-500/20 to-slate-500/20 dark:from-zinc-500/20 dark:to-slate-500/20",
+    border: "border-zinc-500/30 dark:border-zinc-500/40",
+    iconBg: "bg-zinc-500/10 dark:bg-zinc-500/20",
+    icon: "text-zinc-600 dark:text-zinc-400",
   },
   "ai-custom-model": {
-    bg: "bg-indigo-50 dark:bg-indigo-500/10",
-    border: "border-indigo-200 dark:border-indigo-400/30",
-    icon: "text-indigo-500 dark:text-indigo-300",
+    gradient: "from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/20 dark:to-purple-500/20",
+    border: "border-indigo-500/30 dark:border-indigo-500/40",
+    iconBg: "bg-indigo-500/10 dark:bg-indigo-500/20",
+    icon: "text-indigo-600 dark:text-indigo-400",
   },
-
   "integration-spreadsheet": {
-    bg: "bg-emerald-50 dark:bg-emerald-500/10",
-    border: "border-emerald-200 dark:border-emerald-400/30",
-    icon: "text-emerald-500 dark:text-emerald-300",
+    gradient: "from-emerald-500/20 to-teal-500/20 dark:from-emerald-500/20 dark:to-teal-500/20",
+    border: "border-emerald-500/30 dark:border-emerald-500/40",
+    iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
+    icon: "text-emerald-600 dark:text-emerald-400",
   },
   "integration-email": {
-    bg: "bg-blue-50 dark:bg-blue-500/10",
-    border: "border-blue-200 dark:border-blue-400/30",
-    icon: "text-blue-500 dark:text-blue-300",
+    gradient: "from-blue-500/20 to-cyan-500/20 dark:from-blue-500/20 dark:to-cyan-500/20",
+    border: "border-blue-500/30 dark:border-blue-500/40",
+    iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
+    icon: "text-blue-600 dark:text-blue-400",
   },
   "integration-slack": {
-    bg: "bg-violet-50 dark:bg-violet-500/10",
-    border: "border-violet-200 dark:border-violet-400/30",
-    icon: "text-violet-500 dark:text-violet-300",
+    gradient: "from-violet-500/20 to-fuchsia-500/20 dark:from-violet-500/20 dark:to-fuchsia-500/20",
+    border: "border-violet-500/30 dark:border-violet-500/40",
+    iconBg: "bg-violet-500/10 dark:bg-violet-500/20",
+    icon: "text-violet-600 dark:text-violet-400",
   },
   "integration-webhook": {
-    bg: "bg-violet-50 dark:bg-violet-500/10",
-    border: "border-violet-200 dark:border-violet-400/30",
-    icon: "text-violet-500 dark:text-violet-300",
+    gradient: "from-pink-500/20 to-rose-500/20 dark:from-pink-500/20 dark:to-rose-500/20",
+    border: "border-pink-500/30 dark:border-pink-500/40",
+    iconBg: "bg-pink-500/10 dark:bg-pink-500/20",
+    icon: "text-pink-600 dark:text-pink-400",
   },
 } as const;
 
@@ -136,8 +144,13 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
 
   return (
     <div
-      className={`min-w-[140px] max-w-[180px] rounded-lg border-2 ${colors.border} ${colors.bg} p-2 shadow-sm transition-all hover:shadow-md ${selected ? "ring-2 ring-ring/50" : ""}`}
+      className={`relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${
+        selected ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}` : "border-border/50 hover:border-border/80"
+      }`}
     >
+      <div
+        className={`pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br opacity-50 dark:opacity-40 ${colors.gradient}`}
+      />
       {!isTrigger && (
         <>
           <div className="pointer-events-none absolute left-0 top-1/2 h-[2px] w-10 -translate-x-full -translate-y-1/2 bg-foreground" />
@@ -153,29 +166,31 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
         </>
       )}
 
-      <div className="flex items-center gap-2">
-        <div
-          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${colors.icon} bg-white/80 dark:bg-white/10`}
-        >
-          <Icon className="h-4 w-4" />
-        </div>
-        <div className="min-w-0">
-          <p className="truncate text-[13px] font-semibold leading-tight text-foreground">
-            {data.label}
-          </p>
-          {data.description && (
-            <p className="truncate text-[11px] leading-tight text-muted-foreground">
-              {data.description}
+      <div className="relative z-10 flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${colors.iconBg} ${colors.icon} shadow-sm ring-1 ring-black/5 dark:ring-white/10`}
+          >
+            <Icon className="h-4 w-4" weight="duotone" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[13px] font-bold tracking-tight text-foreground">
+              {data.label}
             </p>
-          )}
+            {data.description && (
+              <p className="truncate text-[10px] leading-relaxed text-muted-foreground">
+                {data.description}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {configSummary && (
-        <div className="mt-1.5 truncate rounded bg-white/60 px-1.5 py-0.5 text-[10px] font-medium text-foreground/70 dark:bg-white/5">
-          {configSummary}
-        </div>
-      )}
+        {configSummary && (
+          <div className="mt-1 truncate rounded-md bg-background/60 px-2 py-1 text-[11px] font-medium text-foreground/80 shadow-sm ring-1 ring-border/50 backdrop-blur-md">
+            {configSummary}
+          </div>
+        )}
+      </div>
 
       {isCondition && (
         <>
