@@ -69,4 +69,26 @@ export const NODE_OUTPUT_SCHEMAS: Record<WorkflowNodeType, OutputSchemaDefinitio
     { name: "webhookResponse", type: "object", description: "The response body from the external API" },
     { name: "webhookStatus", type: "number", description: "The HTTP status code" }
   ],
+  "api-request": (data) => {
+    const baseFields: OutputField[] = [
+      { name: "responseBody", type: "object", description: "The raw response body" },
+      { name: "status", type: "number", description: "The HTTP status code" },
+    ];
+    
+    if (Array.isArray(data.expectedOutputFields)) {
+      const customFields = data.expectedOutputFields
+        .filter((field: any) => field && typeof field.name === "string" && field.name.trim() !== "")
+        .map((field: any) => ({
+          name: field.name.trim(),
+          type: typeof field.type === "string" ? field.type : "unknown",
+          description: typeof field.description === "string" && field.description.trim() ? field.description : "Custom response field",
+        }));
+      
+      if (customFields.length > 0) {
+        return [...baseFields, ...customFields];
+      }
+    }
+    
+    return baseFields;
+  },
 };

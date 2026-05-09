@@ -19,7 +19,8 @@ export type WorkflowNodeType =
   | "integration-slack"
   | "integration-spreadsheet"
   | "integration-email"
-  | "integration-webhook";
+  | "integration-webhook"
+  | "api-request";
 
 export type WorkflowNodeData = {
   label: string;
@@ -47,6 +48,8 @@ export type WorkflowNodeData = {
   emailSubject?: string;
   method?: string;
   url?: string;
+  headersTemplate?: string;
+  expectedOutputFields?: { name: string; type: string; description: string }[];
   [key: string]: unknown;
 };
 

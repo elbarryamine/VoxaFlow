@@ -47,10 +47,13 @@ const CanvasInner = () => {
     onUpdateSelectedNode,
     isPaletteOpen,
     setIsPaletteOpen,
+    sourceNodeIdForAdd,
+    targetNodeIdForAdd,
   } = useWorkflowCanvas();
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden bg-background">
+    <div className="px-5  relative flex h-full w-full">
+    <div className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-transparent dark:border-border bg-background/50 dark:bg-background/50 shadow-sm backdrop-blur-md">
       <div className="flex-1 relative" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
@@ -107,7 +110,13 @@ const CanvasInner = () => {
         }`}
       >
         <div className="pointer-events-auto h-full w-full">
-          <NodePalette onDragStart={onDragStart} onAdd={onAddNode} hasNodes={nodes.length > 0} />
+          <NodePalette 
+            onDragStart={onDragStart} 
+            onAdd={onAddNode} 
+            hasNodes={nodes.length > 0} 
+            sourceNodeId={sourceNodeIdForAdd}
+            targetNodeId={targetNodeIdForAdd}
+          />
         </div>
       </div>
 
@@ -169,6 +178,7 @@ const CanvasInner = () => {
         onClose={() => setIsTemplatesModalOpen(false)}
         onSelect={(id) => console.log("Template selected:", id)}
       />
+    </div>
     </div>
   );
 };

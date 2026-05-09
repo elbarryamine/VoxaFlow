@@ -22,7 +22,7 @@ export const TopBar = ({
   backHref,
 }: TopBarProps) => {
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between px-8">
+    <header className="flex h-16 shrink-0 items-center justify-between px-4">
       <div className="flex items-center gap-3">
         {backHref && (
           <Link

@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   const userName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? "VoxaFlow User";
 
   return (
-    <div className="flex h-screen overflow-hidden p-2">
+    <div className="relative flex h-screen overflow-hidden p-2">
       <Sidebar userName={userName} userEmail={userEmail} />
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
         {children}

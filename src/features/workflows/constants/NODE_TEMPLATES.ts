@@ -62,4 +62,10 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     description: "Call any external API endpoint",
     category: "normal-action",
   },
+  {
+    type: "api-request",
+    label: "API Request",
+    description: "Make an HTTP request and define output schema",
+    category: "normal-action",
+  },
 ];

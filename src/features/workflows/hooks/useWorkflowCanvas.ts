@@ -40,6 +40,9 @@ export const useWorkflowCanvas = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [sourceNodeIdForAdd, setSourceNodeIdForAdd] = useState<string | null>(null);
+  const [sourceHandleForAdd, setSourceHandleForAdd] = useState<string | null>(null);
+  const [targetNodeIdForAdd, setTargetNodeIdForAdd] = useState<string | null>(null);
+  const [targetHandleForAdd, setTargetHandleForAdd] = useState<string | null>(null);
   const draggedTemplate = useRef<NodeTemplate | null>(null);
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId) ?? null,
@@ -50,11 +53,17 @@ export const useWorkflowCanvas = () => {
     const handleOpenPalette = (e: any) => {
       setIsPaletteOpen(true);
       setSourceNodeIdForAdd(e?.detail?.sourceNodeId || null);
+      setSourceHandleForAdd(e?.detail?.sourceHandle || null);
+      setTargetNodeIdForAdd(e?.detail?.targetNodeId || null);
+      setTargetHandleForAdd(e?.detail?.targetHandle || null);
       setSelectedNodeId(null);
     };
     const handleClosePalette = () => {
       setIsPaletteOpen(false);
       setSourceNodeIdForAdd(null);
+      setSourceHandleForAdd(null);
+      setTargetNodeIdForAdd(null);
+      setTargetHandleForAdd(null);
     };
     const handleOpenConfig = (e: any) => {
       setSelectedNodeId(e.detail.nodeId);
@@ -182,9 +191,12 @@ export const useWorkflowCanvas = () => {
       setSelectedNodeId(newNode.id);
       setIsPaletteOpen(false);
       setSourceNodeIdForAdd(null);
+      setSourceHandleForAdd(null);
+      setTargetNodeIdForAdd(null);
+      setTargetHandleForAdd(null);
       draggedTemplate.current = null;
     },
-    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, nodes, setEdges],
+    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, sourceHandleForAdd, targetNodeIdForAdd, targetHandleForAdd, nodes, setEdges],
   );
 
   useEffect(() => {
@@ -207,6 +219,14 @@ export const useWorkflowCanvas = () => {
           position = {
             x: sourceNode.position.x + 350,
             y: sourceNode.position.y,
+          };
+        }
+      } else if (targetNodeIdForAdd) {
+        const targetNode = nodes.find((n) => n.id === targetNodeIdForAdd);
+        if (targetNode) {
+          position = {
+            x: targetNode.position.x - 350,
+            y: targetNode.position.y,
           };
         }
       }
@@ -239,7 +259,7 @@ export const useWorkflowCanvas = () => {
         setEdges((eds) => {
           const sourceNode = nodes.find((n) => n.id === sourceNodeIdForAdd);
           const isCondition = sourceNode?.data?.outputFormat === "branch";
-          const sourceHandle = isCondition ? "yes" : undefined;
+          const sourceHandle = sourceHandleForAdd || (isCondition ? "yes" : undefined);
           
           return addEdge(
             {
@@ -255,13 +275,31 @@ export const useWorkflowCanvas = () => {
             eds,
           );
         });
+      } else if (targetNodeIdForAdd) {
+        setEdges((eds) => {
+          return addEdge(
+            {
+              id: `e-${newNode.id}-${targetNodeIdForAdd}`,
+              source: newNode.id,
+              target: targetNodeIdForAdd,
+              sourceHandle: undefined,
+              targetHandle: targetHandleForAdd || undefined,
+              animated: true,
+              style: DASHED_EDGE_STYLE,
+            },
+            eds,
+          );
+        });
       }
 
       setSelectedNodeId(newNode.id);
       setIsPaletteOpen(false);
       setSourceNodeIdForAdd(null);
+      setSourceHandleForAdd(null);
+      setTargetNodeIdForAdd(null);
+      setTargetHandleForAdd(null);
     },
-    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, nodes, setEdges],
+    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, sourceHandleForAdd, targetNodeIdForAdd, targetHandleForAdd, nodes, setEdges],
   );
 
   const formatWorkflow = useCallback(() => {
@@ -366,5 +404,7 @@ export const useWorkflowCanvas = () => {
     setIsPaletteOpen,
     isTemplatesModalOpen,
     setIsTemplatesModalOpen,
+    sourceNodeIdForAdd,
+    targetNodeIdForAdd,
   };
 };

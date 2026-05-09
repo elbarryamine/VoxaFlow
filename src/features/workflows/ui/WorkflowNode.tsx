@@ -31,6 +31,7 @@ const ICON_MAP = {
   "integration-email": Envelope,
   "integration-slack": ChatCircleText,
   "integration-webhook": Globe,
+  "api-request": Globe,
 } as const;
 
 const COLOR_MAP = {
@@ -88,6 +89,12 @@ const COLOR_MAP = {
     iconBg: "bg-pink-500/10 dark:bg-pink-500/20",
     icon: "text-pink-600 dark:text-pink-400",
   },
+  "api-request": {
+    gradient: "from-fuchsia-500/20 to-pink-500/20 dark:from-fuchsia-500/20 dark:to-pink-500/20",
+    border: "border-fuchsia-500/30 dark:border-fuchsia-500/40",
+    iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
+    icon: "text-fuchsia-600 dark:text-fuchsia-400",
+  },
 } as const;
 
 const getConfigSummary = (data: WorkflowNodeData): string | null => {
@@ -120,7 +127,8 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
       const emailTo = data.emailTo as string | undefined;
       return emailTo ?? null;
     }
-    case "integration-webhook": {
+    case "integration-webhook":
+    case "api-request": {
       const method = data.method as string | undefined;
       const url = data.url as string | undefined;
       if (method && url) {
@@ -136,6 +144,7 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
 
 export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
   const { setNodes, setEdges } = useReactFlow();
+  const [isHandleHovered, setIsHandleHovered] = React.useState(false);
   const nodeType = data.type;
   const Icon = ICON_MAP[nodeType] ?? Globe;
   const colors = COLOR_MAP[nodeType] ?? COLOR_MAP["integration-webhook"];
@@ -167,13 +176,32 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
     );
   };
 
+  const handleAddIn = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.dispatchEvent(
+      new CustomEvent("open-node-palette", { detail: { targetNodeId: id } }),
+    );
+  };
+
+  const handleAddOut = (e: React.MouseEvent, handleId?: string) => {
+    e.stopPropagation();
+    window.dispatchEvent(
+      new CustomEvent("open-node-palette", { 
+        detail: { 
+          sourceNodeId: id,
+          sourceHandle: handleId
+        } 
+      }),
+    );
+  };
+
   return (
     <div
       className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 ${
         selected ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}` : "border-border/50 hover:border-border/80"
       }`}
     >
-      <div className="pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover:-top-11 group-hover:pointer-events-auto group-hover:opacity-100 before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']">
+      <div className={`pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 ${!isHandleHovered ? 'group-hover:-top-11 group-hover:pointer-events-auto group-hover:opacity-100' : ''} before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']`}>
         <button
           onClick={handleAdd}
           className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -206,12 +234,26 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute left-[-20px] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             IN
           </div>
-          <Handle
-            type="target"
-            position={Position.Left}
-            className="h-3! w-3! border-2! border-background! bg-foreground!"
-            style={{ left: "-40px" }}
-          />
+          <div 
+            className="group/handle absolute left-[-40px] top-1/2 -translate-x-1/2 -translate-y-1/2"
+            onMouseEnter={() => setIsHandleHovered(true)}
+            onMouseLeave={() => setIsHandleHovered(false)}
+          >
+            <div className="absolute -top-10 left-1/2 flex -translate-x-1/2 items-center rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover/handle:-top-11 group-hover/handle:opacity-100 z-50">
+              <button
+                onClick={handleAddIn}
+                className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <Plus weight="bold" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <Handle
+              type="target"
+              position={Position.Left}
+              className="h-3! w-3! border-2! border-background! bg-foreground!"
+              style={{ position: 'relative', left: '0', top: '0', transform: 'none' }}
+            />
+          </div>
         </>
       )}
 
@@ -248,26 +290,54 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute right-[-20px] top-[30%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             NO
           </div>
-          <Handle
-            id="no"
-            type="source"
-            position={Position.Right}
-            className="h-3! w-3! border-2! border-background! bg-foreground!"
-            style={{ top: "30%", right: "-40px" }}
-          />
+          <div 
+            className="group/handle absolute right-[-40px] top-[30%] -translate-y-1/2 translate-x-1/2"
+            onMouseEnter={() => setIsHandleHovered(true)}
+            onMouseLeave={() => setIsHandleHovered(false)}
+          >
+            <div className="absolute -top-10 left-1/2 flex -translate-x-1/2 items-center rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover/handle:-top-11 group-hover/handle:opacity-100 z-50">
+              <button
+                onClick={(e) => handleAddOut(e, "no")}
+                className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <Plus weight="bold" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <Handle
+              id="no"
+              type="source"
+              position={Position.Right}
+              className="h-3! w-3! border-2! border-background! bg-foreground!"
+              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+            />
+          </div>
 
           {/* Yes Branch */}
           <div className="pointer-events-none absolute right-0 top-[70%] h-[2px] w-10 translate-x-full -translate-y-1/2 bg-foreground" />
           <div className="pointer-events-none absolute right-[-20px] top-[70%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             YES
           </div>
-          <Handle
-            id="yes"
-            type="source"
-            position={Position.Right}
-            className="h-3! w-3! border-2! border-background! bg-foreground!"
-            style={{ top: "70%", right: "-40px" }}
-          />
+          <div 
+            className="group/handle absolute right-[-40px] top-[70%] -translate-y-1/2 translate-x-1/2"
+            onMouseEnter={() => setIsHandleHovered(true)}
+            onMouseLeave={() => setIsHandleHovered(false)}
+          >
+            <div className="absolute -top-10 left-1/2 flex -translate-x-1/2 items-center rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover/handle:-top-11 group-hover/handle:opacity-100 z-50">
+              <button
+                onClick={(e) => handleAddOut(e, "yes")}
+                className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <Plus weight="bold" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <Handle
+              id="yes"
+              type="source"
+              position={Position.Right}
+              className="h-3! w-3! border-2! border-background! bg-foreground!"
+              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+            />
+          </div>
         </>
       )}
 
@@ -277,12 +347,26 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute right-[-20px] top-1/2 z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             OUT
           </div>
-          <Handle
-            type="source"
-            position={Position.Right}
-            className="h-3! w-3! border-2! border-background! bg-foreground!"
-            style={{ right: "-40px" }}
-          />
+          <div 
+            className="group/handle absolute right-[-40px] top-1/2 -translate-y-1/2 translate-x-1/2"
+            onMouseEnter={() => setIsHandleHovered(true)}
+            onMouseLeave={() => setIsHandleHovered(false)}
+          >
+            <div className="absolute -top-10 left-1/2 flex -translate-x-1/2 items-center rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover/handle:-top-11 group-hover/handle:opacity-100 z-50">
+              <button
+                onClick={(e) => handleAddOut(e)}
+                className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              >
+                <Plus weight="bold" className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <Handle
+              type="source"
+              position={Position.Right}
+              className="h-3! w-3! border-2! border-background! bg-foreground!"
+              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+            />
+          </div>
         </>
       )}
     </div>

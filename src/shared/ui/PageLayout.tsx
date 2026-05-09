@@ -21,7 +21,7 @@ export const PageLayout = ({
   contentClassName = "",
   withContentPadding = true,
 }: PageLayoutProps) => {
-  const contentPaddingClass = withContentPadding ? "p-8" : "";
+  const contentPaddingClass = withContentPadding ? "p-4" : "";
   const contentClasses =
     `flex-1 overflow-y-auto ${contentPaddingClass} ${contentClassName}`.trim();
 

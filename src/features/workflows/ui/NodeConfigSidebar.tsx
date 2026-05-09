@@ -19,6 +19,7 @@ import { SlackIntegrationConfig } from "./node-configs/SlackIntegrationConfig";
 import { SpreadsheetIntegrationConfig } from "./node-configs/SpreadsheetIntegrationConfig";
 import { EmailIntegrationConfig } from "./node-configs/EmailIntegrationConfig";
 import { WebhookIntegrationConfig } from "./node-configs/WebhookIntegrationConfig";
+import { ApiRequestConfig } from "./node-configs/ApiRequestConfig";
 import {
   FieldLabel,
   TextInput,
@@ -45,6 +46,7 @@ const TYPE_LABELS: Record<WorkflowNodeType, string> = {
   "integration-spreadsheet": "Spreadsheet Integration",
   "integration-email": "Email Integration",
   "integration-webhook": "Webhook Integration",
+  "api-request": "API Request",
 };
 
 const CONFIG_MAP: Record<
@@ -61,6 +63,7 @@ const CONFIG_MAP: Record<
   "integration-spreadsheet": SpreadsheetIntegrationConfig,
   "integration-email": EmailIntegrationConfig,
   "integration-webhook": WebhookIntegrationConfig,
+  "api-request": ApiRequestConfig,
 };
 
 export const NodeConfigSidebar = ({

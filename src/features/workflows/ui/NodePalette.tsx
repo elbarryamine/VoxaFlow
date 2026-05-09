@@ -38,20 +38,50 @@ interface NodePaletteProps {
   onDragStart: (template: NodeTemplate) => void;
   onAdd: (template: NodeTemplate) => void;
   hasNodes?: boolean;
+  sourceNodeId?: string | null;
+  targetNodeId?: string | null;
 }
 
-export const NodePalette = ({ onDragStart, onAdd, hasNodes }: NodePaletteProps) => {
+export const NodePalette = ({ 
+  onDragStart, 
+  onAdd, 
+  hasNodes, 
+  sourceNodeId, 
+  targetNodeId 
+}: NodePaletteProps) => {
+  const categories = Object.keys(CATEGORY_LABELS) as Array<keyof typeof CATEGORY_LABELS>;
+
   const grouped = NODE_TEMPLATES.reduce(
     (acc, t) => {
-      // Hide triggers if nodes already exist
-      if (hasNodes && t.category === "trigger") return acc;
-
       if (!acc[t.category]) acc[t.category] = [];
       acc[t.category].push(t);
       return acc;
     },
     {} as Record<string, NodeTemplate[]>,
   );
+
+  // Determine if a category is "connectable" in the current context
+  const isConnectable = (category: string) => {
+    if (sourceNodeId || targetNodeId) {
+      // Connecting from/to an existing node -> Actions are the target
+      return category !== "trigger";
+    }
+    if (!hasNodes) {
+      // Empty canvas -> Only triggers can "connect" (start)
+      return category === "trigger";
+    }
+    // Canvas has nodes but no specific source -> Actions are prioritized
+    return category !== "trigger";
+  };
+
+  // Sort categories: connectable ones on top
+  const sortedCategories = [...categories].sort((a, b) => {
+    const aCan = isConnectable(a);
+    const bCan = isConnectable(b);
+    if (aCan && !bCan) return -1;
+    if (!aCan && bCan) return 1;
+    return 0;
+  });
 
   return (
     <div className="h-full w-full shrink-0">
@@ -69,14 +99,19 @@ export const NodePalette = ({ onDragStart, onAdd, hasNodes }: NodePaletteProps) 
           </button>
         </div>
         <div className="flex-1 space-y-5 overflow-y-auto p-3 [scrollbar-color:var(--muted-foreground)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/40 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-thumb:hover]:bg-muted-foreground/60 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-2">
-          {(Object.keys(grouped) as Array<keyof typeof CATEGORY_LABELS>).map(
-            (category) => (
+          {sortedCategories.map((category) => {
+            const templates = grouped[category] || [];
+            if (templates.length === 0) return null;
+
+            return (
               <div key={category}>
-                <p className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {CATEGORY_LABELS[category]}
-                </p>
+                <div className="flex items-center justify-between mb-2 px-1">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {CATEGORY_LABELS[category]}
+                  </p>
+                </div>
                 <div className="space-y-1.5">
-                  {grouped[category].map((template) => {
+                  {templates.map((template) => {
                     const Icon =
                       TYPE_ICONS[template.type as keyof typeof TYPE_ICONS] ??
                       Globe;
@@ -106,8 +141,8 @@ export const NodePalette = ({ onDragStart, onAdd, hasNodes }: NodePaletteProps) 
                   })}
                 </div>
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
       </div>
     </div>
