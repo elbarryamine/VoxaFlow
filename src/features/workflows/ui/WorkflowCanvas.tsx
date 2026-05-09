@@ -99,7 +99,7 @@ const CanvasInner = () => {
         }`}
       >
         <div className="pointer-events-auto h-full w-full">
-          <NodePalette onDragStart={onDragStart} onAdd={onAddNode} />
+          <NodePalette onDragStart={onDragStart} onAdd={onAddNode} hasNodes={nodes.length > 0} />
         </div>
       </div>
 

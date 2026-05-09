@@ -37,11 +37,15 @@ const TYPE_ICONS = {
 interface NodePaletteProps {
   onDragStart: (template: NodeTemplate) => void;
   onAdd: (template: NodeTemplate) => void;
+  hasNodes?: boolean;
 }
 
-export const NodePalette = ({ onDragStart, onAdd }: NodePaletteProps) => {
+export const NodePalette = ({ onDragStart, onAdd, hasNodes }: NodePaletteProps) => {
   const grouped = NODE_TEMPLATES.reduce(
     (acc, t) => {
+      // Hide triggers if nodes already exist
+      if (hasNodes && t.category === "trigger") return acc;
+
       if (!acc[t.category]) acc[t.category] = [];
       acc[t.category].push(t);
       return acc;

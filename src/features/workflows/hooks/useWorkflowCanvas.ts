@@ -39,6 +39,7 @@ export const useWorkflowCanvas = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
+  const [sourceNodeIdForAdd, setSourceNodeIdForAdd] = useState<string | null>(null);
   const draggedTemplate = useRef<NodeTemplate | null>(null);
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId) ?? null,
@@ -46,14 +47,19 @@ export const useWorkflowCanvas = () => {
   );
 
   useEffect(() => {
-    const handleOpenPalette = () => {
+    const handleOpenPalette = (e: any) => {
       setIsPaletteOpen(true);
+      setSourceNodeIdForAdd(e?.detail?.sourceNodeId || null);
       setSelectedNodeId(null);
     };
-    const handleClosePalette = () => setIsPaletteOpen(false);
+    const handleClosePalette = () => {
+      setIsPaletteOpen(false);
+      setSourceNodeIdForAdd(null);
+    };
     const handleOpenConfig = (e: any) => {
       setSelectedNodeId(e.detail.nodeId);
       setIsPaletteOpen(false);
+      setSourceNodeIdForAdd(null);
     };
 
     window.addEventListener("open-node-palette", handleOpenPalette);
@@ -96,6 +102,7 @@ export const useWorkflowCanvas = () => {
     (_, node) => {
       setSelectedNodeId(node.id);
       setIsPaletteOpen(false);
+      setSourceNodeIdForAdd(null);
     },
     [],
   );
@@ -103,6 +110,7 @@ export const useWorkflowCanvas = () => {
   const onPaneClick = useCallback(() => {
     setSelectedNodeId(null);
     setIsPaletteOpen(false);
+    setSourceNodeIdForAdd(null);
   }, []);
 
   const onUpdateSelectedNode = useCallback(
@@ -148,11 +156,35 @@ export const useWorkflowCanvas = () => {
       };
 
       setNodes((nds) => [...nds, newNode]);
+      
+      if (sourceNodeIdForAdd) {
+        setEdges((eds) => {
+          const sourceNode = nodes.find((n) => n.id === sourceNodeIdForAdd);
+          const isCondition = sourceNode?.data?.outputFormat === "branch";
+          const sourceHandle = isCondition ? "yes" : undefined;
+          
+          return addEdge(
+            {
+              id: `e-${sourceNodeIdForAdd}-${newNode.id}`,
+              source: sourceNodeIdForAdd,
+              target: newNode.id,
+              sourceHandle,
+              targetHandle: undefined,
+              animated: true,
+              style: DASHED_EDGE_STYLE,
+              label: getConditionBranchLabel(sourceHandle),
+            },
+            eds,
+          );
+        });
+      }
+
       setSelectedNodeId(newNode.id);
       setIsPaletteOpen(false);
+      setSourceNodeIdForAdd(null);
       draggedTemplate.current = null;
     },
-    [screenToFlowPosition, setNodes],
+    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, nodes, setEdges],
   );
 
   useEffect(() => {
@@ -167,14 +199,27 @@ export const useWorkflowCanvas = () => {
     (template: NodeTemplate) => {
       if (!reactFlowWrapper.current) return;
 
-      const rect = reactFlowWrapper.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
+      let position;
 
-      const position = screenToFlowPosition({
-        x: centerX,
-        y: centerY,
-      });
+      if (sourceNodeIdForAdd) {
+        const sourceNode = nodes.find((n) => n.id === sourceNodeIdForAdd);
+        if (sourceNode) {
+          position = {
+            x: sourceNode.position.x + 350,
+            y: sourceNode.position.y,
+          };
+        }
+      }
+
+      if (!position) {
+        const rect = reactFlowWrapper.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        position = screenToFlowPosition({
+          x: centerX,
+          y: centerY,
+        });
+      }
 
       const newNode: Node<WorkflowNodeData> = {
         id: String(++nodeIdCounter),
@@ -189,10 +234,34 @@ export const useWorkflowCanvas = () => {
       };
 
       setNodes((nds) => [...nds, newNode]);
+
+      if (sourceNodeIdForAdd) {
+        setEdges((eds) => {
+          const sourceNode = nodes.find((n) => n.id === sourceNodeIdForAdd);
+          const isCondition = sourceNode?.data?.outputFormat === "branch";
+          const sourceHandle = isCondition ? "yes" : undefined;
+          
+          return addEdge(
+            {
+              id: `e-${sourceNodeIdForAdd}-${newNode.id}`,
+              source: sourceNodeIdForAdd,
+              target: newNode.id,
+              sourceHandle,
+              targetHandle: undefined,
+              animated: true,
+              style: DASHED_EDGE_STYLE,
+              label: getConditionBranchLabel(sourceHandle),
+            },
+            eds,
+          );
+        });
+      }
+
       setSelectedNodeId(newNode.id);
       setIsPaletteOpen(false);
+      setSourceNodeIdForAdd(null);
     },
-    [screenToFlowPosition, setNodes],
+    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, nodes, setEdges],
   );
 
   return {

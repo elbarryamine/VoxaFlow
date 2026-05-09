@@ -155,7 +155,9 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.dispatchEvent(new CustomEvent("open-node-palette"));
+    window.dispatchEvent(
+      new CustomEvent("open-node-palette", { detail: { sourceNodeId: id } }),
+    );
   };
 
   const handleConfigure = (e: React.MouseEvent) => {
