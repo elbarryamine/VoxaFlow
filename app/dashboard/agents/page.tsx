@@ -15,7 +15,7 @@ export default function AgentsPage() {
       actions={
         <Link
           href="/dashboard/agents/new"
-          className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
+          className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
         >
           <Plus className="h-4 w-4" />
           New Agent

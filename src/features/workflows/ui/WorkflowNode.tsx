@@ -169,32 +169,32 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
 
   return (
     <div
-      className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${
+      className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 ${
         selected ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}` : "border-border/50 hover:border-border/80"
       }`}
     >
-      {/* Hover Action Menu */}
-      <div className="pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-border/50 bg-background/95 px-2 py-1.5 opacity-0 shadow-xl backdrop-blur-xl transition-all duration-200 group-hover:-top-12 group-hover:pointer-events-auto group-hover:opacity-100 before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']">
-        <button
-          onClick={handleDelete}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-red-500/10 hover:text-red-600 hover:scale-110 active:scale-95 dark:hover:text-red-400"
-          title="Delete"
-        >
-          <Trash className="h-4 w-4" />
-        </button>
+      <div className="pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 group-hover:-top-11 group-hover:pointer-events-auto group-hover:opacity-100 before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']">
         <button
           onClick={handleAdd}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary hover:scale-110 active:scale-95"
+          className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           title="Add Action"
         >
-          <Plus className="h-4 w-4" />
+          <Plus weight="bold" className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={handleConfigure}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary hover:scale-110 active:scale-95"
+          className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           title="Configure"
         >
-          <Gear className="h-4 w-4" />
+          <Gear weight="bold" className="h-3.5 w-3.5" />
+        </button>
+        <div className="mx-0.5 h-4 w-[1px] bg-border" />
+        <button
+          onClick={handleDelete}
+          className="flex h-7 w-7 items-center justify-center rounded text-red-500 transition-colors hover:bg-secondary hover:text-red-600"
+          title="Delete"
+        >
+          <Trash weight="bold" className="h-3.5 w-3.5" />
         </button>
       </div>
       <div

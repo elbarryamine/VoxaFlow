@@ -11,12 +11,12 @@ export default function NewWorkflowPage() {
       backHref="/dashboard/workflows"
       actions={
         <>
-          <button className="flex items-center gap-2 rounded-lg border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground">
-            <Play className="h-3.5 w-3.5" />
+          <button className="flex items-center gap-2 rounded-md border border-border px-5 py-2 text-sm font-semibold text-foreground hover:bg-secondary transition-colors">
+            <Play className="h-4 w-4" />
             Test Run
           </button>
-          <button className="flex items-center gap-2 rounded-lg bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80">
-            <FloppyDisk className="h-3.5 w-3.5" />
+          <button className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
+            <FloppyDisk className="h-4 w-4" />
             Save
           </button>
         </>

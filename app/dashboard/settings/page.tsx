@@ -16,7 +16,7 @@ export default function SettingsPage() {
       title="Settings"
       description="Configure workspace preferences, notifications, and account options"
       actions={
-        <button className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80">
+        <button className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80">
           <FloppyDisk className="h-4 w-4" />
           Save Changes
         </button>

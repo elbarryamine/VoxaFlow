@@ -14,7 +14,9 @@ import { WorkflowNode } from "./WorkflowNode";
 import { NodePalette } from "./NodePalette";
 import { NodeConfigSidebar } from "./NodeConfigSidebar";
 import { useWorkflowCanvas } from "../hooks/useWorkflowCanvas";
-import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { Plus, MagicWand, Trash, Copy } from "@phosphor-icons/react/dist/ssr";
+import { ConfirmationModal } from "@/src/shared/ui/ConfirmationModal";
+import { TemplatesModal } from "./TemplatesModal";
 
 const NODE_TYPES = {
   workflowNode: WorkflowNode,
@@ -25,14 +27,21 @@ const CanvasInner = () => {
     reactFlowWrapper,
     nodes,
     edges,
+    selectedNode,
     onNodesChange,
     onEdgesChange,
     onConnect,
     onDragStart,
     onAddNode,
+    formatWorkflow,
+    clearWorkflow,
+    confirmClear,
+    isClearModalOpen,
+    setIsClearModalOpen,
+    isTemplatesModalOpen,
+    setIsTemplatesModalOpen,
     onDragOver,
     onDrop,
-    selectedNode,
     onNodeClick,
     onPaneClick,
     onUpdateSelectedNode,
@@ -42,24 +51,22 @@ const CanvasInner = () => {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden bg-background">
-      {/* Main Flow Canvas */}
-      <div
-        ref={reactFlowWrapper}
-        className="relative h-full w-full"
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-      >
+      <div className="flex-1 relative" ref={reactFlowWrapper}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          nodeTypes={NODE_TYPES}
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
-          nodeTypes={NODE_TYPES}
           fitView
-          className="h-full"
+          minZoom={0.2}
+          maxZoom={2}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
         >
           <Background
             id="canvas-pattern-dots"
@@ -70,10 +77,10 @@ const CanvasInner = () => {
           />
           <Controls
             showInteractive={false}
-            className="rounded-xl! border-border! bg-card! shadow-lg!"
+            className="rounded-lg! border-border! bg-background! shadow-sm!"
           />
           <MiniMap
-            className="rounded-xl! border-border! bg-card!"
+            className="rounded-lg! border-border! bg-background!"
             nodeColor="#6366f1"
             maskColor="var(--flow-minimap-mask)"
           />
@@ -84,15 +91,16 @@ const CanvasInner = () => {
           <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
             <button
               onClick={() => setIsPaletteOpen(true)}
-              className="pointer-events-auto flex h-32 w-32 flex-col items-center justify-center gap-4 rounded-3xl border-4 border-dashed border-border/60 bg-background/50 text-muted-foreground transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:bg-primary/5 hover:text-primary hover:shadow-xl backdrop-blur-sm"
+              className="pointer-events-auto flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-background text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               <Plus weight="bold" className="h-5 w-5" />
-              <span className="text-sm font-semibold tracking-wide">Add Node</span>
+              <span className="text-[11px] font-medium">Add Node</span>
             </button>
           </div>
         )}
       </div>
 
+      {/* Floating Node Palette Panel */}
       <div
         className={`pointer-events-none absolute bottom-4 right-4 top-4 z-40 w-72 transform transition-transform duration-500 ease-in-out ${
           isPaletteOpen ? "translate-x-0" : "translate-x-[150%]"
@@ -103,6 +111,7 @@ const CanvasInner = () => {
         </div>
       </div>
 
+      {/* Floating Config Sidebar Panel */}
       <div
         className={`pointer-events-none absolute bottom-4 right-4 top-4 z-50 w-[340px] transform transition-transform duration-500 ease-in-out ${
           selectedNode ? "translate-x-0" : "translate-x-[150%]"
@@ -118,6 +127,48 @@ const CanvasInner = () => {
           />
         </div>
       </div>
+
+      {/* Floating Controls Area */}
+      <div className="absolute left-6 top-6 z-40 flex items-center gap-2">
+        <button
+          onClick={() => setIsTemplatesModalOpen(true)}
+          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+        >
+          <Copy weight="bold" className="h-3.5 w-3.5" />
+          Start from template
+        </button>
+
+        <button
+          onClick={() => formatWorkflow()}
+          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+        >
+          <MagicWand weight="bold" className="h-3.5 w-3.5" />
+          Format
+        </button>
+
+        <button
+          onClick={() => clearWorkflow()}
+          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-red-500 hover:bg-secondary transition-colors"
+        >
+          <Trash weight="bold" className="h-3.5 w-3.5" />
+          Clear
+        </button>
+      </div>
+
+      <ConfirmationModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={confirmClear}
+        title="Clear Workflow"
+        message="Are you sure you want to clear the entire workflow? This action cannot be undone."
+        confirmText="Clear Everything"
+      />
+
+      <TemplatesModal
+        isOpen={isTemplatesModalOpen}
+        onClose={() => setIsTemplatesModalOpen(false)}
+        onSelect={(id) => console.log("Template selected:", id)}
+      />
     </div>
   );
 };
