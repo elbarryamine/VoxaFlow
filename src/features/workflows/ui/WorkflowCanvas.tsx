@@ -122,7 +122,7 @@ const CanvasInner = () => {
 
       {/* Floating Config Sidebar Panel */}
       <div
-        className={`pointer-events-none absolute bottom-4 right-4 top-4 z-50 w-[340px] transform transition-transform duration-500 ease-in-out ${
+        className={`pointer-events-none absolute bottom-4 right-4 top-4 z-50 w-[480px] transform transition-transform duration-500 ease-in-out ${
           selectedNode ? "translate-x-0" : "translate-x-[150%]"
         }`}
       >
