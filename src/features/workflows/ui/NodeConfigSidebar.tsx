@@ -123,8 +123,8 @@ export const NodeConfigSidebar = ({
     .filter((group) => group.fields.length > 0);
 
   return (
-    <aside className="h-full w-[340px] shrink-0 ">
-      <div className="flex h-full w-full shrink-0 flex-col rounded-xl border border-border bg-card">
+    <aside className="h-full w-[340px] shrink-0">
+      <div className="flex h-full w-full shrink-0 flex-col rounded-xl border border-border bg-card shadow-2xl">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
             <h3 className="text-sm font-semibold text-foreground">

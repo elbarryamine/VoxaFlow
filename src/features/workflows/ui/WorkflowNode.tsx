@@ -1,6 +1,7 @@
 "use client";
 
-import { Handle, Position } from "@xyflow/react";
+import React from "react";
+import { Handle, Position, useReactFlow } from "@xyflow/react";
 import type { NodeProps, Node } from "@xyflow/react";
 import {
   Robot,
@@ -12,6 +13,9 @@ import {
   ShoppingBag,
   Link,
   Lightning,
+  Trash,
+  Plus,
+  Gear,
 } from "@phosphor-icons/react/dist/ssr";
 import type { WorkflowNodeData } from "../types/Workflow.types";
 
@@ -130,7 +134,8 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
   }
 };
 
-export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
+export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
+  const { setNodes, setEdges } = useReactFlow();
   const nodeType = data.type;
   const Icon = ICON_MAP[nodeType] ?? Globe;
   const colors = COLOR_MAP[nodeType] ?? COLOR_MAP["integration-webhook"];
@@ -142,12 +147,54 @@ export const WorkflowNode = ({ data, selected }: WorkflowNodeProps) => {
   const isCondition = data.outputFormat === "branch";
   const configSummary = getConfigSummary(data);
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNodes((nds) => nds.filter((n) => n.id !== id));
+    setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
+  };
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent("open-node-palette"));
+  };
+
+  const handleConfigure = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.dispatchEvent(
+      new CustomEvent("open-node-config", { detail: { nodeId: id } }),
+    );
+  };
+
   return (
     <div
-      className={`relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${
+      className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl ${
         selected ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}` : "border-border/50 hover:border-border/80"
       }`}
     >
+      {/* Hover Action Menu */}
+      <div className="pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-border/50 bg-background/95 px-2 py-1.5 opacity-0 shadow-xl backdrop-blur-xl transition-all duration-200 group-hover:-top-12 group-hover:pointer-events-auto group-hover:opacity-100 before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']">
+        <button
+          onClick={handleDelete}
+          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-red-500/10 hover:text-red-600 hover:scale-110 active:scale-95 dark:hover:text-red-400"
+          title="Delete"
+        >
+          <Trash className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleAdd}
+          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary hover:scale-110 active:scale-95"
+          title="Add Action"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleConfigure}
+          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary hover:scale-110 active:scale-95"
+          title="Configure"
+        >
+          <Gear className="h-4 w-4" />
+        </button>
+      </div>
       <div
         className={`pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br opacity-50 dark:opacity-40 ${colors.gradient}`}
       />

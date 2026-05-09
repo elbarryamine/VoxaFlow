@@ -13,8 +13,7 @@ import {
   Headphones,
   Link as LinkIcon,
   SignOut,
-  CaretLeft,
-  CaretRight,
+  SidebarSimple,
 } from "@phosphor-icons/react/dist/ssr";
 
 const NAV_ITEMS = [
@@ -59,44 +58,51 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
   };
 
   if (!mounted) {
-    return <aside className="z-30 flex h-full w-20 shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg xl:w-64" />;
+    return <aside className="z-30 flex h-full w-16 shrink-0 flex-col rounded-xl border border-border/40 bg-card shadow-2xl xl:w-[260px]" />;
   }
 
   return (
     <aside
       className={cn(
-        "relative z-30 flex h-full shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg text-sidebar-fg shadow-xl transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-20" : "w-64"
+        "relative z-30 flex h-full shrink-0 flex-col rounded-xl border border-border/40 bg-card/80 text-sidebar-fg shadow-2xl backdrop-blur-xl transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-16" : "w-[260px]"
       )}
     >
-      {/* Collapse Toggle Button */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border bg-sidebar-bg text-sidebar-fg shadow-sm transition-transform hover:scale-110 hover:text-sidebar-title"
-      >
-        {isCollapsed ? <CaretRight size={14} /> : <CaretLeft size={14} />}
-      </button>
-
-      <div
-        className={cn(
-          "flex h-16 items-center gap-3 border-b border-sidebar-border px-3 transition-all",
-          isCollapsed ? "justify-center" : "justify-start px-6"
-        )}
-      >
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-active">
-          <Headphones className="h-5 w-5 text-primary-foreground" />
-        </div>
-        <span
-          className={cn(
-            "truncate text-lg font-semibold tracking-tight text-sidebar-title transition-all duration-300",
-            isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+      <div className="flex flex-col p-3 transition-all duration-300">
+        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-2")}>
+          {!isCollapsed && (
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
+                <Headphones weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+              </div>
+              <span className="truncate text-[17px] font-bold tracking-tight text-sidebar-title">
+                VoxaFlow
+              </span>
+            </div>
           )}
-        >
-          VoiceFlow
-        </span>
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-lg transition-all hover:bg-secondary hover:text-primary",
+              isCollapsed ? "bg-secondary/50 text-primary shadow-sm" : "text-sidebar-fg"
+            )}
+            title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <SidebarSimple weight="regular" className="h-5 w-5" />
+          </button>
+        </div>
+
+        {isCollapsed && (
+          <div className="mt-4 flex justify-center border-b border-border/40 pb-4">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
+              <Headphones weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+            </div>
+          </div>
+        )}
+        {!isCollapsed && <div className="mt-4 border-b border-border/40" />}
       </div>
 
-      <nav className="flex-1 space-y-1 px-2 py-4">
+      <nav className="flex-1 space-y-1.5 px-3 py-6">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -104,68 +110,72 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
               key={href}
               href={href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                isCollapsed ? "justify-center" : "justify-start",
+                "group relative flex items-center rounded-lg transition-all duration-200",
+                isCollapsed 
+                  ? "h-10 w-10 justify-center mx-auto" 
+                  : "gap-3 px-3 py-2.5",
                 active
-                  ? "bg-sidebar-active text-primary-foreground"
-                  : "text-sidebar-fg hover:bg-sidebar-hover-bg hover:text-sidebar-title"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                  : "text-sidebar-fg hover:bg-secondary hover:text-sidebar-title"
               )}
               title={isCollapsed ? label : undefined}
             >
-              <Icon className="h-5 w-5 shrink-0" />
-              <span
+              <Icon 
+                weight={active ? "duotone" : "regular"} 
                 className={cn(
-                  "truncate transition-all duration-300",
-                  isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                )}
-              >
-                {label}
-              </span>
+                  "h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110",
+                  active ? "text-primary-foreground" : "text-sidebar-fg group-hover:text-sidebar-title"
+                )} 
+              />
+              {!isCollapsed && (
+                <span className="truncate text-[13px] font-semibold">
+                  {label}
+                </span>
+              )}
+              {active && !isCollapsed && (
+                <div className="absolute left-0 h-4 w-1 rounded-r-full bg-primary-foreground/40" />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-sidebar-border p-4">
-        <div className="space-y-3">
+      <div className="border-t border-border/40 px-3 py-6">
+        <div className="space-y-6">
           <div
             className={cn(
-              "flex items-center gap-3 transition-all",
-              isCollapsed ? "justify-center" : "justify-start"
+              "flex items-center transition-all",
+              isCollapsed ? "justify-center" : "gap-3"
             )}
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sidebar-active/30 text-sm font-semibold text-primary-foreground">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary ring-1 ring-primary/20 shadow-sm">
               {initial}
             </div>
-            <div
-              className={cn(
-                "min-w-0 flex-1 transition-all duration-300",
-                isCollapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"
-              )}
-            >
-              <p className="truncate text-sm font-medium text-sidebar-title">{userName}</p>
-              <p className="truncate text-xs text-sidebar-fg/50">{userEmail}</p>
-            </div>
+            {!isCollapsed && (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-bold text-sidebar-title leading-tight">{userName}</p>
+                <p className="truncate text-[11px] text-sidebar-fg/60 leading-tight">{userEmail}</p>
+              </div>
+            )}
           </div>
 
           <button
             type="button"
             onClick={handleSignOut}
             className={cn(
-              "inline-flex w-full items-center gap-2 rounded-lg border border-sidebar-border px-3 py-2 text-sm font-medium text-sidebar-fg transition-colors hover:bg-sidebar-hover-bg hover:text-sidebar-title",
-              isCollapsed ? "justify-center" : "justify-start"
+              "group inline-flex items-center rounded-lg border border-border/50 bg-secondary/30 text-sidebar-fg transition-all hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20",
+              isCollapsed 
+                ? "h-10 w-10 justify-center mx-auto" 
+                : "w-full gap-2 px-3 py-2.5 text-[12px] font-bold"
             )}
             title={isCollapsed ? "Sign out" : undefined}
           >
-            <SignOut className="h-4 w-4 shrink-0" />
-            <span
-              className={cn(
-                "transition-all duration-300",
-                isCollapsed ? "w-0 opacity-0 overflow-hidden" : "w-auto opacity-100"
-              )}
-            >
-              Sign out
-            </span>
+            <SignOut weight="regular" className="h-4.5 w-4.5 shrink-0 transition-transform group-hover:scale-110" />
+            {!isCollapsed && (
+              <span className="truncate">
+                Sign out
+              </span>
+            )}
           </button>
         </div>
       </div>

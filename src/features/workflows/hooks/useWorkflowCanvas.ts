@@ -27,100 +27,8 @@ const getConditionBranchLabel = (sourceHandle: string | null | undefined) => {
   return undefined;
 };
 
-const INITIAL_NODES: Node<WorkflowNodeData>[] = [
-  {
-    id: "1",
-    type: "workflowNode",
-    position: { x: 50, y: 150 },
-    data: {
-      label: "Webhook Trigger",
-      type: "webhook-custom",
-      description: "Trigger from external event",
-      agentId: "agent-1",
-      agentName: "Sales Qualifier",
-    },
-  },
-  {
-    id: "2",
-    type: "workflowNode",
-    position: { x: 350, y: 150 },
-    data: {
-      label: "Lead Intent Model",
-      type: "ai-custom-model",
-      description: "Classify lead intent",
-      modelName: "gpt-4.1",
-    },
-  },
-  {
-    id: "3",
-    type: "workflowNode",
-    position: { x: 650, y: 150 },
-    data: {
-      label: "Qualified?",
-      type: "ai-custom-model",
-      description: "Route by qualification result",
-      outputFormat: "branch",
-      modelPrompt: "Is the lead qualified based on the intent and conversation?",
-    },
-  },
-  {
-    id: "4",
-    type: "workflowNode",
-    position: { x: 950, y: 50 },
-    data: {
-      label: "Log to Spreadsheet",
-      type: "integration-spreadsheet",
-      description: "Store lead record",
-      spreadsheetId: "sales-leads",
-    },
-  },
-  {
-    id: "5",
-    type: "workflowNode",
-    position: { x: 950, y: 250 },
-    data: {
-      label: "Notify Sales Team",
-      type: "integration-slack",
-      description: "Send Slack notification",
-      slackChannel: "#sales-alerts",
-    },
-  },
-];
-
-const INITIAL_EDGES: Edge[] = [
-  {
-    id: "e1-2",
-    source: "1",
-    target: "2",
-    animated: true,
-    style: DASHED_EDGE_STYLE,
-  },
-  {
-    id: "e2-3",
-    source: "2",
-    target: "3",
-    animated: true,
-    style: DASHED_EDGE_STYLE,
-  },
-  {
-    id: "e3-4",
-    source: "3",
-    sourceHandle: "no",
-    target: "4",
-    label: "No",
-    animated: true,
-    style: DASHED_EDGE_STYLE,
-  },
-  {
-    id: "e3-5",
-    source: "3",
-    sourceHandle: "yes",
-    target: "5",
-    label: "Yes",
-    animated: true,
-    style: DASHED_EDGE_STYLE,
-  },
-];
+const INITIAL_NODES: Node<WorkflowNodeData>[] = [];
+const INITIAL_EDGES: Edge[] = [];
 
 let nodeIdCounter = 10;
 
@@ -130,11 +38,34 @@ export const useWorkflowCanvas = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const draggedTemplate = useRef<NodeTemplate | null>(null);
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId) ?? null,
     [nodes, selectedNodeId],
   );
+
+  useEffect(() => {
+    const handleOpenPalette = () => {
+      setIsPaletteOpen(true);
+      setSelectedNodeId(null);
+    };
+    const handleClosePalette = () => setIsPaletteOpen(false);
+    const handleOpenConfig = (e: any) => {
+      setSelectedNodeId(e.detail.nodeId);
+      setIsPaletteOpen(false);
+    };
+
+    window.addEventListener("open-node-palette", handleOpenPalette);
+    window.addEventListener("close-node-palette", handleClosePalette);
+    window.addEventListener("open-node-config", handleOpenConfig);
+
+    return () => {
+      window.removeEventListener("open-node-palette", handleOpenPalette);
+      window.removeEventListener("close-node-palette", handleClosePalette);
+      window.removeEventListener("open-node-config", handleOpenConfig);
+    };
+  }, []);
 
   const onConnect: OnConnect = useCallback(
     (params) =>
@@ -164,12 +95,14 @@ export const useWorkflowCanvas = () => {
   const onNodeClick: NodeMouseHandler<Node<WorkflowNodeData>> = useCallback(
     (_, node) => {
       setSelectedNodeId(node.id);
+      setIsPaletteOpen(false);
     },
     [],
   );
 
   const onPaneClick = useCallback(() => {
     setSelectedNodeId(null);
+    setIsPaletteOpen(false);
   }, []);
 
   const onUpdateSelectedNode = useCallback(
@@ -216,6 +149,7 @@ export const useWorkflowCanvas = () => {
 
       setNodes((nds) => [...nds, newNode]);
       setSelectedNodeId(newNode.id);
+      setIsPaletteOpen(false);
       draggedTemplate.current = null;
     },
     [screenToFlowPosition, setNodes],
@@ -229,6 +163,38 @@ export const useWorkflowCanvas = () => {
     }
   }, [nodes, selectedNodeId]);
 
+  const onAddNode = useCallback(
+    (template: NodeTemplate) => {
+      if (!reactFlowWrapper.current) return;
+
+      const rect = reactFlowWrapper.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const position = screenToFlowPosition({
+        x: centerX,
+        y: centerY,
+      });
+
+      const newNode: Node<WorkflowNodeData> = {
+        id: String(++nodeIdCounter),
+        type: "workflowNode",
+        position,
+        data: {
+          label: template.label,
+          type: template.type,
+          description: template.description,
+          configured: false,
+        },
+      };
+
+      setNodes((nds) => [...nds, newNode]);
+      setSelectedNodeId(newNode.id);
+      setIsPaletteOpen(false);
+    },
+    [screenToFlowPosition, setNodes],
+  );
+
   return {
     reactFlowWrapper,
     nodes,
@@ -238,10 +204,13 @@ export const useWorkflowCanvas = () => {
     onEdgesChange,
     onConnect,
     onDragStart,
+    onAddNode,
     onDragOver,
     onDrop,
     onNodeClick,
     onPaneClick,
     onUpdateSelectedNode,
+    isPaletteOpen,
+    setIsPaletteOpen,
   };
 };
