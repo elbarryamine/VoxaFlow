@@ -3,8 +3,8 @@ export interface Workflow {
   name: string;
   description: string;
   status: "active" | "inactive" | "draft";
-  agentId: string;
-  agentName: string;
+  profileId: string;
+  profileName: string;
   runsCount: number;
   lastRun: string;
   createdAt: string;
@@ -29,8 +29,8 @@ export type WorkflowNodeData = {
   icon?: string;
   configured?: boolean;
   // Shared trigger assignment
-  agentId?: string;
-  agentName?: string;
+  profileId?: string;
+  profileName?: string;
   // Trigger specifics
   webhookPath?: string;
   // Intelligent actions

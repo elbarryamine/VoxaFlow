@@ -17,7 +17,7 @@ interface ThemeContextValue {
   setTheme: (theme: Theme) => void;
 }
 
-const THEME_STORAGE_KEY = "voiceflow-theme";
+const THEME_STORAGE_KEY = "voxaflow-theme";
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 

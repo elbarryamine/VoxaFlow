@@ -106,7 +106,7 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
       const agent = data.agentName as string | undefined;
       const webhookPath = data.webhookPath as string | undefined;
       if (data.type === "webhook-custom" && webhookPath) return webhookPath;
-      return agent ? `Agent: ${agent}` : null;
+      return agent ? `Execution: ${agent}` : null;
     }
     case "ai-custom-model": {
       const modelName = data.modelName as string | undefined;

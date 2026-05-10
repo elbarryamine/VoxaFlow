@@ -31,7 +31,7 @@ export const EmailIntegrationConfig = ({ data, onUpdate }: NodeConfigProps) => {
           id="email-subject"
           value={String(data.emailSubject ?? "")}
           onChange={(value) => onUpdate("emailSubject", value)}
-          placeholder="New lead call summary"
+          placeholder="New lead notification"
         />
       </div>
 

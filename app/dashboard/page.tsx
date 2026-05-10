@@ -2,40 +2,40 @@
 
 import Link from "next/link";
 import { useMemo } from "react";
-import { Robot, GitBranch, TrendUp } from "@phosphor-icons/react/dist/ssr";
+import { Pulse, GitBranch, TrendUp } from "@phosphor-icons/react/dist/ssr";
 
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { StatCard } from "@/src/shared/ui/StatCard";
 import { RecentActivity } from "@/src/features/dashboard/ui/RecentActivity";
-import { AgentCard } from "@/src/features/agents/ui/AgentCard";
-import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
+import { ExecutionCard } from "@/src/features/executions/ui/ExecutionCard";
+import { MOCK_EXECUTIONS } from "@/src/features/executions/constants/MOCK_EXECUTIONS";
 import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
 import { MOCK_WORKFLOWS } from "@/src/features/workflows/constants/MOCK_WORKFLOWS";
 
 export default function DashboardPage() {
-  const agents = MOCK_AGENTS;
+  const executions = MOCK_EXECUTIONS;
   const workflows = MOCK_WORKFLOWS;
 
   const successRate = useMemo(() => {
-    const activeAgents = agents.filter((a) => a.status === "active").length;
-    if (!activeAgents) return "0%";
-    return `${Math.round((activeAgents / agents.length) * 100)}%`;
-  }, [agents]);
+    const successful = executions.filter((e) => e.status === "success").length;
+    if (!executions.length) return "0%";
+    return `${Math.round((successful / executions.length) * 100)}%`;
+  }, [executions]);
 
   return (
     <PageLayout
       title="Dashboard"
-      description="Overview of your voice agents"
+      description="Overview of your workflow automations"
       contentClassName="space-y-8"
     >
       {/* Stats */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          label="Total Agents"
-          value={String(agents.length)}
+          label="Total Executions"
+          value={String(executions.length)}
           change="Live"
           changeType="neutral"
-          icon={Robot}
+          icon={Pulse}
         />
         <StatCard
           label="Active Workflows"
@@ -55,20 +55,20 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Agents preview */}
+      {/* Executions preview */}
       <section>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold">Your Agents</h2>
+          <h2 className="text-lg font-semibold">Recent Executions</h2>
           <Link
-            href="/dashboard/agents"
+            href="/dashboard/executions"
             className="text-sm font-medium text-primary hover:text-primary/80"
           >
             View all
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {agents.slice(0, 3).map((agent) => (
-            <AgentCard key={agent.id} agent={agent} />
+          {executions.slice(0, 3).map((execution) => (
+            <ExecutionCard key={execution.id} execution={execution} />
           ))}
         </div>
       </section>

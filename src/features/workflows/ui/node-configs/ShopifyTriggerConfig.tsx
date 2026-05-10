@@ -1,6 +1,6 @@
 "use client";
 
-import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
+import { MOCK_EXECUTIONS } from "@/src/features/executions/constants/MOCK_EXECUTIONS";
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextInput } from "./shared";
@@ -12,25 +12,25 @@ const SHOPIFY_EVENTS = [
 ];
 
 export const ShopifyTriggerConfig = ({ data, onUpdate }: NodeConfigProps) => {
-  const agentOptions = MOCK_AGENTS.map((agent) => ({
-    value: agent.id,
-    label: agent.name,
+  const profileOptions = MOCK_EXECUTIONS.map((exec) => ({
+    value: exec.id,
+    label: exec.workflowName,
   }));
 
   return (
     <div className="space-y-4">
       <div>
-        <FieldLabel htmlFor="shopify-agent">Agent</FieldLabel>
+        <FieldLabel htmlFor="shopify-profile">Workflow Profile</FieldLabel>
         <SelectInput
-          id="shopify-agent"
-          value={String(data.agentId ?? "")}
+          id="shopify-profile"
+          value={String(data.profileId ?? "")}
           onChange={(value) => {
-            const selected = MOCK_AGENTS.find((agent) => agent.id === value);
-            onUpdate("agentId", value);
-            onUpdate("agentName", selected?.name ?? "");
+            const selected = MOCK_EXECUTIONS.find((exec) => exec.id === value);
+            onUpdate("profileId", value);
+            onUpdate("profileName", selected?.workflowName ?? "");
           }}
-          options={agentOptions}
-          placeholder="Select agent"
+          options={profileOptions}
+          placeholder="Select profile"
         />
       </div>
 

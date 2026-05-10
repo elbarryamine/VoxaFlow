@@ -38,15 +38,15 @@ export const ConditionConfig = ({ data, onUpdate, inputVariables }: NodeConfigPr
         onChange={(id) => onUpdate("connectionId", id)}
       />
 
-      <SectionDivider label="Agent Details" />
+      <SectionDivider label="Node Details" />
       
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <FieldLabel htmlFor="agent-name">Agent Name</FieldLabel>
+          <FieldLabel htmlFor="step-name">Step Name</FieldLabel>
           <TextInput
-            id="agent-name"
-            value={String(data.agentName ?? "Condition Agent")}
-            onChange={(v) => onUpdate("agentName", v)}
+            id="step-name"
+            value={String(data.stepName ?? "Condition Step")}
+            onChange={(v) => onUpdate("stepName", v)}
             placeholder="e.g. Qualifier"
           />
         </div>
@@ -74,12 +74,12 @@ export const ConditionConfig = ({ data, onUpdate, inputVariables }: NodeConfigPr
       )}
 
       <div>
-        <FieldLabel htmlFor="agent-description">Description</FieldLabel>
+        <FieldLabel htmlFor="step-description">Step Description</FieldLabel>
         <TextInput
-          id="agent-description"
-          value={String(data.agentDescription ?? "")}
-          onChange={(v) => onUpdate("agentDescription", v)}
-          placeholder="What does this agent decide?"
+          id="step-description"
+          value={String(data.stepDescription ?? "")}
+          onChange={(v) => onUpdate("stepDescription", v)}
+          placeholder="What does this step decide?"
         />
       </div>
 

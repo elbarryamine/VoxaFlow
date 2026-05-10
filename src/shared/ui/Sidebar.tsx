@@ -7,10 +7,10 @@ import { getSupabaseClient } from "@/src/shared/utils/supabase-client";
 import { cn } from "@/src/shared/utils/cn";
 import {
   SquaresFour,
-  Robot,
+  Pulse,
   GitBranch,
   Gear,
-  Headphones,
+  Lightning,
   Link as LinkIcon,
   SignOut,
   SidebarSimple,
@@ -18,8 +18,8 @@ import {
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: SquaresFour },
-  { href: "/dashboard/agents", label: "Agents", icon: Robot },
   { href: "/dashboard/workflows", label: "Workflows", icon: GitBranch },
+  { href: "/dashboard/executions", label: "Executions", icon: Pulse },
   { href: "/dashboard/connections", label: "Connections", icon: LinkIcon },
   { href: "/dashboard/settings", label: "Settings", icon: Gear },
 ];
@@ -72,8 +72,8 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
         <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-2")}>
           {!isCollapsed && (
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-                <Headphones weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
+                <Lightning weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
               </div>
               <span className="truncate text-[17px] font-bold tracking-tight text-sidebar-title">
                 VoxaFlow
@@ -95,7 +95,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
         {isCollapsed && (
           <div className="mt-4 flex justify-center border-b border-border/40 pb-4">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-              <Headphones weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+              <Lightning weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
             </div>
           </div>
         )}

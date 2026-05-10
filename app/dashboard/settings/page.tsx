@@ -35,7 +35,7 @@ export default function SettingsPage() {
             <div className="md:col-span-2">
               <label className="mb-1.5 block text-sm font-medium">Workspace Name</label>
               <input
-                defaultValue="VoiceFlow Team"
+                defaultValue="VoxaFlow Team"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-ring focus:ring-2 focus:ring-ring/20"
               />
             </div>
@@ -108,7 +108,7 @@ export default function SettingsPage() {
           </div>
           <div className="space-y-4 text-sm">
             <label className="flex items-center justify-between">
-              <span>Store conversation transcripts by default</span>
+              <span>Store execution logs by default</span>
               <input type="checkbox" defaultChecked className="h-4 w-4 accent-primary" />
             </label>
           </div>

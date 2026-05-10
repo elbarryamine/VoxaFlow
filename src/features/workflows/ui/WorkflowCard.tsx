@@ -55,7 +55,7 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
 
       <div className="mt-4 flex items-center gap-2">
         <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-primary">
-          {workflow.agentName}
+          {workflow.profileName}
         </span>
       </div>
 

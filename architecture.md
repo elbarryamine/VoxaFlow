@@ -16,18 +16,12 @@ app/
 ├── dashboard/
 │   ├── layout.tsx                      # Dashboard shell — sidebar + main content area
 │   ├── page.tsx                        # Dashboard overview — static mock stats/cards
-│   ├── agents/
-│   │   ├── page.tsx                    # Agents page — static mock list
-│   │   └── new/
-│   │       └── page.tsx                # Create agent form UI
+│   ├── executions/
+│   │   └── page.tsx                    # Executions page — list of workflow runs
 │   ├── workflows/
-│   │   ├── page.tsx                    # Workflows page — static mock list
+│   │   ├── page.tsx                    # Workflows page — list of automation flows
 │   │   └── new/
 │   │       └── page.tsx                # Workflow canvas UI
-│   ├── calls/
-│   │   └── page.tsx                    # Calls page — local mock call history and demo add flow
-│   ├── phone-numbers/
-│   │   └── page.tsx                    # Phone numbers page — static mock numbers
 │   ├── connections/
 │   │   ├── page.tsx                    # Connections list UI
 │   │   └── [id]/
@@ -64,8 +58,7 @@ src/
 └── features/
     ├── auth/                           # Sign-in UI
     ├── dashboard/                      # Dashboard widgets
-    ├── agents/                         # Agent types, mock data, cards/forms
+    ├── executions/                     # Execution types, mock data, cards
     ├── workflows/                      # Workflow types, mock data, canvas components
-    ├── connections/                    # Connection types, mock data, forms, store
-    └── phone-numbers/                  # Phone number types, mock data, cards
+    └── connections/                    # Connection types, mock data, forms, store
 ```

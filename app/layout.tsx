@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoiceFlow — AI Voice Agents",
-  description: "Create and manage AI voice agents and automation workflows",
+  title: "VoxaFlow — AI Workflow Executions",
+  description: "Create and manage AI-driven automation workflows",
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
             __html: `
               (function () {
                 try {
-                  var key = "voiceflow-theme";
+                  var key = "voxaflow-theme";
                   var stored = localStorage.getItem(key);
                   var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
                   var theme = stored || (systemDark ? "dark" : "light");

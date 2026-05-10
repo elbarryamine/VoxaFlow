@@ -1,19 +1,19 @@
 "use client";
 
-import { MOCK_AGENTS } from "@/src/features/agents/constants/MOCK_AGENTS";
+import { MOCK_EXECUTIONS } from "@/src/features/executions/constants/MOCK_EXECUTIONS";
 
 import type { NodeConfigProps } from "./shared";
 import { FieldLabel, SelectInput, TextInput } from "./shared";
 
-const DEFAULT_PATH = "https://api.voiceflow.app/hooks/workflow/custom-trigger";
+const DEFAULT_PATH = "https://api.workflowflow.app/hooks/workflow/custom-trigger";
 
 export const CustomWebhookTriggerConfig = ({
   data,
   onUpdate,
 }: NodeConfigProps) => {
-  const agentOptions = MOCK_AGENTS.map((agent) => ({
-    value: agent.id,
-    label: agent.name,
+  const profileOptions = MOCK_EXECUTIONS.map((exec) => ({
+    value: exec.id,
+    label: exec.workflowName,
   }));
 
   const webhookPath = String(data.webhookPath ?? DEFAULT_PATH);
@@ -21,17 +21,17 @@ export const CustomWebhookTriggerConfig = ({
   return (
     <div className="space-y-4">
       <div>
-        <FieldLabel htmlFor="custom-webhook-agent">Agent</FieldLabel>
+        <FieldLabel htmlFor="custom-webhook-profile">Workflow Profile</FieldLabel>
         <SelectInput
-          id="custom-webhook-agent"
-          value={String(data.agentId ?? "")}
+          id="custom-webhook-profile"
+          value={String(data.profileId ?? "")}
           onChange={(value) => {
-            const selected = MOCK_AGENTS.find((agent) => agent.id === value);
-            onUpdate("agentId", value);
-            onUpdate("agentName", selected?.name ?? "");
+            const selected = MOCK_EXECUTIONS.find((exec) => exec.id === value);
+            onUpdate("profileId", value);
+            onUpdate("profileName", selected?.workflowName ?? "");
           }}
-          options={agentOptions}
-          placeholder="Select agent"
+          options={profileOptions}
+          placeholder="Select profile"
         />
       </div>
 

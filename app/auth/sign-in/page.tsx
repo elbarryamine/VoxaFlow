@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { CheckCircle, Headphones, ShieldCheck, Sparkle } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Lightning, ShieldCheck, Sparkle } from "@phosphor-icons/react/dist/ssr";
 import { SignInForm } from "@/src/features/auth/ui/SignInForm";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 
 export const metadata: Metadata = {
-  title: "Sign in | VoiceFlow",
+  title: "Sign in | VoxaFlow",
   description: "Sign in to your VoxaFlow workspace",
 };
 
@@ -26,11 +26,11 @@ export default async function SignInPage() {
         <div className="rounded-2xl border border-border bg-linear-to-b from-secondary to-card p-6 md:p-8">
           <div className="mb-8 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary">
-              <Headphones className="h-5 w-5 text-primary-foreground" />
+              <Lightning className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">VoxaFlow</p>
-              <h1 className="text-2xl font-semibold tracking-tight">Modern voice agents, secured</h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Modern workflow automations, secured</h1>
             </div>
           </div>
 
@@ -38,9 +38,9 @@ export default async function SignInPage() {
             <li className="flex items-start gap-3 rounded-xl border border-border bg-card p-4">
               <ShieldCheck className="mt-0.5 h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm font-medium">Build and manage AI agents</p>
+                <p className="text-sm font-medium">Build and manage AI workflows</p>
                 <p className="text-sm text-muted-foreground">
-                  Configure voice, prompts, and behavior for every customer-facing agent.
+                  Configure logic, prompts, and behavior for every automated process.
                 </p>
               </div>
             </li>
@@ -58,7 +58,7 @@ export default async function SignInPage() {
               <div>
                 <p className="text-sm font-medium">Connect integrations and channels</p>
                 <p className="text-sm text-muted-foreground">
-                  Connect webhooks, Slack, email, and other integrations to your AI agents.
+                  Connect webhooks, Slack, email, and other integrations to your automations.
                 </p>
               </div>
             </li>
