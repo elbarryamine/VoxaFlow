@@ -40,7 +40,7 @@ export default function DashboardPage() {
         <StatCard
           label="Active Workflows"
           value={
-            String(workflows.filter((workflow) => workflow.status === "active").length)
+            String(workflows.filter((workflow) => workflow.is_active).length)
           }
           change="Live"
           changeType="neutral"

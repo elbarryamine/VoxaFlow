@@ -9,6 +9,7 @@ interface PageLayoutProps {
   actions?: React.ReactNode;
   backHref?: string;
   contentClassName?: string;
+  withContentPadding?: boolean;
   onTitleChange?: (newTitle: string) => void;
 }
 
