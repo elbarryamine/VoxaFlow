@@ -1,20 +1,38 @@
 "use client";
 
-import { Copy, MagicWand, Trash } from "@phosphor-icons/react/dist/ssr";
+import { Copy, MagicWand, Trash, Plus } from "@phosphor-icons/react/dist/ssr";
 
 interface WorkflowActionsProps {
   onStartFromTemplate: () => void;
   onFormat: () => void;
   onClear: () => void;
+  onTogglePalette: () => void;
+  isPaletteOpen: boolean;
 }
 
 export const WorkflowActions = ({
   onStartFromTemplate,
   onFormat,
   onClear,
+  onTogglePalette,
+  isPaletteOpen,
 }: WorkflowActionsProps) => {
   return (
     <div className="absolute left-6 top-6 z-40 flex items-center gap-3">
+      <button
+        onClick={onTogglePalette}
+        className={`flex h-10 items-center gap-2.5 rounded-xl border px-4 text-[13px] font-semibold shadow-sm backdrop-blur-md transition-all active:scale-95 ${
+          isPaletteOpen
+            ? "border-primary bg-primary/10 text-primary"
+            : "border-border bg-background/80 text-foreground hover:bg-secondary"
+        }`}
+      >
+        <div className="flex h-5 w-5 items-center justify-center">
+          <Plus weight="bold" className="h-4 w-4" />
+        </div>
+        Add Component
+      </button>
+
       <button
         onClick={onStartFromTemplate}
         className="flex h-10 items-center gap-2.5 rounded-xl border border-border bg-background/80 px-4 text-[13px] font-semibold text-foreground shadow-sm backdrop-blur-md transition-all hover:bg-secondary active:scale-95"

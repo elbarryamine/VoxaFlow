@@ -32,6 +32,7 @@ const CanvasInner = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    onDragStart,
     onAddNode,
     formatWorkflow,
     clearWorkflow,
@@ -40,6 +41,8 @@ const CanvasInner = () => {
     setIsClearModalOpen,
     isTemplatesModalOpen,
     setIsTemplatesModalOpen,
+    onDragOver,
+    onDrop,
     onNodeClick,
     onPaneClick,
     onUpdateSelectedNode,
@@ -61,6 +64,8 @@ const CanvasInner = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
           nodeTypes={NODE_TYPES}
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
@@ -103,6 +108,8 @@ const CanvasInner = () => {
         <div className="pointer-events-auto h-full w-full">
           <NodePalette 
             onAdd={onAddNode} 
+            onDragStart={onDragStart}
+            isDraggable={true}
             hasNodes={nodes.length > 0} 
             sourceNodeId={sourceNodeIdForAdd}
             targetNodeId={targetNodeIdForAdd}
@@ -132,6 +139,8 @@ const CanvasInner = () => {
         onStartFromTemplate={() => setIsTemplatesModalOpen(true)}
         onFormat={formatWorkflow}
         onClear={clearWorkflow}
+        onTogglePalette={() => setIsPaletteOpen(!isPaletteOpen)}
+        isPaletteOpen={isPaletteOpen}
       />
 
       <ConfirmationModal

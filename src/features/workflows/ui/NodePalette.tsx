@@ -2,7 +2,6 @@
 
 import {
   Robot,
-  GitFork,
   FileXls,
   Envelope,
   ChatCircleText,
@@ -10,6 +9,7 @@ import {
   ShoppingBag,
   Link,
   Lightning,
+  DotsSixVertical,
   X,
 } from "@phosphor-icons/react/dist/ssr";
 import { NODE_TEMPLATES } from "../constants/NODE_TEMPLATES";
@@ -35,18 +35,24 @@ const TYPE_ICONS = {
 
 interface NodePaletteProps {
   onAdd: (template: NodeTemplate) => void;
+  onDragStart: (template: NodeTemplate) => void;
+  isDraggable?: boolean;
   hasNodes?: boolean;
   sourceNodeId?: string | null;
   targetNodeId?: string | null;
 }
 
-export const NodePalette = ({ 
-  onAdd, 
-  hasNodes, 
-  sourceNodeId, 
-  targetNodeId 
+export const NodePalette = ({
+  onAdd,
+  onDragStart,
+  isDraggable = true,
+  hasNodes,
+  sourceNodeId,
+  targetNodeId,
 }: NodePaletteProps) => {
-  const categories = Object.keys(CATEGORY_LABELS) as Array<keyof typeof CATEGORY_LABELS>;
+  const categories = Object.keys(CATEGORY_LABELS) as Array<
+    keyof typeof CATEGORY_LABELS
+  >;
 
   const grouped = NODE_TEMPLATES.reduce(
     (acc, t) => {
@@ -57,21 +63,16 @@ export const NodePalette = ({
     {} as Record<string, NodeTemplate[]>,
   );
 
-  // Determine if a category is "connectable" in the current context
   const isConnectable = (category: string) => {
     if (sourceNodeId || targetNodeId) {
-      // Connecting from/to an existing node -> Actions are the target
       return category !== "trigger";
     }
     if (!hasNodes) {
-      // Empty canvas -> Only triggers can "connect" (start)
       return category === "trigger";
     }
-    // Canvas has nodes but no specific source -> Actions are prioritized
     return category !== "trigger";
   };
 
-  // Sort categories: connectable ones on top
   const sortedCategories = [...categories].sort((a, b) => {
     const aCan = isConnectable(a);
     const bCan = isConnectable(b);
@@ -86,10 +87,14 @@ export const NodePalette = ({
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <div>
             <h3 className="text-sm font-semibold">Components</h3>
-            <p className="text-xs text-muted-foreground">Click to add to canvas</p>
+            <p className="text-xs text-muted-foreground">
+              {isDraggable ? "Drag or click to add" : "Click to add to canvas"}
+            </p>
           </div>
           <button
-            onClick={() => window.dispatchEvent(new CustomEvent("close-node-palette"))}
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("close-node-palette"))
+            }
             className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
           >
             <X className="h-4 w-4" />
@@ -115,9 +120,19 @@ export const NodePalette = ({
                     return (
                       <div
                         key={`${template.type}-${template.label}`}
+                        draggable={isDraggable}
+                        onDragStart={(e) => {
+                          if (isDraggable) {
+                            e.dataTransfer.effectAllowed = "move";
+                            onDragStart(template);
+                          }
+                        }}
                         onClick={() => onAdd(template)}
                         className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border bg-background p-2.5 transition-colors hover:border-primary/30 hover:bg-secondary"
                       >
+                        {isDraggable && (
+                          <DotsSixVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
+                        )}
                         <Icon className="h-4 w-4 shrink-0 text-primary" />
                         <div className="min-w-0">
                           <p className="truncate text-xs font-semibold">
