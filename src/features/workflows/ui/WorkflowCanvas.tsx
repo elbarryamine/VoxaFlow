@@ -5,7 +5,6 @@ import {
   ReactFlowProvider,
   Background,
   BackgroundVariant,
-  Controls,
   MiniMap,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -14,9 +13,11 @@ import { WorkflowNode } from "./WorkflowNode";
 import { NodePalette } from "./NodePalette";
 import { NodeConfigSidebar } from "./NodeConfigSidebar";
 import { useWorkflowCanvas } from "../hooks/useWorkflowCanvas";
-import { Plus, MagicWand, Trash, Copy } from "@phosphor-icons/react/dist/ssr";
 import { ConfirmationModal } from "@/src/shared/ui/ConfirmationModal";
 import { TemplatesModal } from "./TemplatesModal";
+import { CanvasControls } from "./CanvasControls";
+import { EmptyCanvasPlaceholder } from "./EmptyCanvasPlaceholder";
+import { WorkflowActions } from "./WorkflowActions";
 
 const NODE_TYPES = {
   workflowNode: WorkflowNode,
@@ -31,7 +32,6 @@ const CanvasInner = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
-    onDragStart,
     onAddNode,
     formatWorkflow,
     clearWorkflow,
@@ -40,8 +40,6 @@ const CanvasInner = () => {
     setIsClearModalOpen,
     isTemplatesModalOpen,
     setIsTemplatesModalOpen,
-    onDragOver,
-    onDrop,
     onNodeClick,
     onPaneClick,
     onUpdateSelectedNode,
@@ -49,6 +47,8 @@ const CanvasInner = () => {
     setIsPaletteOpen,
     sourceNodeIdForAdd,
     targetNodeIdForAdd,
+    showMiniMap,
+    setShowMiniMap,
   } = useWorkflowCanvas();
 
   return (
@@ -61,15 +61,13 @@ const CanvasInner = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
-          onDrop={onDrop}
-          onDragOver={onDragOver}
           nodeTypes={NODE_TYPES}
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           fitView
-          minZoom={0.2}
+          minZoom={0.5}
           maxZoom={2}
-          defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+          defaultViewport={{ x: 0, y: 0, zoom: 0.5 }}
         >
           <Background
             id="canvas-pattern-dots"
@@ -78,28 +76,21 @@ const CanvasInner = () => {
             size={1.4}
             color="var(--flow-pattern-dot)"
           />
-          <Controls
-            showInteractive={false}
-            className="rounded-lg! border-border! bg-background! shadow-sm!"
-          />
-          <MiniMap
-            className="rounded-lg! border-border! bg-background!"
-            nodeColor="#6366f1"
-            maskColor="var(--flow-minimap-mask)"
-          />
+          <CanvasControls showMiniMap={showMiniMap} setShowMiniMap={setShowMiniMap} />
+          {showMiniMap && (
+            <MiniMap
+              className="rounded-lg! border-border! bg-background/80! backdrop-blur-md! shadow-sm!"
+              nodeColor="var(--primary)"
+              maskColor="var(--flow-minimap-mask)"
+              maskStrokeWidth={1}
+              style={{ height: 100, width: 160 }}
+            />
+          )}
         </ReactFlow>
 
         {/* Empty Canvas Placeholder */}
         {nodes.length === 0 && (
-          <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
-            <button
-              onClick={() => setIsPaletteOpen(true)}
-              className="pointer-events-auto flex h-28 w-28 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-background text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-            >
-              <Plus weight="bold" className="h-5 w-5" />
-              <span className="text-[11px] font-medium">Add Node</span>
-            </button>
-          </div>
+          <EmptyCanvasPlaceholder onClick={() => setIsPaletteOpen(true)} />
         )}
       </div>
 
@@ -111,7 +102,6 @@ const CanvasInner = () => {
       >
         <div className="pointer-events-auto h-full w-full">
           <NodePalette 
-            onDragStart={onDragStart} 
             onAdd={onAddNode} 
             hasNodes={nodes.length > 0} 
             sourceNodeId={sourceNodeIdForAdd}
@@ -138,31 +128,11 @@ const CanvasInner = () => {
       </div>
 
       {/* Floating Controls Area */}
-      <div className="absolute left-6 top-6 z-40 flex items-center gap-2">
-        <button
-          onClick={() => setIsTemplatesModalOpen(true)}
-          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
-        >
-          <Copy weight="bold" className="h-3.5 w-3.5" />
-          Start from template
-        </button>
-
-        <button
-          onClick={() => formatWorkflow()}
-          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
-        >
-          <MagicWand weight="bold" className="h-3.5 w-3.5" />
-          Format
-        </button>
-
-        <button
-          onClick={() => clearWorkflow()}
-          className="flex h-8 items-center gap-2 rounded border border-border bg-background px-3 text-xs font-medium text-red-500 hover:bg-secondary transition-colors"
-        >
-          <Trash weight="bold" className="h-3.5 w-3.5" />
-          Clear
-        </button>
-      </div>
+      <WorkflowActions 
+        onStartFromTemplate={() => setIsTemplatesModalOpen(true)}
+        onFormat={formatWorkflow}
+        onClear={clearWorkflow}
+      />
 
       <ConfirmationModal
         isOpen={isClearModalOpen}

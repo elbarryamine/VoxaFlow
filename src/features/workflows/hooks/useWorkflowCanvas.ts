@@ -40,10 +40,10 @@ export const useWorkflowCanvas = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [sourceNodeIdForAdd, setSourceNodeIdForAdd] = useState<string | null>(null);
+  const [showMiniMap, setShowMiniMap] = useState(true);
   const [sourceHandleForAdd, setSourceHandleForAdd] = useState<string | null>(null);
   const [targetNodeIdForAdd, setTargetNodeIdForAdd] = useState<string | null>(null);
   const [targetHandleForAdd, setTargetHandleForAdd] = useState<string | null>(null);
-  const draggedTemplate = useRef<NodeTemplate | null>(null);
   const selectedNode = useMemo(
     () => nodes.find((node) => node.id === selectedNodeId) ?? null,
     [nodes, selectedNodeId],
@@ -98,14 +98,6 @@ export const useWorkflowCanvas = () => {
     [setEdges],
   );
 
-  const onDragStart = useCallback((template: NodeTemplate) => {
-    draggedTemplate.current = template;
-  }, []);
-
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  }, []);
 
   const onNodeClick: NodeMouseHandler<Node<WorkflowNodeData>> = useCallback(
     (_, node) => {
@@ -141,63 +133,6 @@ export const useWorkflowCanvas = () => {
     [selectedNodeId, setNodes],
   );
 
-  const onDrop = useCallback(
-    (event: React.DragEvent) => {
-      event.preventDefault();
-      const template = draggedTemplate.current;
-      if (!template || !reactFlowWrapper.current) return;
-
-      const position = screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-
-      const newNode: Node<WorkflowNodeData> = {
-        id: String(++nodeIdCounter),
-        type: "workflowNode",
-        position,
-        data: {
-          label: template.label,
-          type: template.type,
-          description: template.description,
-          configured: false,
-        },
-      };
-
-      setNodes((nds) => [...nds, newNode]);
-      
-      if (sourceNodeIdForAdd) {
-        setEdges((eds) => {
-          const sourceNode = nodes.find((n) => n.id === sourceNodeIdForAdd);
-          const isCondition = sourceNode?.data?.outputFormat === "branch";
-          const sourceHandle = isCondition ? "yes" : undefined;
-          
-          return addEdge(
-            {
-              id: `e-${sourceNodeIdForAdd}-${newNode.id}`,
-              source: sourceNodeIdForAdd,
-              target: newNode.id,
-              sourceHandle,
-              targetHandle: undefined,
-              animated: true,
-              style: DASHED_EDGE_STYLE,
-              label: getConditionBranchLabel(sourceHandle),
-            },
-            eds,
-          );
-        });
-      }
-
-      setSelectedNodeId(newNode.id);
-      setIsPaletteOpen(false);
-      setSourceNodeIdForAdd(null);
-      setSourceHandleForAdd(null);
-      setTargetNodeIdForAdd(null);
-      setTargetHandleForAdd(null);
-      draggedTemplate.current = null;
-    },
-    [screenToFlowPosition, setNodes, sourceNodeIdForAdd, sourceHandleForAdd, targetNodeIdForAdd, targetHandleForAdd, nodes, setEdges],
-  );
 
   useEffect(() => {
     if (!selectedNodeId) return;
@@ -388,15 +323,12 @@ export const useWorkflowCanvas = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
-    onDragStart,
     onAddNode,
     formatWorkflow,
     clearWorkflow,
     confirmClear,
     isClearModalOpen,
     setIsClearModalOpen,
-    onDragOver,
-    onDrop,
     onNodeClick,
     onPaneClick,
     onUpdateSelectedNode,
@@ -406,5 +338,7 @@ export const useWorkflowCanvas = () => {
     setIsTemplatesModalOpen,
     sourceNodeIdForAdd,
     targetNodeIdForAdd,
+    showMiniMap,
+    setShowMiniMap,
   };
 };
