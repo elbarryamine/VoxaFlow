@@ -9,10 +9,11 @@ import {
 import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
 
 interface TopBarProps {
-  title: string;
+  title?: string;
   description?: string;
   actions?: React.ReactNode;
   backHref?: string;
+  onTitleChange?: (newTitle: string) => void;
 }
 
 export const TopBar = ({
@@ -20,6 +21,7 @@ export const TopBar = ({
   description,
   actions,
   backHref,
+  onTitleChange,
 }: TopBarProps) => {
   return (
     <header className="flex h-16 shrink-0 items-center justify-between px-4">
@@ -33,7 +35,26 @@ export const TopBar = ({
           </Link>
         )}
         <div>
-          <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+          {onTitleChange ? (
+            <input
+              key={title}
+              type="text"
+              defaultValue={title}
+              onBlur={(e) => {
+                if (e.target.value && e.target.value !== title) {
+                  onTitleChange(e.target.value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.currentTarget.blur();
+                }
+              }}
+              className="bg-transparent text-lg font-semibold text-foreground outline-none border-b border-transparent hover:border-border/50 focus:border-primary transition-colors px-0 w-full min-w-[200px]"
+            />
+          ) : (
+            <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+          )}
           {description && (
             <p className="text-sm text-muted-foreground">{description}</p>
           )}

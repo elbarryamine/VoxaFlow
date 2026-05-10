@@ -4,19 +4,18 @@ import type { NodeConfigProps } from "./shared";
 import { 
   FieldLabel, 
   SelectInput, 
-  TextAreaInput, 
   SectionDivider, 
   TextInput,
   MODEL_OPTIONS,
   getConnectionType,
   AutocompleteTextArea,
+  CredentialPicker,
 } from "./shared";
 import { Plus, X } from "@phosphor-icons/react/dist/ssr";
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 export const AICustomModelConfig = ({ data, onUpdate, inputVariables }: NodeConfigProps) => {
-  const modelName = String(data.modelName ?? "gpt-4.1");
-  const connectionType = getConnectionType(modelName);
+  const modelName = String(data.modelName ?? "gpt-4o-mini");
+  const service = getConnectionType(modelName);
   const outputFormat = String(data.outputFormat ?? "text");
 
   const autocompleteOptions = inputVariables
@@ -48,10 +47,10 @@ export const AICustomModelConfig = ({ data, onUpdate, inputVariables }: NodeConf
 
   return (
     <div className="space-y-4">
-      <ConnectionPicker
-        connectionType={connectionType}
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service={service}
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <SectionDivider label="Model Settings" />

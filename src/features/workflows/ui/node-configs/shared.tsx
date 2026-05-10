@@ -146,8 +146,79 @@ export interface NodeConfigProps {
   }[];
 }
 
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { Key, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 import { useState, useRef, KeyboardEvent, useEffect } from "react";
+
+interface Credential {
+  id: string;
+  name: string;
+  service: string;
+}
+
+/** Reusable credential picker that fetches from /api/credentials */
+export function CredentialPicker({
+  service,
+  value,
+  onChange,
+}: {
+  service: string;
+  value?: string;
+  onChange: (id: string) => void;
+}) {
+  const [credentials, setCredentials] = useState<Credential[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/credentials")
+      .then((r) => r.json())
+      .then((all: Credential[]) => {
+        setCredentials(all.filter((c) => c.service === service));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [service]);
+
+  return (
+    <div>
+      <FieldLabel
+        htmlFor={`cred-${service}`}
+        hint={
+          <a
+            href="/dashboard/credentials"
+            target="_blank"
+            className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          >
+            <Key className="h-3 w-3" />
+            Manage
+          </a>
+        }
+      >
+        Credential
+      </FieldLabel>
+      {loading ? (
+        <div className="flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-xs text-muted-foreground">
+          <CircleNotch className="h-3.5 w-3.5 animate-spin" />
+          Loading…
+        </div>
+      ) : credentials.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-border bg-muted/10 px-3 py-2.5 text-[11px] text-muted-foreground">
+          No {service} credentials found.{" "}
+          <a href="/dashboard/credentials" target="_blank" className="text-primary hover:underline">
+            Add one →
+          </a>
+        </div>
+      ) : (
+        <SelectInput
+          id={`cred-${service}`}
+          value={value ?? ""}
+          onChange={onChange}
+          options={credentials.map((c) => ({ value: c.id, label: c.name }))}
+          placeholder="Select credential…"
+        />
+      )}
+    </div>
+  );
+}
 
 export interface AutocompleteOption {
   label: string;

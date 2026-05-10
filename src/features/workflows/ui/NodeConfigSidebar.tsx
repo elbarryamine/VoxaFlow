@@ -20,6 +20,10 @@ import { SpreadsheetIntegrationConfig } from "./node-configs/SpreadsheetIntegrat
 import { EmailIntegrationConfig } from "./node-configs/EmailIntegrationConfig";
 import { WebhookIntegrationConfig } from "./node-configs/WebhookIntegrationConfig";
 import { ApiRequestConfig } from "./node-configs/ApiRequestConfig";
+import { OpenAIConfig } from "./node-configs/OpenAIConfig";
+import { SlackConfig } from "./node-configs/SlackConfig";
+import { SendEmailConfig } from "./node-configs/SendEmailConfig";
+import { DelayConfig } from "./node-configs/DelayConfig";
 import {
   FieldLabel,
   TextInput,
@@ -47,6 +51,12 @@ const TYPE_LABELS: Record<WorkflowNodeType, string> = {
   "integration-email": "Email Integration",
   "integration-webhook": "Webhook Integration",
   "api-request": "API Request",
+
+  // Executor-backed nodes
+  "openai": "OpenAI",
+  "slack": "Slack (Bot)",
+  "send-email": "Send Email (Resend)",
+  "delay": "Delay",
 };
 
 const CONFIG_MAP: Record<
@@ -64,6 +74,12 @@ const CONFIG_MAP: Record<
   "integration-email": EmailIntegrationConfig,
   "integration-webhook": WebhookIntegrationConfig,
   "api-request": ApiRequestConfig,
+
+  // Executor-backed nodes
+  "openai": OpenAIConfig,
+  "slack": SlackConfig,
+  "send-email": SendEmailConfig,
+  "delay": DelayConfig,
 };
 
 export const NodeConfigSidebar = ({

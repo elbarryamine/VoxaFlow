@@ -1,13 +1,19 @@
 export interface Workflow {
   id: string;
+  user_id: string;
   name: string;
-  description: string;
-  status: "active" | "inactive" | "draft";
-  profileId: string;
-  profileName: string;
-  runsCount: number;
-  lastRun: string;
-  createdAt: string;
+  description: string | null;
+  definition: {
+    nodes: any[];
+    edges: any[];
+  };
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  // UI helper fields (calculated or joined)
+  runsCount?: number;
+  lastRun?: string;
+  profileName?: string;
 }
 
 export type WorkflowNodeType =
@@ -20,7 +26,12 @@ export type WorkflowNodeType =
   | "integration-spreadsheet"
   | "integration-email"
   | "integration-webhook"
-  | "api-request";
+  | "api-request"
+  // New executor-backed nodes
+  | "openai"
+  | "slack"
+  | "send-email"
+  | "delay";
 
 export type WorkflowNodeData = {
   label: string;

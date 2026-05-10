@@ -20,6 +20,10 @@ const STATUS_STYLES = {
 } as const;
 
 export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
+  const status = workflow.is_active ? "active" : "inactive";
+  const runsCount = workflow.runsCount || 0;
+  const lastRun = workflow.lastRun || "No runs";
+
   return (
     <Link
       href={`/dashboard/workflows/${workflow.id}`}
@@ -35,14 +39,17 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
               {workflow.name}
             </h3>
             <span
-              className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_STYLES[workflow.status]}`}
+              className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_STYLES[status]}`}
             >
-              {workflow.status}
+              {status}
             </span>
           </div>
         </div>
         <button
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           className="rounded-lg p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-secondary hover:text-secondary-foreground group-hover:opacity-100"
         >
           <DotsThreeVertical className="h-4 w-4" />
@@ -50,23 +57,25 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
       </div>
 
       <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-        {workflow.description}
+        {workflow.description || "No description provided."}
       </p>
 
-      <div className="mt-4 flex items-center gap-2">
-        <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-primary">
-          {workflow.profileName}
-        </span>
-      </div>
+      {workflow.profileName && (
+        <div className="mt-4 flex items-center gap-2">
+          <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-primary">
+            {workflow.profileName}
+          </span>
+        </div>
+      )}
 
       <div className="mt-4 flex items-center gap-5 text-sm text-muted-foreground">
         <div className="flex items-center gap-1.5">
           <Play className="h-3.5 w-3.5" />
-          <span>{workflow.runsCount.toLocaleString()} runs</span>
+          <span>{runsCount.toLocaleString()} runs</span>
         </div>
         <div className="flex items-center gap-1.5">
           <Clock className="h-3.5 w-3.5" />
-          <span>{workflow.lastRun}</span>
+          <span>{lastRun}</span>
         </div>
       </div>
     </Link>

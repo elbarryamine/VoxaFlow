@@ -9,7 +9,7 @@ interface PageLayoutProps {
   actions?: React.ReactNode;
   backHref?: string;
   contentClassName?: string;
-  withContentPadding?: boolean;
+  onTitleChange?: (newTitle: string) => void;
 }
 
 export const PageLayout = ({
@@ -18,6 +18,7 @@ export const PageLayout = ({
   description,
   actions,
   backHref,
+  onTitleChange,
   contentClassName = "",
   withContentPadding = true,
 }: PageLayoutProps) => {
@@ -27,14 +28,13 @@ export const PageLayout = ({
 
   return (
     <>
-      {title && (
-        <TopBar
-          title={title}
-          description={description}
-          actions={actions}
-          backHref={backHref}
-        />
-      )}
+      <TopBar
+        title={title}
+        description={description}
+        actions={actions}
+        backHref={backHref}
+        onTitleChange={onTitleChange}
+      />
       <div className={contentClasses}>{children}</div>
     </>
   );

@@ -68,4 +68,29 @@ export const NODE_TEMPLATES: NodeTemplate[] = [
     description: "Make an HTTP request and define output schema",
     category: "normal-action",
   },
+  // Executor-backed nodes
+  {
+    type: "openai",
+    label: "OpenAI",
+    description: "Generate text or structured data with GPT models",
+    category: "intelligent-action",
+  },
+  {
+    type: "slack",
+    label: "Slack",
+    description: "Post a message to a Slack channel via Bot Token",
+    category: "normal-action",
+  },
+  {
+    type: "send-email",
+    label: "Send Email",
+    description: "Send an email via Resend with HTML support",
+    category: "normal-action",
+  },
+  {
+    type: "delay",
+    label: "Delay",
+    description: "Pause the workflow for N seconds before continuing",
+    category: "normal-action",
+  },
 ];

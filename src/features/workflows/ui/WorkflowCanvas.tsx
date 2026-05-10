@@ -19,11 +19,18 @@ import { CanvasControls } from "./CanvasControls";
 import { EmptyCanvasPlaceholder } from "./EmptyCanvasPlaceholder";
 import { WorkflowActions } from "./WorkflowActions";
 
+import type { Workflow } from "../types/Workflow.types";
+
 const NODE_TYPES = {
   workflowNode: WorkflowNode,
 };
 
-const CanvasInner = () => {
+interface WorkflowCanvasProps {
+  initialWorkflow?: Workflow;
+  onSave?: (definition: any) => void;
+}
+
+const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
   const {
     reactFlowWrapper,
     nodes,
@@ -52,7 +59,7 @@ const CanvasInner = () => {
     targetNodeIdForAdd,
     showMiniMap,
     setShowMiniMap,
-  } = useWorkflowCanvas();
+  } = useWorkflowCanvas(initialWorkflow, onSave);
 
   return (
     <div className="px-5  relative flex h-full w-full">
@@ -162,10 +169,10 @@ const CanvasInner = () => {
   );
 };
 
-export const WorkflowCanvas = () => {
+export const WorkflowCanvas = (props: WorkflowCanvasProps) => {
   return (
     <ReactFlowProvider>
-      <CanvasInner />
+      <CanvasInner {...props} />
     </ReactFlowProvider>
   );
 };

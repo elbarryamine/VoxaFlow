@@ -32,6 +32,11 @@ const ICON_MAP = {
   "integration-slack": ChatCircleText,
   "integration-webhook": Globe,
   "api-request": Globe,
+  // Executor-backed
+  "openai": Robot,
+  "slack": ChatCircleText,
+  "send-email": Envelope,
+  "delay": GitFork,
 } as const;
 
 const COLOR_MAP = {
@@ -95,6 +100,31 @@ const COLOR_MAP = {
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     icon: "text-fuchsia-600 dark:text-fuchsia-400",
   },
+  // Executor-backed nodes
+  "openai": {
+    gradient: "from-teal-500/20 to-emerald-500/20 dark:from-teal-500/20 dark:to-emerald-500/20",
+    border: "border-teal-500/30 dark:border-teal-500/40",
+    iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
+    icon: "text-teal-600 dark:text-teal-400",
+  },
+  "slack": {
+    gradient: "from-violet-500/20 to-purple-500/20 dark:from-violet-500/20 dark:to-purple-500/20",
+    border: "border-violet-500/30 dark:border-violet-500/40",
+    iconBg: "bg-violet-500/10 dark:bg-violet-500/20",
+    icon: "text-violet-600 dark:text-violet-400",
+  },
+  "send-email": {
+    gradient: "from-blue-500/20 to-sky-500/20 dark:from-blue-500/20 dark:to-sky-500/20",
+    border: "border-blue-500/30 dark:border-blue-500/40",
+    iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
+    icon: "text-blue-600 dark:text-blue-400",
+  },
+  "delay": {
+    gradient: "from-slate-500/20 to-zinc-500/20 dark:from-slate-500/20 dark:to-zinc-500/20",
+    border: "border-slate-500/30 dark:border-slate-500/40",
+    iconBg: "bg-slate-500/10 dark:bg-slate-500/20",
+    icon: "text-slate-600 dark:text-slate-400",
+  },
 } as const;
 
 const getConfigSummary = (data: WorkflowNodeData): string | null => {
@@ -136,6 +166,25 @@ const getConfigSummary = (data: WorkflowNodeData): string | null => {
         return `${method} ${short}`;
       }
       return null;
+    }
+    case "openai": {
+      const model = data.model as string | undefined;
+      return model ?? null;
+    }
+    case "slack": {
+      const channel = data.channel as string | undefined;
+      return channel ?? null;
+    }
+    case "send-email": {
+      const to = data.to as string | undefined;
+      const subject = data.subject as string | undefined;
+      if (to) return subject ? `${to} — ${subject}` : to;
+      return null;
+    }
+    case "delay": {
+      const amount = data.delayAmount as string | number | undefined;
+      const unit = data.delayUnit as string | undefined;
+      return amount ? `${amount} ${unit ?? "seconds"}` : null;
     }
     default:
       return null;

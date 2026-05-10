@@ -12,6 +12,7 @@ import {
   type NodeMouseHandler,
 } from "@xyflow/react";
 import type {
+  Workflow,
   WorkflowNodeData,
   WorkflowNodeDataValue,
 } from "../types/Workflow.types";
@@ -32,11 +33,23 @@ const INITIAL_EDGES: Edge[] = [];
 
 let nodeIdCounter = 10;
 
-export const useWorkflowCanvas = () => {
+export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definition: any) => void) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { screenToFlowPosition } = useReactFlow();
+  const { screenToFlowPosition, setViewport } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
+
+  // Load initial workflow data
+  useEffect(() => {
+    if (initialWorkflow?.definition) {
+      setNodes(initialWorkflow.definition.nodes || []);
+      setEdges(initialWorkflow.definition.edges || []);
+      // Reset counter to avoid ID collisions
+      const maxId = Math.max(0, ...initialWorkflow.definition.nodes.map((n: any) => parseInt(n.id) || 0));
+      nodeIdCounter = maxId;
+    }
+  }, [initialWorkflow, setNodes, setEdges]);
+
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
   const [sourceNodeIdForAdd, setSourceNodeIdForAdd] = useState<string | null>(null);
@@ -49,6 +62,17 @@ export const useWorkflowCanvas = () => {
     () => nodes.find((node) => node.id === selectedNodeId) ?? null,
     [nodes, selectedNodeId],
   );
+
+  // Use refs to avoid re-attaching the listener on every node/edge change
+  const nodesRef = useRef(nodes);
+  const edgesRef = useRef(edges);
+  const onSaveRef = useRef(onSave);
+
+  useEffect(() => {
+    nodesRef.current = nodes;
+    edgesRef.current = edges;
+    onSaveRef.current = onSave;
+  }, [nodes, edges, onSave]);
 
   useEffect(() => {
     const handleOpenPalette = (e: any) => {
@@ -71,15 +95,25 @@ export const useWorkflowCanvas = () => {
       setIsPaletteOpen(false);
       setSourceNodeIdForAdd(null);
     };
+    const handleSaveTrigger = () => {
+      if (onSaveRef.current) {
+        onSaveRef.current({ 
+          nodes: nodesRef.current, 
+          edges: edgesRef.current 
+        });
+      }
+    };
 
     window.addEventListener("open-node-palette", handleOpenPalette);
     window.addEventListener("close-node-palette", handleClosePalette);
     window.addEventListener("open-node-config", handleOpenConfig);
+    window.addEventListener("save-workflow-trigger", handleSaveTrigger);
 
     return () => {
       window.removeEventListener("open-node-palette", handleOpenPalette);
       window.removeEventListener("close-node-palette", handleClosePalette);
       window.removeEventListener("open-node-config", handleOpenConfig);
+      window.removeEventListener("save-workflow-trigger", handleSaveTrigger);
     };
   }, []);
 

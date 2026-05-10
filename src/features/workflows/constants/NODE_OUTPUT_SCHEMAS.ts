@@ -91,4 +91,25 @@ export const NODE_OUTPUT_SCHEMAS: Record<WorkflowNodeType, OutputSchemaDefinitio
     
     return baseFields;
   },
+
+  // Executor-backed nodes
+  "openai": [
+    { name: "text", type: "string", description: "The raw text response from the model" },
+    { name: "model", type: "string", description: "The model used (e.g. gpt-4o-mini)" },
+    { name: "finish_reason", type: "string", description: "Why the model stopped (stop, length, etc.)" },
+    { name: "usage", type: "object", description: "Token usage: { prompt_tokens, completion_tokens, total_tokens }" },
+  ],
+  "slack": [
+    { name: "ts", type: "string", description: "Slack message timestamp (unique message ID)" },
+    { name: "channel", type: "string", description: "The channel the message was posted to" },
+    { name: "message_text", type: "string", description: "The text that was sent" },
+  ],
+  "send-email": [
+    { name: "email_id", type: "string", description: "The Resend email ID" },
+    { name: "to", type: "array", description: "The list of recipients" },
+    { name: "subject", type: "string", description: "The subject that was sent" },
+  ],
+  "delay": [
+    { name: "delayed_seconds", type: "number", description: "How many seconds the workflow was paused" },
+  ],
 };

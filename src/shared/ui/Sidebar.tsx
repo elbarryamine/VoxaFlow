@@ -12,6 +12,7 @@ import {
   Gear,
   Lightning,
   Link as LinkIcon,
+  Key,
   SignOut,
   SidebarSimple,
 } from "@phosphor-icons/react/dist/ssr";
@@ -20,7 +21,7 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: SquaresFour },
   { href: "/dashboard/workflows", label: "Workflows", icon: GitBranch },
   { href: "/dashboard/executions", label: "Executions", icon: Pulse },
-  { href: "/dashboard/connections", label: "Connections", icon: LinkIcon },
+  { href: "/dashboard/credentials", label: "Credentials", icon: Key },
   { href: "/dashboard/settings", label: "Settings", icon: Gear },
 ];
 
