@@ -1,17 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { Play, FloppyDisk, CircleNotch, CheckCircle, XCircle } from "@phosphor-icons/react/dist/ssr";
 
 import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
 import type { Workflow } from "@/src/features/workflows/types/Workflow.types";
 
-export default function EditWorkflowPage() {
-  const params = useParams();
+export default function EditWorkflowPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
-  const id = params.id as string;
 
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,10 +28,13 @@ export default function EditWorkflowPage() {
         const data = await res.json();
         setWorkflow(data);
       } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error("Fetch workflow failed:", res.status, errorData);
         router.push("/dashboard/workflows");
       }
     } catch (err) {
-      console.error("Failed to fetch workflow:", err);
+      console.error("Failed to fetch workflow exception:", err);
+      router.push("/dashboard/workflows");
     } finally {
       setLoading(false);
     }

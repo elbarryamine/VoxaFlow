@@ -35,20 +35,29 @@ let nodeIdCounter = 10;
 
 export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definition: any) => void) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
-  const { screenToFlowPosition, setViewport } = useReactFlow();
+  const { screenToFlowPosition, setViewport, fitView } = useReactFlow();
   const [nodes, setNodes, onNodesChange] = useNodesState(INITIAL_NODES);
   const [edges, setEdges, onEdgesChange] = useEdgesState(INITIAL_EDGES);
 
   // Load initial workflow data
   useEffect(() => {
     if (initialWorkflow?.definition) {
-      setNodes(initialWorkflow.definition.nodes || []);
-      setEdges(initialWorkflow.definition.edges || []);
+      const { nodes: initialNodes = [], edges: initialEdges = [] } = initialWorkflow.definition;
+      setNodes(initialNodes);
+      setEdges(initialEdges);
+      
       // Reset counter to avoid ID collisions
-      const maxId = Math.max(0, ...initialWorkflow.definition.nodes.map((n: any) => parseInt(n.id) || 0));
+      const maxId = Math.max(0, ...initialNodes.map((n: any) => parseInt(n.id) || 0));
       nodeIdCounter = maxId;
+
+      // Fit view after nodes are set
+      if (initialNodes.length > 0) {
+        requestAnimationFrame(() => {
+          fitView({ padding: 0.2, duration: 400 });
+        });
+      }
     }
-  }, [initialWorkflow, setNodes, setEdges]);
+  }, [initialWorkflow, setNodes, setEdges, fitView]);
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isPaletteOpen, setIsPaletteOpen] = useState(false);
