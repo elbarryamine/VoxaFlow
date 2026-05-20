@@ -49,7 +49,7 @@ src/
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms
-│   └── dashboard/                      # Dashboard summary widgets
+│   └── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
 ├── shared/                             # Cross-cutting concerns
 │   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper
