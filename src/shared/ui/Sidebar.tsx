@@ -61,24 +61,25 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
   };
 
   if (!mounted) {
-    return <aside className="z-30 flex h-full w-16 shrink-0 flex-col rounded-xl border border-border/40 bg-card shadow-2xl xl:w-[260px]" />;
+    return <aside className="z-30 flex h-full w-20 shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg shadow-lg xl:w-[280px]" />;
   }
 
   return (
     <aside
       className={cn(
-        "relative z-30 flex h-full shrink-0 flex-col rounded-xl border border-border/40 bg-card/80 text-sidebar-fg shadow-2xl backdrop-blur-xl transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-[260px]"
+        "relative z-30 flex h-full shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg text-sidebar-fg shadow-xl transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+        isCollapsed ? "w-20" : "w-[280px]"
       )}
     >
-      <div className="flex flex-col p-3 transition-all duration-300">
-        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-2")}>
+      {/* Header */}
+      <div className="flex flex-col p-4 transition-all duration-300">
+        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-1")}>
           {!isCollapsed && (
             <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-                <Lightning weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+                <Lightning weight="duotone" className="h-5 w-5" />
               </div>
-              <span className="truncate text-[17px] font-bold tracking-tight text-sidebar-title">
+              <span className="truncate text-xl font-newsreader font-bold tracking-tight text-sidebar-title">
                 VoxaFlow
               </span>
             </div>
@@ -86,26 +87,28 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-lg transition-all hover:bg-secondary hover:text-primary",
-              isCollapsed ? "bg-secondary/50 text-primary shadow-sm" : "text-sidebar-fg"
+              "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
+              isCollapsed 
+                ? "bg-surface-variant text-sidebar-title shadow-sm" 
+                : "text-sidebar-fg hover:bg-surface-variant hover:text-sidebar-title"
             )}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            <SidebarSimple weight="regular" className="h-5 w-5" />
+            <SidebarSimple weight="regular" className="h-4.5 w-4.5" />
           </button>
         </div>
-
+        
         {isCollapsed && (
-          <div className="mt-4 flex justify-center border-b border-border/40 pb-4">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
-              <Lightning weight="duotone" className="h-4.5 w-4.5 text-primary-foreground" />
+          <div className="mt-6 flex justify-center border-b border-sidebar-border/50 pb-5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
+              <Lightning weight="duotone" className="h-5 w-5" />
             </div>
           </div>
         )}
-        {!isCollapsed && <div className="mt-4 border-b border-border/40" />}
       </div>
 
-      <nav className="flex-1 space-y-1.5 px-3 py-6">
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1.5 px-3 py-4 font-manrope">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -113,51 +116,52 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
               key={href}
               href={href}
               className={cn(
-                "group relative flex items-center rounded-lg transition-all duration-200",
+                "group relative flex items-center rounded-xl transition-all duration-300 ease-out",
                 isCollapsed 
-                  ? "h-10 w-10 justify-center mx-auto" 
-                  : "gap-3 px-3 py-2.5",
+                  ? "h-12 w-12 justify-center mx-auto" 
+                  : "gap-3.5 px-3.5 py-3",
                 active
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "text-sidebar-fg hover:bg-secondary hover:text-sidebar-title"
+                  ? "bg-sidebar-active text-sidebar-active-foreground shadow-sm"
+                  : "text-sidebar-fg hover:bg-sidebar-hover-bg hover:text-sidebar-title"
               )}
               title={isCollapsed ? label : undefined}
             >
               <Icon 
                 weight={active ? "duotone" : "regular"} 
                 className={cn(
-                  "h-5 w-5 shrink-0 transition-transform duration-200 group-hover:scale-110",
-                  active ? "text-primary-foreground" : "text-sidebar-fg group-hover:text-sidebar-title"
+                  "h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110",
+                  active ? "text-sidebar-active-foreground" : "text-sidebar-fg group-hover:text-sidebar-title"
                 )} 
               />
               {!isCollapsed && (
-                <span className="truncate text-[13px] font-semibold">
+                <span className="truncate text-[14px] font-semibold tracking-wide">
                   {label}
                 </span>
               )}
               {active && !isCollapsed && (
-                <div className="absolute left-0 h-4 w-1 rounded-r-full bg-primary-foreground/40" />
+                <div className="absolute left-0 h-5 w-1 rounded-r-full bg-primary-foreground/40" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="border-t border-border/40 px-3 py-6">
-        <div className="space-y-6">
+      {/* Footer Profile */}
+      <div className="border-t border-sidebar-border/50 p-4 font-manrope">
+        <div className="space-y-4">
           <div
             className={cn(
               "flex items-center transition-all",
-              isCollapsed ? "justify-center" : "gap-3"
+              isCollapsed ? "justify-center" : "gap-3.5 px-1"
             )}
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary ring-1 ring-primary/20 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary-container text-sm font-bold text-on-secondary-container ring-1 ring-border/20 shadow-sm">
               {initial}
             </div>
             {!isCollapsed && (
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13px] font-bold text-sidebar-title leading-tight">{userName}</p>
-                <p className="truncate text-[11px] text-sidebar-fg/60 leading-tight">{userEmail}</p>
+                <p className="truncate text-[14px] font-bold text-sidebar-title leading-tight">{userName}</p>
+                <p className="truncate text-[12px] text-sidebar-fg mt-0.5 leading-tight">{userEmail}</p>
               </div>
             )}
           </div>
@@ -166,14 +170,14 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
             type="button"
             onClick={handleSignOut}
             className={cn(
-              "group inline-flex items-center rounded-lg border border-border/50 bg-secondary/30 text-sidebar-fg transition-all hover:bg-destructive/10 hover:text-destructive hover:border-destructive/20",
+              "group inline-flex items-center rounded-xl transition-all duration-300",
               isCollapsed 
-                ? "h-10 w-10 justify-center mx-auto" 
-                : "w-full gap-2 px-3 py-2.5 text-[12px] font-bold"
+                ? "h-12 w-12 justify-center mx-auto bg-surface-variant/50 text-sidebar-fg hover:bg-error-container hover:text-on-error-container" 
+                : "w-full gap-3 px-3.5 py-2.5 text-[13px] font-bold bg-surface-variant/50 text-sidebar-fg hover:bg-error-container hover:text-on-error-container border border-transparent hover:border-error/10"
             )}
             title={isCollapsed ? "Sign out" : undefined}
           >
-            <SignOut weight="regular" className="h-4.5 w-4.5 shrink-0 transition-transform group-hover:scale-110" />
+            <SignOut weight="regular" className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:-translate-x-0.5" />
             {!isCollapsed && (
               <span className="truncate">
                 Sign out
