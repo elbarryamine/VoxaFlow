@@ -61,13 +61,13 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
   };
 
   if (!mounted) {
-    return <aside className="z-30 flex h-full w-20 shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg shadow-lg xl:w-[280px]" />;
+    return <aside className="z-30 flex h-full w-20 shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar-bg xl:w-[280px]" />;
   }
 
   return (
     <aside
       className={cn(
-        "relative z-30 flex h-full shrink-0 flex-col rounded-2xl border border-sidebar-border bg-sidebar-bg text-sidebar-fg shadow-xl transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+        "relative z-30 flex h-full shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar-bg text-sidebar-fg transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
         isCollapsed ? "w-20" : "w-[280px]"
       )}
     >

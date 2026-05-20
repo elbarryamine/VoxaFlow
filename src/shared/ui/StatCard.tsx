@@ -24,7 +24,7 @@ export const StatCard = ({
       <div className="flex items-center justify-between">
         <p className="text-[14px] font-manrope font-semibold tracking-wide text-on-surface-variant">{label}</p>
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-300 group-hover:scale-110">
-          <Icon className="h-6 w-6" weight="duotone" />
+          <Icon className="h-6 w-6" />
         </div>
       </div>
       <p className="mt-4 text-4xl font-newsreader font-bold tracking-tight text-on-surface">{value}</p>
