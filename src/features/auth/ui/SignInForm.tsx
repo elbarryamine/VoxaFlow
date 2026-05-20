@@ -134,15 +134,15 @@ export function SignInForm() {
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-2 rounded-xl border border-border bg-secondary p-1">
+    <div className="space-y-6 font-manrope">
+      <div className="grid grid-cols-2 rounded-xl border border-border/50 bg-surface-variant/30 p-1.5 shadow-inner">
         <button
           type="button"
           onClick={() => switchMode("sign-in")}
-          className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+          className={`rounded-lg px-4 py-2.5 text-[14px] font-bold transition-all ${
             mode === "sign-in"
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-card text-on-surface shadow-sm ring-1 ring-border/50"
+              : "text-on-surface-variant hover:bg-surface-variant/50 hover:text-on-surface"
           }`}
         >
           Sign in
@@ -150,10 +150,10 @@ export function SignInForm() {
         <button
           type="button"
           onClick={() => switchMode("sign-up")}
-          className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+          className={`rounded-lg px-4 py-2.5 text-[14px] font-bold transition-all ${
             mode === "sign-up"
-              ? "bg-card text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-card text-on-surface shadow-sm ring-1 ring-border/50"
+              : "text-on-surface-variant hover:bg-surface-variant/50 hover:text-on-surface"
           }`}
         >
           Create account
@@ -164,25 +164,27 @@ export function SignInForm() {
         type="button"
         onClick={handleGoogleSignIn}
         disabled={isGoogleSubmitting || isSubmitting}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium transition hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-3 rounded-xl border border-border/50 bg-card px-5 py-3 text-[14px] font-bold shadow-sm transition-all hover:border-outline-variant hover:bg-surface-variant/30 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
       >
         <GoogleIcon />
         {isGoogleSubmitting ? "Connecting Google..." : `Continue with Google`}
       </button>
 
-      <div className="relative">
+      <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border" />
+          <div className="w-full border-t border-border/50" />
         </div>
-        <p className="relative mx-auto w-fit bg-card px-2 text-xs text-muted-foreground">
-          or continue with email
-        </p>
+        <div className="relative flex justify-center">
+          <span className="bg-card px-3 text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+            or continue with email
+          </span>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {mode === "sign-up" ? (
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {mode === "sign-up" && (
           <div className="space-y-2">
-            <label htmlFor="full-name" className="block text-sm font-medium">
+            <label htmlFor="full-name" className="block text-[13px] font-bold uppercase tracking-wide text-on-surface-variant">
               Full name
             </label>
             <input
@@ -191,14 +193,14 @@ export function SignInForm() {
               required
               value={fullName}
               onChange={(event) => setFullName(event.target.value)}
-              className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+              className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
               placeholder="Jane Doe"
             />
           </div>
-        ) : null}
+        )}
 
         <div className="space-y-2">
-          <label htmlFor="email" className="block text-sm font-medium">
+          <label htmlFor="email" className="block text-[13px] font-bold uppercase tracking-wide text-on-surface-variant">
             Email
           </label>
           <input
@@ -208,13 +210,13 @@ export function SignInForm() {
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+            className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
             placeholder="you@example.com"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="password" className="block text-sm font-medium">
+          <label htmlFor="password" className="block text-[13px] font-bold uppercase tracking-wide text-on-surface-variant">
             Password
           </label>
           <input
@@ -225,14 +227,14 @@ export function SignInForm() {
             minLength={8}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="w-full rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none transition focus:border-primary"
+            className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
             placeholder={mode === "sign-in" ? "Enter your password" : "Use at least 8 characters"}
           />
         </div>
 
-        {mode === "sign-up" ? (
+        {mode === "sign-up" && (
           <div className="space-y-2">
-            <label htmlFor="confirm-password" className="block text-sm font-medium">
+            <label htmlFor="confirm-password" className="block text-[13px] font-bold uppercase tracking-wide text-on-surface-variant">
               Confirm password
             </label>
             <input
@@ -243,59 +245,55 @@ export function SignInForm() {
               minLength={8}
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
-              className={`w-full rounded-xl border bg-card px-3 py-2.5 text-sm outline-none transition ${
-                passwordMismatch ? "border-danger" : "border-border focus:border-primary"
+              className={`w-full rounded-xl border bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
+                passwordMismatch ? "border-error focus:border-error" : "border-border/50 focus:border-primary"
               }`}
               placeholder="Repeat your password"
             />
-            {passwordMismatch ? <p className="text-xs text-danger">Passwords must match.</p> : null}
+            {passwordMismatch && <p className="text-[13px] font-bold text-error">Passwords must match.</p>}
           </div>
-        ) : null}
+        )}
 
-        {errorMessage ? (
-          <p className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">
+        {errorMessage && (
+          <p className="rounded-xl border border-error/30 bg-error/10 px-4 py-3 text-[14px] font-bold text-error shadow-sm">
             {errorMessage}
           </p>
-        ) : null}
+        )}
 
-        {successMessage ? (
-          <p className="rounded-lg border border-success/40 bg-success/10 px-3 py-2 text-sm text-success">
+        {successMessage && (
+          <p className="rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-[14px] font-bold text-success shadow-sm">
             {successMessage}
           </p>
-        ) : null}
-        {!successMessage && statusMessage ? (
+        )}
+        {!successMessage && statusMessage && (
           <p
-            className={`rounded-lg border px-3 py-2 text-sm ${
+            className={`rounded-xl border px-4 py-3 text-[14px] font-bold shadow-sm ${
               authStatus === "verify_failed"
-                ? "border-danger/40 bg-danger/10 text-danger"
-                : "border-success/40 bg-success/10 text-success"
+                ? "border-error/30 bg-error/10 text-error"
+                : "border-success/30 bg-success/10 text-success"
             }`}
           >
             {statusMessage}
           </p>
-        ) : null}
+        )}
 
         <button
           type="submit"
           disabled={isSubmitting || isGoogleSubmitting || passwordMismatch}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3.5 text-[15px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
         >
           {mode === "sign-in" ? (
-            isSubmitting ? (
-              "Signing in..."
-            ) : (
-              "Sign in"
-            )
+            isSubmitting ? "Signing in..." : "Sign in"
           ) : isSubmitting ? (
             "Creating account..."
           ) : (
             <>
-              Create account <Sparkle className="h-4 w-4" />
+              Create account <Sparkle className="h-5 w-5" weight="duotone" />
             </>
           )}
         </button>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-[13px] font-medium text-on-surface-variant">
           {mode === "sign-in"
             ? "Use your VoxaFlow account credentials to access your dashboard."
             : "A confirmation email may be required before your first sign in."}

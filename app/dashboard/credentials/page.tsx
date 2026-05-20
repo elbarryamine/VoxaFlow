@@ -149,37 +149,37 @@ export default function CredentialsPage() {
       actions={
         <button
           onClick={() => { setShowForm(true); setError(null); }}
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 shadow-lg shadow-primary/20"
+          className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 font-manrope text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
         >
-          <Plus className="h-4 w-4" weight="bold" />
+          <Plus className="h-4.5 w-4.5" weight="bold" />
           Add Credential
         </button>
       }
     >
-      <div className="space-y-5">
+      <div className="space-y-6">
         {/* Feedback banners */}
         {success && (
-          <div className="flex items-center gap-2 rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">
-            <CheckCircle className="h-4 w-4 shrink-0" weight="fill" />
+          <div className="flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-5 py-4 font-manrope text-[14px] font-bold text-success shadow-sm">
+            <CheckCircle className="h-5 w-5 shrink-0" weight="duotone" />
             {success}
           </div>
         )}
 
         {/* Add form */}
         {showForm && (
-          <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
-            <h3 className="mb-4 text-base font-semibold text-foreground">New Credential</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="rounded-2xl border border-border/50 bg-card p-6 shadow-sm font-manrope sm:p-8">
+            <h3 className="mb-6 font-newsreader text-2xl font-bold text-on-surface">New Credential</h3>
+            <form onSubmit={handleSubmit} className="space-y-5">
               {error && (
-                <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  <XCircle className="h-4 w-4 shrink-0" weight="fill" />
+                <div className="flex items-center gap-3 rounded-xl border border-error/30 bg-error/10 px-5 py-4 text-[14px] font-bold text-error shadow-sm">
+                  <XCircle className="h-5 w-5 shrink-0" weight="duotone" />
                   {error}
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
                     Display Name
                   </label>
                   <input
@@ -187,17 +187,17 @@ export default function CredentialsPage() {
                     value={form.name}
                     onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                     placeholder='e.g. "My OpenAI Key"'
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-3 py-2 text-sm text-foreground placeholder-muted-foreground/50 outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
                     Service
                   </label>
                   <select
                     value={form.service}
                     onChange={(e) => handleServiceChange(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-secondary/30 px-3 py-2 text-sm text-foreground outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none"
                   >
                     {Object.entries(SERVICE_CONFIG).map(([key, conf]) => (
                       <option key={key} value={key}>{conf.label}</option>
@@ -208,7 +208,7 @@ export default function CredentialsPage() {
 
               {serviceConf.fields.map((field) => (
                 <div key={field.key}>
-                  <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
                     {field.label}
                   </label>
                   <div className="relative">
@@ -222,7 +222,7 @@ export default function CredentialsPage() {
                         }))
                       }
                       placeholder={field.placeholder}
-                      className="w-full rounded-lg border border-border bg-secondary/30 px-3 py-2 pr-10 text-sm text-foreground placeholder-muted-foreground/50 font-mono outline-none transition focus:border-primary focus:ring-1 focus:ring-primary/20"
+                      className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 pr-11 text-[14px] font-mono text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                     />
                     {field.sensitive && (
                       <button
@@ -230,12 +230,12 @@ export default function CredentialsPage() {
                         onClick={() =>
                           setShowFields((p) => ({ ...p, [field.key]: !p[field.key] }))
                         }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
                       >
                         {showFields[field.key] ? (
-                          <EyeSlash className="h-4 w-4" />
+                          <EyeSlash className="h-5 w-5" />
                         ) : (
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-5 w-5" />
                         )}
                       </button>
                     )}
@@ -243,24 +243,24 @@ export default function CredentialsPage() {
                 </div>
               ))}
 
-              <p className="text-[11px] text-muted-foreground/70">
+              <p className="text-[13px] font-medium text-on-surface-variant/80">
                 Keys are encrypted before storage and never returned to the UI after saving. Reference credentials in nodes using their ID.
               </p>
 
-              <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-4">
+              <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-5 mt-2">
                 <button
                   type="button"
                   onClick={() => { setShowForm(false); setError(null); }}
-                  className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-secondary"
+                  className="rounded-xl px-5 py-2.5 text-[14px] font-bold text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-60"
+                  className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-60"
                 >
-                  {saving && <CircleNotch className="h-4 w-4 animate-spin" />}
+                  {saving && <CircleNotch className="h-4.5 w-4.5 animate-spin" />}
                   {saving ? "Saving…" : "Save Credential"}
                 </button>
               </div>
@@ -271,58 +271,58 @@ export default function CredentialsPage() {
         {/* List */}
         {loading ? (
           <div className="flex h-40 items-center justify-center">
-            <CircleNotch className="h-6 w-6 animate-spin text-muted-foreground" />
+            <CircleNotch className="h-8 w-8 animate-spin text-on-surface-variant" />
           </div>
         ) : credentials.length === 0 && !showForm ? (
-          <div className="flex h-[360px] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/50 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-              <Key className="h-7 w-7 text-primary" weight="duotone" />
+          <div className="flex h-[380px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/60 bg-card/40 text-center font-manrope transition-colors hover:bg-card/60">
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-container/60">
+              <Key className="h-8 w-8 text-on-secondary-container" weight="duotone" />
             </div>
-            <h3 className="mb-1 text-base font-semibold text-foreground">No credentials yet</h3>
-            <p className="mb-5 max-w-xs text-sm text-muted-foreground">
-              Add API keys so your workflow nodes can authenticate with external services.
+            <h3 className="mb-2 font-newsreader text-2xl font-bold text-on-surface">No credentials yet</h3>
+            <p className="mb-6 max-w-sm text-[15px] font-medium text-on-surface-variant">
+              Add API keys so your workflow nodes can authenticate with external services securely.
             </p>
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+              className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
             >
-              <Plus className="h-4 w-4" weight="bold" />
+              <Plus className="h-5 w-5" weight="bold" />
               Add your first credential
             </button>
           </div>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {credentials.map((cred) => {
               const conf = SERVICE_CONFIG[cred.service];
               const Icon = conf?.icon ?? Key;
               return (
                 <div
                   key={cred.id}
-                  className="group flex items-start justify-between gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/30"
+                  className="group flex items-start justify-between gap-4 rounded-2xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-outline-variant hover:shadow-lg font-manrope"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                      <Icon className="h-5 w-5 text-primary" weight="duotone" />
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-secondary-container/60 transition-transform duration-300 group-hover:scale-110">
+                      <Icon className="h-6 w-6 text-on-secondary-container" weight="duotone" />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-foreground">{cred.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{conf?.label ?? cred.service}</p>
-                      <p className="mt-1 font-mono text-[10px] text-muted-foreground/60">{cred.id}</p>
+                      <p className="truncate text-[16px] font-bold text-on-surface group-hover:text-primary transition-colors">{cred.name}</p>
+                      <p className="text-[13px] font-semibold text-on-surface-variant">{conf?.label ?? cred.service}</p>
+                      <p className="mt-1.5 font-mono text-[11px] font-bold tracking-widest text-on-surface-variant/70">{cred.id}</p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleDelete(cred.id)}
                     disabled={deletingId === cred.id}
                     className={cn(
-                      "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground opacity-0 transition-all group-hover:opacity-100",
-                      "hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-on-surface-variant opacity-0 transition-all group-hover:opacity-100",
+                      "hover:bg-error/10 hover:text-error disabled:opacity-40"
                     )}
                     title="Delete credential"
                   >
                     {deletingId === cred.id ? (
-                      <CircleNotch className="h-4 w-4 animate-spin" />
+                      <CircleNotch className="h-5 w-5 animate-spin" />
                     ) : (
-                      <Trash className="h-4 w-4" weight="bold" />
+                      <Trash className="h-5 w-5" weight="duotone" />
                     )}
                   </button>
                 </div>
