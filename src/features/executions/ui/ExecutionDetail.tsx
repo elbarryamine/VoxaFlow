@@ -80,7 +80,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-success/10',
     borderClass: 'border-success/25',
     barClass:    'bg-success',
-    dotClass:    'border-success bg-success/20',
+    dotClass:    'border-success bg-success',
     icon:        CheckCircle,
   },
   failed: {
@@ -89,7 +89,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-destructive/10',
     borderClass: 'border-destructive/25',
     barClass:    'bg-destructive',
-    dotClass:    'border-destructive bg-destructive/20',
+    dotClass:    'border-destructive bg-destructive',
     icon:        XCircle,
   },
   running: {
@@ -98,7 +98,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-primary/10',
     borderClass: 'border-primary/25',
     barClass:    'bg-primary',
-    dotClass:    'border-primary bg-primary/20',
+    dotClass:    'border-primary bg-primary',
     icon:        CircleNotch,
   },
   pending: {
@@ -107,7 +107,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-muted/40',
     borderClass: 'border-border',
     barClass:    'bg-muted-foreground/30',
-    dotClass:    'border-border bg-muted/40',
+    dotClass:    'border-muted-foreground/40 bg-muted',
     icon:        Timer,
   },
   skipped: {
@@ -116,7 +116,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-muted/40',
     borderClass: 'border-border',
     barClass:    'bg-muted-foreground/20',
-    dotClass:    'border-border bg-muted/30',
+    dotClass:    'border-muted-foreground/40 bg-muted',
     icon:        SkipForward,
   },
   timed_out: {
@@ -125,7 +125,7 @@ const STATUS_CONFIG = {
     bgClass:     'bg-destructive/10',
     borderClass: 'border-destructive/25',
     barClass:    'bg-destructive',
-    dotClass:    'border-destructive bg-destructive/20',
+    dotClass:    'border-destructive bg-destructive',
     icon:        XCircle,
   },
 } as const;
@@ -155,10 +155,6 @@ function formatDate(iso: string): string {
     month: 'short', day: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
-}
-
-function isTerminal(status: string): boolean {
-  return ['success', 'failed', 'skipped', 'timed_out'].includes(status);
 }
 
 function getCfg(status: string) {
@@ -192,22 +188,50 @@ function LogLine({ log }: { log: NodeExecutionLog }) {
 
 // ─── Step log panel ───────────────────────────────────────────────────────────
 
-function LogPanel({ logs, isRunning }: { logs: NodeExecutionLog[]; isRunning: boolean }) {
+function LogPanel({
+  logs,
+  isRunning,
+  errorMessage,
+}: {
+  logs: NodeExecutionLog[];
+  isRunning: boolean;
+  errorMessage?: string | null;
+}) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const showNodeError =
+    errorMessage &&
+    !logs.some(l => l.level === 'error' && l.message === errorMessage);
+
+  const isEmpty = logs.length === 0 && !showNodeError;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }, [logs.length]);
+  }, [logs.length, errorMessage]);
 
   return (
     <div className="mx-4 mb-4 rounded-lg overflow-hidden border border-border bg-muted/30">
       <div className="px-4 py-3 space-y-1 max-h-56 overflow-y-auto">
-        {logs.length === 0 ? (
+        {isEmpty ? (
           <span className="font-mono text-[12px] text-muted-foreground italic">
             {isRunning ? 'Waiting for logs…' : 'No logs recorded.'}
           </span>
         ) : (
-          logs.map(log => <LogLine key={log.id} log={log} />)
+          <>
+            {logs.map(log => <LogLine key={log.id} log={log} />)}
+            {showNodeError && (
+              <LogLine
+                log={{
+                  id: 'node-error',
+                  node_execution_id: '',
+                  level: 'error',
+                  message: errorMessage,
+                  data: null,
+                  elapsed_ms: null,
+                  created_at: '',
+                }}
+              />
+            )}
+          </>
         )}
 
         {isRunning && (
@@ -243,24 +267,25 @@ function StepCard({
   const isRunning = node.status === 'running';
 
   return (
-    <div className="relative flex gap-4">
-      {/* Timeline spine */}
-      <div className="flex flex-col items-center shrink-0 pt-3.5">
-        {/* Dot */}
+    <div className="relative flex gap-4 pb-3 last:pb-0">
+      {/* Timeline rail — stretches with card height; line bridges gap to next step */}
+      <div className="relative w-3.5 shrink-0 self-stretch">
+        {!isLast && (
+          <div
+            className="absolute left-1/2 top-5.25 -bottom-8.25 w-px -translate-x-1/2 bg-border"
+            aria-hidden
+          />
+        )}
         <div
           className={cn(
-            'h-3.5 w-3.5 rounded-full border-2 shrink-0 z-10',
+            'relative z-10 mx-auto mt-3.5 h-3.5 w-3.5 rounded-full border-2',
             cfg.dotClass,
           )}
         />
-        {/* Connector line */}
-        {!isLast && (
-          <div className="flex-1 w-px bg-border mt-1 min-h-4" />
-        )}
       </div>
 
       {/* Card */}
-      <div className={cn('flex-1 mb-3 rounded-xl border bg-card overflow-hidden transition-shadow', cfg.borderClass, isOpen && 'shadow-sm')}>
+      <div className={cn('flex-1 rounded-xl border bg-card overflow-hidden transition-shadow', cfg.borderClass, isOpen && 'shadow-sm')}>
         {/* Header row */}
         <button
           onClick={() => setIsOpen(o => !o)}
@@ -308,17 +333,7 @@ function StepCard({
         {/* Expandable body */}
         {isOpen && (
           <div className="border-t border-border/50 pt-3">
-            <LogPanel logs={logs} isRunning={isRunning} />
-
-            {/* Error message */}
-            {node.error_message && (
-              <div className="mx-4 mb-4 flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/8 px-3 py-2.5">
-                <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" weight="fill" />
-                <p className="text-xs font-medium text-destructive break-all leading-snug">
-                  {node.error_message}
-                </p>
-              </div>
-            )}
+            <LogPanel logs={logs} isRunning={isRunning} errorMessage={node.error_message} />
           </div>
         )}
       </div>
@@ -465,7 +480,7 @@ export function ExecutionDetail({
             <p className="text-xs text-muted-foreground">Steps will appear here as the execution runs.</p>
           </div>
         ) : (
-          <div className="pl-1">
+          <div>
             {nodeExecutions.map((node, i) => (
               <StepCard
                 key={node.id}

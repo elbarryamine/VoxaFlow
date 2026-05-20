@@ -244,7 +244,7 @@ export default function CredentialsPage() {
               ))}
 
               <p className="text-[11px] text-muted-foreground/70">
-                🔒 Keys are encoded before storage and never returned to the UI after saving. Reference credentials in nodes using their ID.
+                Keys are encrypted before storage and never returned to the UI after saving. Reference credentials in nodes using their ID.
               </p>
 
               <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-4">
