@@ -50,7 +50,7 @@ src/
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms
 │   ├── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
-│   └── settings/                       # SettingsScreen, SettingsSection (compact settings UI)
+│   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
 │   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, EmptyState
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper

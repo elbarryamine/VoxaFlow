@@ -1,165 +1,71 @@
 "use client";
 
-import {
-  Building,
-  Bell,
-  ShieldCheck,
-  CreditCard,
-  Clock,
-  FloppyDisk,
-  Palette,
-} from "@phosphor-icons/react/dist/ssr";
+import { useCallback, useEffect, useState } from "react";
+import { FloppyDisk } from "@phosphor-icons/react/dist/ssr";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { TopBarButton } from "@/src/shared/ui/TopBarButton";
-import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
-import { SettingsSection } from "@/src/features/settings/ui/SettingsSection";
 import {
-  SettingsField,
-  SettingsToggleRow,
-  SettingsDivider,
-  SettingsStatRow,
-  settingsInputClass,
-} from "@/src/features/settings/ui/SettingsField";
+  SETTINGS_SECTIONS,
+  DEFAULT_SETTINGS_SECTION,
+  type SettingsSectionId,
+} from "@/src/features/settings/constants/SETTINGS_SECTIONS";
+import { SettingsNav } from "@/src/features/settings/ui/SettingsNav";
+import { SettingsPanelContent } from "@/src/features/settings/ui/SettingsPanels";
 
-export const SettingsScreen = () => (
-  <PageLayout
-    title="Settings"
-    description="Workspace preferences, notifications, and account options"
-    actions={
-      <TopBarButton type="button">
-        <FloppyDisk className="h-4 w-4" weight="bold" />
-        Save
-      </TopBarButton>
-    }
-    contentClassName="pb-8"
-  >
-    <div className="mx-auto max-w-2xl space-y-4">
-      <SettingsSection
-        icon={Building}
-        title="Workspace"
-        description="Identity and regional defaults"
-      >
-        <SettingsField label="Workspace name" htmlFor="workspace-name">
-          <input
-            id="workspace-name"
-            defaultValue="VoxaFlow Team"
-            className={settingsInputClass}
+function parseHashSection(hash: string): SettingsSectionId | null {
+  const id = hash.replace(/^#/, "") as SettingsSectionId;
+  return SETTINGS_SECTIONS.some((s) => s.id === id) ? id : null;
+}
+
+export const SettingsScreen = () => {
+  const [activeId, setActiveId] = useState<SettingsSectionId>(DEFAULT_SETTINGS_SECTION);
+
+  useEffect(() => {
+    const syncFromHash = () => {
+      const fromHash = parseHashSection(window.location.hash);
+      if (fromHash) setActiveId(fromHash);
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  const handleSelect = useCallback((id: SettingsSectionId) => {
+    setActiveId(id);
+    window.history.replaceState(null, "", `#${id}`);
+  }, []);
+
+  const active = SETTINGS_SECTIONS.find((s) => s.id === activeId) ?? SETTINGS_SECTIONS[0];
+
+  return (
+    <PageLayout
+      title="Settings"
+      description="Workspace preferences, notifications, and account options"
+  
+      withContentPadding={false}
+      contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
+    >
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
+        <aside className="shrink-0 border-b border-border/50 bg-surface-container-low md:w-56 md:border-b-0 md:border-r">
+          <SettingsNav
+            items={SETTINGS_SECTIONS}
+            activeId={activeId}
+            onSelect={handleSelect}
           />
-        </SettingsField>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <SettingsField label="Language" htmlFor="language">
-            <select id="language" className={settingsInputClass}>
-              <option>English</option>
-              <option>French</option>
-              <option>Spanish</option>
-              <option>German</option>
-              <option>Arabic</option>
-            </select>
-          </SettingsField>
-          <SettingsField label="Timezone" htmlFor="timezone">
-            <select id="timezone" className={settingsInputClass}>
-              <option>UTC</option>
-              <option>America/New_York</option>
-              <option>Europe/London</option>
-              <option>Europe/Paris</option>
-            </select>
-          </SettingsField>
-        </div>
-        <SettingsField label="Default region" htmlFor="region">
-          <select id="region" className={settingsInputClass}>
-            <option>US East (Virginia)</option>
-            <option>US West (Oregon)</option>
-            <option>Europe (Frankfurt)</option>
-          </select>
-        </SettingsField>
-        <SettingsField label="Retry window" htmlFor="retry-window">
-          <div className="relative">
-            <Clock
-              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-on-surface-variant"
-              weight="duotone"
-            />
-            <input
-              id="retry-window"
-              defaultValue="5 minutes"
-              className={`${settingsInputClass} pl-9`}
-            />
-          </div>
-        </SettingsField>
-      </SettingsSection>
+        </aside>
 
-      <SettingsSection
-        icon={Palette}
-        title="Appearance"
-        description="Theme and display"
-      >
-        <div className="flex items-center justify-between gap-4 rounded-lg bg-surface-variant/25 px-3 py-2.5">
-          <div>
-            <p className="text-[14px] font-bold text-on-surface">Color mode</p>
-            <p className="mt-0.5 text-[12px] font-medium text-on-surface-variant">
-              Switch between light and dark
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+          <header className="mb-4 font-manrope">
+            <h2 className="font-newsreader text-xl font-bold text-on-surface sm:text-2xl">
+              {active.label}
+            </h2>
+            <p className="mt-1 text-[13px] font-medium text-on-surface-variant">
+              {active.description}
             </p>
-          </div>
-          <ThemeToggle />
+          </header>
+          <SettingsPanelContent sectionId={activeId} />
         </div>
-      </SettingsSection>
-
-      <SettingsSection
-        icon={CreditCard}
-        title="Plan & billing"
-        description="Subscription and usage"
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="font-newsreader text-xl font-bold text-on-surface">
-              Pro workspace
-            </p>
-            <p className="mt-0.5 text-[13px] font-medium text-on-surface-variant">
-              $299/month · 3 seats
-            </p>
-          </div>
-          <TopBarButton type="button" variant="secondary" className="shrink-0">
-            Manage billing
-          </TopBarButton>
-        </div>
-        <SettingsStatRow label="Next billing date" value="May 1, 2026" />
-      </SettingsSection>
-
-      <SettingsSection
-        icon={Bell}
-        title="Notifications"
-        description="Email and in-app alerts"
-      >
-        <SettingsToggleRow
-          title="Weekly usage digest"
-          description="Summary of workflow activity each week"
-          defaultChecked
-        />
-        <SettingsDivider />
-        <SettingsToggleRow
-          title="Workflow run alerts"
-          description="Notify when critical runs fail"
-        />
-      </SettingsSection>
-
-      <SettingsSection
-        icon={ShieldCheck}
-        title="Data & compliance"
-        description="Logs and retention"
-      >
-        <SettingsToggleRow
-          title="Store execution logs"
-          description="Keep inputs and outputs for each run"
-          defaultChecked
-        />
-        <SettingsDivider />
-        <SettingsField label="Log retention" htmlFor="retention">
-          <select id="retention" className={settingsInputClass}>
-            <option>30 days</option>
-            <option>90 days</option>
-            <option>1 year</option>
-          </select>
-        </SettingsField>
-      </SettingsSection>
-    </div>
-  </PageLayout>
-);
+      </div>
+    </PageLayout>
+  );
+};
