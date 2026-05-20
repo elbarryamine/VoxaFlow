@@ -1,6 +1,27 @@
-import { get } from 'https://deno.land/x/lodash@4.17.21/get.js';
 import { ExecutionContext } from './types.ts';
 import { createSupabaseClient } from './supabaseClient.ts';
+
+function get(obj: any, path: string): any {
+  return path.split('.').reduce((acc, part) => {
+    if (acc === null || acc === undefined) return undefined;
+    const bracketIndex = part.indexOf('[');
+    if (bracketIndex !== -1) {
+      const key = part.slice(0, bracketIndex);
+      const arrayPart = part.slice(bracketIndex);
+      let currentVal = key ? acc[key] : acc;
+      const matches = arrayPart.match(/\[(\d+)\]/g);
+      if (matches) {
+        for (const match of matches) {
+          if (currentVal === null || currentVal === undefined) return undefined;
+          const idx = parseInt(match.replace(/[\[\]]/g, ''), 10);
+          currentVal = currentVal[idx];
+        }
+      }
+      return currentVal;
+    }
+    return acc[part];
+  }, obj);
+}
 
 // Need to define decryptCredential or import it
 // Assuming we'll have it in supabaseClient or a crypto utils file.

@@ -40,11 +40,10 @@ export async function PATCH(
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
-    const { name, description, definition, is_active } = body;
+    const { name, definition, is_active } = body;
 
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
-    if (description !== undefined) updateData.description = description;
     if (definition !== undefined) updateData.definition = definition;
     if (is_active !== undefined) updateData.is_active = is_active;
     updateData.updated_at = new Date().toISOString();

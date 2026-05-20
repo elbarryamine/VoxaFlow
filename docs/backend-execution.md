@@ -44,6 +44,7 @@ node C fires → writes output to DB → calls execute-node for D (fan-in gate)
 ```
 
 **Benefits:**
+
 - Each node has its own fresh 400s budget — workflows can run for hours
 - DB is the single source of truth between steps — crash-safe by default
 - Parallel branches are just parallel pg_net calls — no thread management
@@ -210,14 +211,14 @@ export interface WorkflowEdge {
   id: string;
   source: NodeId;
   target: NodeId;
-  sourceHandle?: string;  // e.g. 'true' | 'false' for condition nodes
+  sourceHandle?: string; // e.g. 'true' | 'false' for condition nodes
   targetHandle?: string;
 }
 
 export interface WorkflowNode {
   id: NodeId;
-  type: string;                    // matches a key in ExecutorRegistry
-  data: Record<string, unknown>;   // config set in the UI, may contain {{variables}}
+  type: string; // matches a key in ExecutorRegistry
+  data: Record<string, unknown>; // config set in the UI, may contain {{variables}}
 }
 
 export interface WorkflowDefinition {
@@ -245,8 +246,8 @@ export interface ExecutionContext {
 }
 
 export interface ExecutionResult {
-  status: 'success' | 'failed';
-  output?: Record<string, unknown>;   // stored in node_executions.output_data
+  status: "success" | "failed";
+  output?: Record<string, unknown>; // stored in node_executions.output_data
   error?: string;
   // Returned by condition nodes to control which branch fires next
   // Must match a sourceHandle value on the node's outgoing edges
@@ -256,7 +257,10 @@ export interface ExecutionResult {
 // ─── Executor Contract ───────────────────────────────────────────────────────
 
 export interface NodeExecutor {
-  execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult>;
+  execute(
+    node: WorkflowNode,
+    context: ExecutionContext,
+  ): Promise<ExecutionResult>;
 }
 ```
 
@@ -273,8 +277,8 @@ Responds immediately (< 50ms). Never runs any executor logic itself.
 
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
-  const workflowId = url.searchParams.get('workflowId');
-  if (!workflowId) return new Response('missing workflowId', { status: 400 });
+  const workflowId = url.searchParams.get("workflowId");
+  if (!workflowId) return new Response("missing workflowId", { status: 400 });
 
   const triggerPayload = await req.json().catch(() => ({}));
 
@@ -282,55 +286,63 @@ Deno.serve(async (req: Request) => {
 
   // 1. Load workflow (verify it exists + get definition + user_id)
   const { data: workflow, error } = await supabase
-    .from('workflows')
-    .select('id, user_id, definition, is_active')
-    .eq('id', workflowId)
+    .from("workflows")
+    .select("id, user_id, definition, is_active")
+    .eq("id", workflowId)
     .single();
 
   if (error || !workflow || !workflow.is_active) {
-    return new Response('workflow not found or inactive', { status: 404 });
+    return new Response("workflow not found or inactive", { status: 404 });
   }
 
   const definition: WorkflowDefinition = workflow.definition;
 
   // 2. Create execution row
   const { data: execution } = await supabase
-    .from('executions')
+    .from("executions")
     .insert({
       workflow_id: workflow.id,
       user_id: workflow.user_id,
-      status: 'running',
-      trigger_source: 'webhook',
+      status: "running",
+      trigger_source: "webhook",
       trigger_payload: triggerPayload,
       started_at: new Date().toISOString(),
     })
-    .select('id')
+    .select("id")
     .single();
 
   // 3. Find trigger nodes: nodes with zero incoming edges
-  const nodesWithIncoming = new Set(definition.edges.map(e => e.target));
-  const triggerNodes = definition.nodes.filter(n => !nodesWithIncoming.has(n.id));
+  const nodesWithIncoming = new Set(definition.edges.map((e) => e.target));
+  const triggerNodes = definition.nodes.filter(
+    (n) => !nodesWithIncoming.has(n.id),
+  );
 
   if (triggerNodes.length === 0) {
-    await supabase.from('executions').update({ status: 'failed', error_message: 'No trigger node found' }).eq('id', execution.id);
-    return new Response('no trigger nodes', { status: 400 });
+    await supabase
+      .from("executions")
+      .update({ status: "failed", error_message: "No trigger node found" })
+      .eq("id", execution.id);
+    return new Response("no trigger nodes", { status: 400 });
   }
 
   // 4. Insert pending node_executions for each trigger node
-  await supabase.from('node_executions').insert(
-    triggerNodes.map(n => ({
+  await supabase.from("node_executions").insert(
+    triggerNodes.map((n) => ({
       execution_id: execution.id,
       node_id: n.id,
       node_type: n.type,
-      status: 'pending',
-    }))
+      status: "pending",
+    })),
   );
 
   // 5. Fire execute-node for each trigger node via pg_net
   for (const node of triggerNodes) {
-    await supabase.rpc('net.http_post', {
-      url: `${Deno.env.get('SUPABASE_FUNCTIONS_URL')}/execute-node`,
-      headers: JSON.stringify({ 'Content-Type': 'application/json', Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}` }),
+    await supabase.rpc("net.http_post", {
+      url: `${Deno.env.get("SUPABASE_FUNCTIONS_URL")}/execute-node`,
+      headers: JSON.stringify({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      }),
       body: JSON.stringify({ executionId: execution.id, nodeId: node.id }),
     });
   }
@@ -338,7 +350,7 @@ Deno.serve(async (req: Request) => {
   // Immediate 200 — caller doesn't wait for execution
   return new Response(JSON.stringify({ executionId: execution.id }), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { "Content-Type": "application/json" },
   });
 });
 ```
@@ -359,62 +371,70 @@ Deno.serve(async (req: Request) => {
   // ── 1. Load execution + workflow ─────────────────────────────────────────
 
   const { data: execution } = await supabase
-    .from('executions')
-    .select('*, workflows(definition, user_id)')
-    .eq('id', executionId)
+    .from("executions")
+    .select("*, workflows(definition, user_id)")
+    .eq("id", executionId)
     .single();
 
-  if (!execution || execution.status === 'failed') {
-    return new Response('execution not found or already failed', { status: 200 });
+  if (!execution || execution.status === "failed") {
+    return new Response("execution not found or already failed", {
+      status: 200,
+    });
   }
 
   const definition: WorkflowDefinition = execution.workflows.definition;
-  const node = definition.nodes.find(n => n.id === nodeId);
-  if (!node) return new Response('node not found in definition', { status: 200 });
+  const node = definition.nodes.find((n) => n.id === nodeId);
+  if (!node)
+    return new Response("node not found in definition", { status: 200 });
 
   // ── 2. Fan-in gate: all parent nodes must be 'success' ───────────────────
 
   const parentNodeIds = definition.edges
-    .filter(e => e.target === nodeId)
-    .map(e => e.source);
+    .filter((e) => e.target === nodeId)
+    .map((e) => e.source);
 
   if (parentNodeIds.length > 0) {
     const { data: parentRows } = await supabase
-      .from('node_executions')
-      .select('node_id, status')
-      .eq('execution_id', executionId)
-      .in('node_id', parentNodeIds);
+      .from("node_executions")
+      .select("node_id, status")
+      .eq("execution_id", executionId)
+      .in("node_id", parentNodeIds);
 
-    const allDone = parentNodeIds.every(id =>
-      parentRows?.find(r => r.node_id === id)?.status === 'success'
+    const allDone = parentNodeIds.every(
+      (id) => parentRows?.find((r) => r.node_id === id)?.status === "success",
     );
 
     if (!allDone) {
       // Another parallel branch hasn't finished yet.
       // The last parent to complete will also call execute-node for this node,
       // and at that point the gate will pass.
-      return new Response('deferred — waiting for other parents', { status: 200 });
+      return new Response("deferred — waiting for other parents", {
+        status: 200,
+      });
     }
   }
 
   // ── 3. Mark this node as running (upsert handles retry re-entry) ─────────
 
-  await supabase.from('node_executions')
-    .update({ status: 'running', started_at: new Date().toISOString() })
-    .eq('execution_id', executionId)
-    .eq('node_id', nodeId);
+  await supabase
+    .from("node_executions")
+    .update({ status: "running", started_at: new Date().toISOString() })
+    .eq("execution_id", executionId)
+    .eq("node_id", nodeId);
 
   // ── 4. Load all previous node outputs to build interpolation state ────────
 
   const { data: completedNodes } = await supabase
-    .from('node_executions')
-    .select('node_id, output_data')
-    .eq('execution_id', executionId)
-    .eq('status', 'success');
+    .from("node_executions")
+    .select("node_id, output_data")
+    .eq("execution_id", executionId)
+    .eq("status", "success");
 
   const state: Record<string, unknown> = {
     trigger: execution.trigger_payload,
-    ...Object.fromEntries((completedNodes ?? []).map(r => [r.node_id, r.output_data])),
+    ...Object.fromEntries(
+      (completedNodes ?? []).map((r) => [r.node_id, r.output_data]),
+    ),
   };
 
   // ── 5. Build context and interpolate node config ──────────────────────────
@@ -436,9 +456,14 @@ Deno.serve(async (req: Request) => {
 
   const executor = ExecutorRegistry.get(node.type);
   if (!executor) {
-    await failNode(supabase, executionId, nodeId, `Unknown node type: ${node.type}`);
+    await failNode(
+      supabase,
+      executionId,
+      nodeId,
+      `Unknown node type: ${node.type}`,
+    );
     await maybeMarkExecutionFailed(supabase, executionId, definition);
-    return new Response('unknown executor', { status: 200 });
+    return new Response("unknown executor", { status: 200 });
   }
 
   const startMs = Date.now();
@@ -446,87 +471,106 @@ Deno.serve(async (req: Request) => {
   try {
     result = await executor.execute(interpolatedNode, context);
   } catch (err) {
-    result = { status: 'failed', error: String(err) };
+    result = { status: "failed", error: String(err) };
   }
   const durationMs = Date.now() - startMs;
 
   // ── 7. Write result ───────────────────────────────────────────────────────
 
-  await supabase.from('node_executions').update({
-    status: result.status,
-    output_data: result.output ?? {},
-    input_data: interpolatedNode.data,
-    error_message: result.error ?? null,
-    finished_at: new Date().toISOString(),
-    duration_ms: durationMs,
-  }).eq('execution_id', executionId).eq('node_id', nodeId);
+  await supabase
+    .from("node_executions")
+    .update({
+      status: result.status,
+      output_data: result.output ?? {},
+      input_data: interpolatedNode.data,
+      error_message: result.error ?? null,
+      finished_at: new Date().toISOString(),
+      duration_ms: durationMs,
+    })
+    .eq("execution_id", executionId)
+    .eq("node_id", nodeId);
 
   // ── 8. Handle failure ─────────────────────────────────────────────────────
 
-  if (result.status === 'failed') {
+  if (result.status === "failed") {
     const { data: nodeExec } = await supabase
-      .from('node_executions')
-      .select('retry_count')
-      .eq('execution_id', executionId)
-      .eq('node_id', nodeId)
+      .from("node_executions")
+      .select("retry_count")
+      .eq("execution_id", executionId)
+      .eq("node_id", nodeId)
       .single();
 
     const MAX_RETRIES = (node.data.maxRetries as number) ?? 0;
     if ((nodeExec?.retry_count ?? 0) < MAX_RETRIES) {
       // Schedule retry
-      await supabase.from('node_executions')
-        .update({ status: 'pending', retry_count: (nodeExec?.retry_count ?? 0) + 1 })
-        .eq('execution_id', executionId).eq('node_id', nodeId);
+      await supabase
+        .from("node_executions")
+        .update({
+          status: "pending",
+          retry_count: (nodeExec?.retry_count ?? 0) + 1,
+        })
+        .eq("execution_id", executionId)
+        .eq("node_id", nodeId);
 
       // Re-fire after delay (simple version — use pg_cron for backoff)
-      await supabase.rpc('net.http_post', {
-        url: `${Deno.env.get('SUPABASE_FUNCTIONS_URL')}/execute-node`,
+      await supabase.rpc("net.http_post", {
+        url: `${Deno.env.get("SUPABASE_FUNCTIONS_URL")}/execute-node`,
         body: JSON.stringify({ executionId, nodeId }),
       });
     } else {
       await maybeMarkExecutionFailed(supabase, executionId, definition);
     }
-    return new Response('node failed', { status: 200 });
+    return new Response("node failed", { status: 200 });
   }
 
   // ── 9. Determine which downstream nodes to activate ───────────────────────
 
-  const outgoingEdges = definition.edges.filter(e => e.source === nodeId);
+  const outgoingEdges = definition.edges.filter((e) => e.source === nodeId);
 
   // For condition nodes: only follow the branch that matches branchTarget
   const activeEdges = result.branchTarget
-    ? outgoingEdges.filter(e => e.sourceHandle === result.branchTarget)
+    ? outgoingEdges.filter((e) => e.sourceHandle === result.branchTarget)
     : outgoingEdges;
 
   // For condition false-path skip: mark skipped branches
   if (result.branchTarget) {
-    const skippedEdges = outgoingEdges.filter(e => e.sourceHandle !== result.branchTarget);
+    const skippedEdges = outgoingEdges.filter(
+      (e) => e.sourceHandle !== result.branchTarget,
+    );
     for (const edge of skippedEdges) {
-      await supabase.from('node_executions').upsert({
-        execution_id: executionId,
-        node_id: edge.target,
-        node_type: definition.nodes.find(n => n.id === edge.target)?.type ?? 'unknown',
-        status: 'skipped',
-      }, { onConflict: 'execution_id,node_id', ignoreDuplicates: true });
+      await supabase.from("node_executions").upsert(
+        {
+          execution_id: executionId,
+          node_id: edge.target,
+          node_type:
+            definition.nodes.find((n) => n.id === edge.target)?.type ??
+            "unknown",
+          status: "skipped",
+        },
+        { onConflict: "execution_id,node_id", ignoreDuplicates: true },
+      );
     }
   }
 
   // ── 10. Insert pending rows and fire downstream ───────────────────────────
 
   for (const edge of activeEdges) {
-    const nextNode = definition.nodes.find(n => n.id === edge.target);
+    const nextNode = definition.nodes.find((n) => n.id === edge.target);
     if (!nextNode) continue;
 
     // Upsert with ignoreDuplicates — multiple parents may try to insert the same row
-    await supabase.from('node_executions').upsert({
-      execution_id: executionId,
-      node_id: edge.target,
-      node_type: nextNode.type,
-      status: 'pending',
-    }, { onConflict: 'execution_id,node_id', ignoreDuplicates: true });
+    await supabase.from("node_executions").upsert(
+      {
+        execution_id: executionId,
+        node_id: edge.target,
+        node_type: nextNode.type,
+        status: "pending",
+      },
+      { onConflict: "execution_id,node_id", ignoreDuplicates: true },
+    );
 
-    await supabase.rpc('net.http_post', {
-      url: `${Deno.env.get('SUPABASE_FUNCTIONS_URL')}/execute-node`,
+    await supabase.rpc("net.http_post", {
+      url: `${Deno.env.get("SUPABASE_FUNCTIONS_URL")}/execute-node`,
       body: JSON.stringify({ executionId, nodeId: edge.target }),
     });
   }
@@ -537,7 +581,7 @@ Deno.serve(async (req: Request) => {
     await maybeMarkExecutionComplete(supabase, executionId, definition);
   }
 
-  return new Response('ok', { status: 200 });
+  return new Response("ok", { status: 200 });
 });
 ```
 
@@ -547,16 +591,16 @@ Deno.serve(async (req: Request) => {
 
 Template syntax is `{{path.to.value}}` — same as n8n/Handlebars.
 
-| Template | Resolves from |
-|---|---|
-| `{{trigger.email}}` | Initial webhook payload |
+| Template               | Resolves from                            |
+| ---------------------- | ---------------------------------------- |
+| `{{trigger.email}}`    | Initial webhook payload                  |
 | `{{node_abc.body.id}}` | `output_data` of node with id `node_abc` |
-| `{{node_abc.status}}` | Top-level field on node output |
+| `{{node_abc.status}}`  | Top-level field on node output           |
 
 ```typescript
 // supabase/functions/_shared/engine/ExecutionContext.ts
 
-import { get } from 'https://deno.land/x/lodash/get.js';
+import { get } from "https://deno.land/x/lodash/get.js";
 
 export function buildExecutionContext(params: {
   executionId: string;
@@ -568,16 +612,22 @@ export function buildExecutionContext(params: {
   const { executionId, workflowId, userId, triggerPayload, state } = params;
 
   function interpolateValue(value: unknown): unknown {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       return value.replace(/\{\{([^}]+)\}\}/g, (_, path: string) => {
-        const resolved = get({ trigger: triggerPayload, ...state }, path.trim());
-        return resolved !== undefined ? String(resolved) : '';
+        const resolved = get(
+          { trigger: triggerPayload, ...state },
+          path.trim(),
+        );
+        return resolved !== undefined ? String(resolved) : "";
       });
     }
     if (Array.isArray(value)) return value.map(interpolateValue);
-    if (value !== null && typeof value === 'object') {
+    if (value !== null && typeof value === "object") {
       return Object.fromEntries(
-        Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, interpolateValue(v)])
+        Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+          k,
+          interpolateValue(v),
+        ]),
       );
     }
     return value;
@@ -593,10 +643,10 @@ export function buildExecutionContext(params: {
     resolveCredential: async (credentialId: string) => {
       const supabase = createSupabaseClient();
       const { data } = await supabase
-        .from('credentials')
-        .select('encrypted_data')
-        .eq('id', credentialId)
-        .eq('user_id', userId)
+        .from("credentials")
+        .select("encrypted_data")
+        .eq("id", credentialId)
+        .eq("user_id", userId)
         .single();
       // Decrypt here via Supabase Vault / pgsodium
       return decryptCredential(data.encrypted_data);
@@ -615,41 +665,57 @@ A condition node evaluates a rule and returns `branchTarget` to tell the engine 
 // supabase/functions/_shared/engine/executors/logic/ConditionExecutor.ts
 
 export class ConditionExecutor implements NodeExecutor {
-  async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+  async execute(
+    node: WorkflowNode,
+    context: ExecutionContext,
+  ): Promise<ExecutionResult> {
     // node.data.rules: Array of { field, operator, value }
     // node.data.logic: 'AND' | 'OR'
     const rules = node.data.rules as ConditionRule[];
-    const logic = (node.data.logic as string) ?? 'AND';
+    const logic = (node.data.logic as string) ?? "AND";
 
-    const results = rules.map(rule => evaluateRule(rule, context.state));
-    const passed = logic === 'AND' ? results.every(Boolean) : results.some(Boolean);
+    const results = rules.map((rule) => evaluateRule(rule, context.state));
+    const passed =
+      logic === "AND" ? results.every(Boolean) : results.some(Boolean);
 
     return {
-      status: 'success',
+      status: "success",
       output: { passed, results },
-      branchTarget: passed ? 'true' : 'false',  // matches sourceHandle on edges
+      branchTarget: passed ? "true" : "false", // matches sourceHandle on edges
     };
   }
 }
 
-function evaluateRule(rule: ConditionRule, state: Record<string, unknown>): boolean {
+function evaluateRule(
+  rule: ConditionRule,
+  state: Record<string, unknown>,
+): boolean {
   const left = get({ trigger: state.trigger, ...state }, rule.field);
   const right = rule.value;
 
   switch (rule.operator) {
-    case 'equals':           return String(left) === String(right);
-    case 'not_equals':       return String(left) !== String(right);
-    case 'contains':         return String(left).includes(String(right));
-    case 'greater_than':     return Number(left) > Number(right);
-    case 'less_than':        return Number(left) < Number(right);
-    case 'exists':           return left !== undefined && left !== null;
-    case 'not_exists':       return left === undefined || left === null;
-    default:                 return false;
+    case "equals":
+      return String(left) === String(right);
+    case "not_equals":
+      return String(left) !== String(right);
+    case "contains":
+      return String(left).includes(String(right));
+    case "greater_than":
+      return Number(left) > Number(right);
+    case "less_than":
+      return Number(left) < Number(right);
+    case "exists":
+      return left !== undefined && left !== null;
+    case "not_exists":
+      return left === undefined || left === null;
+    default:
+      return false;
   }
 }
 ```
 
 **On the React Flow canvas**, condition nodes have two outgoing edge handles:
+
 - `sourceHandle: 'true'` → the "yes" branch
 - `sourceHandle: 'false'` → the "no" branch
 
@@ -685,6 +751,7 @@ When two parallel branches converge into a single node, that node must not execu
 Configured per-node in the UI via `node.data.maxRetries` (default: 0).
 
 On failure:
+
 1. Increment `retry_count` on the `node_executions` row
 2. Re-fire `execute-node` for the same node
 3. After `maxRetries` exhausted → mark node `failed`, call `maybeMarkExecutionFailed`
@@ -694,37 +761,55 @@ On failure:
 ```typescript
 // supabase/functions/_shared/engine/helpers.ts
 
-export async function maybeMarkExecutionFailed(supabase, executionId, definition) {
+export async function maybeMarkExecutionFailed(
+  supabase,
+  executionId,
+  definition,
+) {
   const { data: rows } = await supabase
-    .from('node_executions')
-    .select('status')
-    .eq('execution_id', executionId);
+    .from("node_executions")
+    .select("status")
+    .eq("execution_id", executionId);
 
-  const hasFailed  = rows?.some(r => r.status === 'failed');
-  const hasActive  = rows?.some(r => r.status === 'pending' || r.status === 'running');
+  const hasFailed = rows?.some((r) => r.status === "failed");
+  const hasActive = rows?.some(
+    (r) => r.status === "pending" || r.status === "running",
+  );
 
   if (hasFailed && !hasActive) {
-    await supabase.from('executions').update({
-      status: 'failed',
-      finished_at: new Date().toISOString(),
-    }).eq('id', executionId);
+    await supabase
+      .from("executions")
+      .update({
+        status: "failed",
+        finished_at: new Date().toISOString(),
+      })
+      .eq("id", executionId);
   }
 }
 
-export async function maybeMarkExecutionComplete(supabase, executionId, definition) {
+export async function maybeMarkExecutionComplete(
+  supabase,
+  executionId,
+  definition,
+) {
   const { data: rows } = await supabase
-    .from('node_executions')
-    .select('status')
-    .eq('execution_id', executionId);
+    .from("node_executions")
+    .select("status")
+    .eq("execution_id", executionId);
 
-  const allDone = rows?.every(r => ['success', 'failed', 'skipped'].includes(r.status));
-  const anyFailed = rows?.some(r => r.status === 'failed');
+  const allDone = rows?.every((r) =>
+    ["success", "failed", "skipped"].includes(r.status),
+  );
+  const anyFailed = rows?.some((r) => r.status === "failed");
 
   if (allDone) {
-    await supabase.from('executions').update({
-      status: anyFailed ? 'failed' : 'success',
-      finished_at: new Date().toISOString(),
-    }).eq('id', executionId);
+    await supabase
+      .from("executions")
+      .update({
+        status: anyFailed ? "failed" : "success",
+        finished_at: new Date().toISOString(),
+      })
+      .eq("id", executionId);
   }
 }
 ```
@@ -772,23 +857,30 @@ Node configs store only a `credentialId` reference — never raw keys.
 ```typescript
 // Example: how an executor uses credentials
 export class OpenAIExecutor implements NodeExecutor {
-  async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
-    const creds = await context.resolveCredential(node.data.credentialId as string);
-    
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
+  async execute(
+    node: WorkflowNode,
+    context: ExecutionContext,
+  ): Promise<ExecutionResult> {
+    const creds = await context.resolveCredential(
+      node.data.credentialId as string,
+    );
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${creds.apiKey}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${creds.apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: node.data.model,
-        messages: [{ role: 'user', content: context.interpolate(node.data.prompt) }],
+        messages: [
+          { role: "user", content: context.interpolate(node.data.prompt) },
+        ],
       }),
     });
 
     const data = await response.json();
-    return { status: 'success', output: data };
+    return { status: "success", output: data };
   }
 }
 ```
@@ -816,39 +908,36 @@ export const ExecutorRegistry = {
 // supabase/functions/_shared/engine/executors/init.ts
 // Call this at the top of execute-node/index.ts
 
-import { ApiRequestExecutor }  from './actions/ApiRequestExecutor.ts';
-import { SendEmailExecutor }   from './actions/SendEmailExecutor.ts';
-import { SlackExecutor }       from './actions/SlackExecutor.ts';
-import { VapiCallExecutor }    from './actions/VapiCallExecutor.ts';
-import { OpenAIExecutor }      from './actions/OpenAIExecutor.ts';
-import { ConditionExecutor }   from './logic/ConditionExecutor.ts';
-import { DelayExecutor }       from './logic/DelayExecutor.ts';
-import { CodeExecutor }        from './logic/CodeExecutor.ts';
+import { ApiRequestExecutor } from "./actions/ApiRequestExecutor.ts";
+import { SendEmailExecutor } from "./actions/SendEmailExecutor.ts";
+import { SlackExecutor } from "./actions/SlackExecutor.ts";
+import { OpenAIExecutor } from "./actions/OpenAIExecutor.ts";
+import { ConditionExecutor } from "./logic/ConditionExecutor.ts";
+import { DelayExecutor } from "./logic/DelayExecutor.ts";
+import { CodeExecutor } from "./logic/CodeExecutor.ts";
 
 export function initExecutors() {
-  ExecutorRegistry.register('api-request',   new ApiRequestExecutor());
-  ExecutorRegistry.register('send-email',    new SendEmailExecutor());
-  ExecutorRegistry.register('slack',         new SlackExecutor());
-  ExecutorRegistry.register('vapi-call',     new VapiCallExecutor());
-  ExecutorRegistry.register('openai',        new OpenAIExecutor());
-  ExecutorRegistry.register('condition',     new ConditionExecutor());
-  ExecutorRegistry.register('delay',         new DelayExecutor());
-  ExecutorRegistry.register('code',          new CodeExecutor());
+  ExecutorRegistry.register("api-request", new ApiRequestExecutor());
+  ExecutorRegistry.register("send-email", new SendEmailExecutor());
+  ExecutorRegistry.register("slack", new SlackExecutor());
+  ExecutorRegistry.register("openai", new OpenAIExecutor());
+  ExecutorRegistry.register("condition", new ConditionExecutor());
+  ExecutorRegistry.register("delay", new DelayExecutor());
+  ExecutorRegistry.register("code", new CodeExecutor());
 }
 ```
 
 ### Built-in Node Types (initial set)
 
-| Node Type | Category | Description |
-|---|---|---|
-| `api-request` | Action | HTTP request to any URL |
-| `send-email` | Action | Send via SMTP / Resend |
-| `slack` | Action | Post to Slack channel |
-| `vapi-call` | Action | Outbound VAPI voice call |
-| `openai` | Action | Chat completion / embedding |
-| `condition` | Logic | If/else branching |
-| `delay` | Logic | Wait N seconds (reschedule via pg_net) |
-| `code` | Logic | Run user-provided JS snippet in sandbox |
+| Node Type     | Category | Description                             |
+| ------------- | -------- | --------------------------------------- |
+| `api-request` | Action   | HTTP request to any URL                 |
+| `send-email`  | Action   | Send via SMTP / Resend                  |
+| `slack`       | Action   | Post to Slack channel                   |
+| `openai`      | Action   | Chat completion / embedding             |
+| `condition`   | Logic    | If/else branching                       |
+| `delay`       | Logic    | Wait N seconds (reschedule via pg_net)  |
+| `code`        | Logic    | Run user-provided JS snippet in sandbox |
 
 ---
 
@@ -946,7 +1035,6 @@ supabase/
                 │   ├── ApiRequestExecutor.ts
                 │   ├── SendEmailExecutor.ts
                 │   ├── SlackExecutor.ts
-                │   ├── VapiCallExecutor.ts
                 │   └── OpenAIExecutor.ts
                 │
                 └── logic/
@@ -966,16 +1054,16 @@ src/                                    # Next.js app
 
 ## 15. Key Design Decisions & Trade-offs
 
-| Decision | Chosen Approach | Trade-off |
-|---|---|---|
-| **Execution model** | Step-based (one Edge Function per node) | Slightly more complex than monolithic BFS, but survives any timeout |
-| **Queue** | `pg_net` HTTP calls (Supabase native) | No external infra (Upstash/SQS), but no built-in dead-letter queue |
-| **State between steps** | `node_executions` table in Postgres | DB round-trips per step, but zero shared memory needed |
-| **Fan-in** | Re-check parents on every call, defer if not ready | Simple and correct; last parent to finish always wins the race |
-| **Retries** | Per-node, inline in `execute-node` | No backoff scheduling (add pg_cron for exponential backoff later) |
-| **Credential encryption** | Supabase Vault / pgsodium | Keys never in plaintext in logs or DB rows |
-| **RLS** | Per-table, scoped to `user_id` | Edge Functions use service role and manually enforce tenancy |
-| **Timeout recovery** | pg_cron scans for stuck executions | ~5 min detection window, not instant |
+| Decision                  | Chosen Approach                                    | Trade-off                                                           |
+| ------------------------- | -------------------------------------------------- | ------------------------------------------------------------------- |
+| **Execution model**       | Step-based (one Edge Function per node)            | Slightly more complex than monolithic BFS, but survives any timeout |
+| **Queue**                 | `pg_net` HTTP calls (Supabase native)              | No external infra (Upstash/SQS), but no built-in dead-letter queue  |
+| **State between steps**   | `node_executions` table in Postgres                | DB round-trips per step, but zero shared memory needed              |
+| **Fan-in**                | Re-check parents on every call, defer if not ready | Simple and correct; last parent to finish always wins the race      |
+| **Retries**               | Per-node, inline in `execute-node`                 | No backoff scheduling (add pg_cron for exponential backoff later)   |
+| **Credential encryption** | Supabase Vault / pgsodium                          | Keys never in plaintext in logs or DB rows                          |
+| **RLS**                   | Per-table, scoped to `user_id`                     | Edge Functions use service role and manually enforce tenancy        |
+| **Timeout recovery**      | pg_cron scans for stuck executions                 | ~5 min detection window, not instant                                |
 
 ### What to build next (priority order)
 

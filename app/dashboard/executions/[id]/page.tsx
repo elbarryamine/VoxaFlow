@@ -82,7 +82,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
           <div>
             <h2 className="text-xl font-semibold mb-1">Execution {execution.id.split('-')[0]}...</h2>
             <p className="text-sm text-muted-foreground">
-              Triggered via <span className="capitalize font-medium text-foreground">{execution.trigger_source}</span>
+              Triggered via <span className="capitalize font-medium text-foreground">webhook</span>
             </p>
           </div>
           <div className="flex flex-col gap-2 md:items-end">
@@ -95,7 +95,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
             </span>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Clock className="h-4 w-4" />
-              <span>Started: {new Date(execution.started_at).toLocaleString()}</span>
+              <span>Started: {new Date(execution.created_at).toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -116,8 +116,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                 <tr>
                   <th className="px-6 py-4">Node Type</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Duration</th>
-                  <th className="px-6 py-4">Started At</th>
+                  <th className="px-6 py-4">Executed At</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -149,10 +148,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-muted-foreground">
-                          {node.duration_ms ? `${node.duration_ms}ms` : '—'}
-                        </td>
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {node.started_at ? new Date(node.started_at).toLocaleTimeString() : '—'}
+                          {node.created_at ? new Date(node.created_at).toLocaleTimeString() : '—'}
                         </td>
                       </tr>
                     );

@@ -56,10 +56,6 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
         </button>
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm text-muted-foreground">
-        {workflow.description || "No description provided."}
-      </p>
-
       {workflow.profileName && (
         <div className="mt-4 flex items-center gap-2">
           <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-primary">

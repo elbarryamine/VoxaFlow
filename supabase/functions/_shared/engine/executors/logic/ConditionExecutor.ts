@@ -1,5 +1,5 @@
 import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '../../types.ts';
-import { get } from 'https://deno.land/x/lodash@4.17.21/get.js';
+
 
 interface ConditionRule {
   field: string;
@@ -41,4 +41,26 @@ function evaluateRule(rule: ConditionRule, state: Record<string, unknown>, trigg
     case 'not_exists':       return left === undefined || left === null;
     default:                 return false;
   }
+}
+
+function get(obj: any, path: string): any {
+  return path.split('.').reduce((acc, part) => {
+    if (acc === null || acc === undefined) return undefined;
+    const bracketIndex = part.indexOf('[');
+    if (bracketIndex !== -1) {
+      const key = part.slice(0, bracketIndex);
+      const arrayPart = part.slice(bracketIndex);
+      let currentVal = key ? acc[key] : acc;
+      const matches = arrayPart.match(/\[(\d+)\]/g);
+      if (matches) {
+        for (const match of matches) {
+          if (currentVal === null || currentVal === undefined) return undefined;
+          const idx = parseInt(match.replace(/[\[\]]/g, ''), 10);
+          currentVal = currentVal[idx];
+        }
+      }
+      return currentVal;
+    }
+    return acc[part];
+  }, obj);
 }

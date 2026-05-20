@@ -33,94 +33,108 @@ const ICON_MAP = {
   "integration-webhook": Globe,
   "api-request": Globe,
   // Executor-backed
-  "openai": Robot,
-  "slack": ChatCircleText,
+  openai: Robot,
+  slack: ChatCircleText,
   "send-email": Envelope,
-  "delay": GitFork,
+  delay: GitFork,
 } as const;
 
 const COLOR_MAP = {
   "webhook-shopify": {
-    gradient: "from-orange-500/20 to-rose-500/20 dark:from-orange-500/20 dark:to-rose-500/20",
+    gradient:
+      "from-orange-500/20 to-rose-500/20 dark:from-orange-500/20 dark:to-rose-500/20",
     border: "border-orange-500/30 dark:border-orange-500/40",
     iconBg: "bg-orange-500/10 dark:bg-orange-500/20",
     icon: "text-orange-600 dark:text-orange-400",
   },
   "webhook-lightfunnels": {
-    gradient: "from-amber-500/20 to-orange-500/20 dark:from-amber-500/20 dark:to-orange-500/20",
+    gradient:
+      "from-amber-500/20 to-orange-500/20 dark:from-amber-500/20 dark:to-orange-500/20",
     border: "border-amber-500/30 dark:border-amber-500/40",
     iconBg: "bg-amber-500/10 dark:bg-amber-500/20",
     icon: "text-amber-600 dark:text-amber-400",
   },
   "webhook-youcan": {
-    gradient: "from-sky-500/20 to-blue-500/20 dark:from-sky-500/20 dark:to-blue-500/20",
+    gradient:
+      "from-sky-500/20 to-blue-500/20 dark:from-sky-500/20 dark:to-blue-500/20",
     border: "border-sky-500/30 dark:border-sky-500/40",
     iconBg: "bg-sky-500/10 dark:bg-sky-500/20",
     icon: "text-sky-600 dark:text-sky-400",
   },
   "webhook-custom": {
-    gradient: "from-zinc-500/20 to-slate-500/20 dark:from-zinc-500/20 dark:to-slate-500/20",
+    gradient:
+      "from-zinc-500/20 to-slate-500/20 dark:from-zinc-500/20 dark:to-slate-500/20",
     border: "border-zinc-500/30 dark:border-zinc-500/40",
     iconBg: "bg-zinc-500/10 dark:bg-zinc-500/20",
     icon: "text-zinc-600 dark:text-zinc-400",
   },
   "ai-custom-model": {
-    gradient: "from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/20 dark:to-purple-500/20",
+    gradient:
+      "from-indigo-500/20 to-purple-500/20 dark:from-indigo-500/20 dark:to-purple-500/20",
     border: "border-indigo-500/30 dark:border-indigo-500/40",
     iconBg: "bg-indigo-500/10 dark:bg-indigo-500/20",
     icon: "text-indigo-600 dark:text-indigo-400",
   },
   "integration-spreadsheet": {
-    gradient: "from-emerald-500/20 to-teal-500/20 dark:from-emerald-500/20 dark:to-teal-500/20",
+    gradient:
+      "from-emerald-500/20 to-teal-500/20 dark:from-emerald-500/20 dark:to-teal-500/20",
     border: "border-emerald-500/30 dark:border-emerald-500/40",
     iconBg: "bg-emerald-500/10 dark:bg-emerald-500/20",
     icon: "text-emerald-600 dark:text-emerald-400",
   },
   "integration-email": {
-    gradient: "from-blue-500/20 to-cyan-500/20 dark:from-blue-500/20 dark:to-cyan-500/20",
+    gradient:
+      "from-blue-500/20 to-cyan-500/20 dark:from-blue-500/20 dark:to-cyan-500/20",
     border: "border-blue-500/30 dark:border-blue-500/40",
     iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
     icon: "text-blue-600 dark:text-blue-400",
   },
   "integration-slack": {
-    gradient: "from-violet-500/20 to-fuchsia-500/20 dark:from-violet-500/20 dark:to-fuchsia-500/20",
+    gradient:
+      "from-violet-500/20 to-fuchsia-500/20 dark:from-violet-500/20 dark:to-fuchsia-500/20",
     border: "border-violet-500/30 dark:border-violet-500/40",
     iconBg: "bg-violet-500/10 dark:bg-violet-500/20",
     icon: "text-violet-600 dark:text-violet-400",
   },
   "integration-webhook": {
-    gradient: "from-pink-500/20 to-rose-500/20 dark:from-pink-500/20 dark:to-rose-500/20",
+    gradient:
+      "from-pink-500/20 to-rose-500/20 dark:from-pink-500/20 dark:to-rose-500/20",
     border: "border-pink-500/30 dark:border-pink-500/40",
     iconBg: "bg-pink-500/10 dark:bg-pink-500/20",
     icon: "text-pink-600 dark:text-pink-400",
   },
   "api-request": {
-    gradient: "from-fuchsia-500/20 to-pink-500/20 dark:from-fuchsia-500/20 dark:to-pink-500/20",
+    gradient:
+      "from-fuchsia-500/20 to-pink-500/20 dark:from-fuchsia-500/20 dark:to-pink-500/20",
     border: "border-fuchsia-500/30 dark:border-fuchsia-500/40",
     iconBg: "bg-fuchsia-500/10 dark:bg-fuchsia-500/20",
     icon: "text-fuchsia-600 dark:text-fuchsia-400",
   },
   // Executor-backed nodes
-  "openai": {
-    gradient: "from-teal-500/20 to-emerald-500/20 dark:from-teal-500/20 dark:to-emerald-500/20",
+  openai: {
+    gradient:
+      "from-teal-500/20 to-emerald-500/20 dark:from-teal-500/20 dark:to-emerald-500/20",
     border: "border-teal-500/30 dark:border-teal-500/40",
     iconBg: "bg-teal-500/10 dark:bg-teal-500/20",
     icon: "text-teal-600 dark:text-teal-400",
   },
-  "slack": {
-    gradient: "from-violet-500/20 to-purple-500/20 dark:from-violet-500/20 dark:to-purple-500/20",
+  slack: {
+    gradient:
+      "from-violet-500/20 to-purple-500/20 dark:from-violet-500/20 dark:to-purple-500/20",
     border: "border-violet-500/30 dark:border-violet-500/40",
     iconBg: "bg-violet-500/10 dark:bg-violet-500/20",
     icon: "text-violet-600 dark:text-violet-400",
   },
   "send-email": {
-    gradient: "from-blue-500/20 to-sky-500/20 dark:from-blue-500/20 dark:to-sky-500/20",
+    gradient:
+      "from-blue-500/20 to-sky-500/20 dark:from-blue-500/20 dark:to-sky-500/20",
     border: "border-blue-500/30 dark:border-blue-500/40",
     iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
     icon: "text-blue-600 dark:text-blue-400",
   },
-  "delay": {
-    gradient: "from-slate-500/20 to-zinc-500/20 dark:from-slate-500/20 dark:to-zinc-500/20",
+  delay: {
+    gradient:
+      "from-slate-500/20 to-zinc-500/20 dark:from-slate-500/20 dark:to-zinc-500/20",
     border: "border-slate-500/30 dark:border-slate-500/40",
     iconBg: "bg-slate-500/10 dark:bg-slate-500/20",
     icon: "text-slate-600 dark:text-slate-400",
@@ -208,7 +222,9 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
     setNodes((nds) => nds.filter((n) => n.id !== id));
-    setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
+    setEdges((eds) =>
+      eds.filter((edge) => edge.source !== id && edge.target !== id),
+    );
   };
 
   const handleAdd = (e: React.MouseEvent) => {
@@ -235,11 +251,11 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
   const handleAddOut = (e: React.MouseEvent, handleId?: string) => {
     e.stopPropagation();
     window.dispatchEvent(
-      new CustomEvent("open-node-palette", { 
-        detail: { 
+      new CustomEvent("open-node-palette", {
+        detail: {
           sourceNodeId: id,
-          sourceHandle: handleId
-        } 
+          sourceHandle: handleId,
+        },
       }),
     );
   };
@@ -247,10 +263,14 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
   return (
     <div
       className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-background/95 p-3 shadow-lg backdrop-blur-xl transition-all duration-300 ${
-        selected ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}` : "border-border/50 hover:border-border/80"
+        selected
+          ? `ring-2 ring-ring ring-offset-2 ring-offset-background ${colors.border}`
+          : "border-border/50 hover:border-border/80"
       }`}
     >
-      <div className={`pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 ${!isHandleHovered ? 'group-hover:-top-11 group-hover:pointer-events-auto group-hover:opacity-100' : ''} before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']`}>
+      <div
+        className={`pointer-events-none absolute -top-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-border bg-background p-1 opacity-0 shadow-lg transition-all duration-200 ${!isHandleHovered ? "group-hover:-top-11 group-hover:pointer-events-auto group-hover:opacity-100" : ""} before:absolute before:-bottom-4 before:left-0 before:right-0 before:h-4 before:content-['']`}
+      >
         <button
           onClick={handleAdd}
           className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
@@ -265,7 +285,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
         >
           <Gear weight="bold" className="h-3.5 w-3.5" />
         </button>
-        <div className="mx-0.5 h-4 w-[1px] bg-border" />
+        <div className="mx-0.5 h-4 w-px bg-border" />
         <button
           onClick={handleDelete}
           className="flex h-7 w-7 items-center justify-center rounded text-red-500 transition-colors hover:bg-secondary hover:text-red-600"
@@ -275,7 +295,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
         </button>
       </div>
       <div
-        className={`pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br opacity-50 dark:opacity-40 ${colors.gradient}`}
+        className={`pointer-events-none absolute inset-0 rounded-xl bg-linear-to-br opacity-50 dark:opacity-40 ${colors.gradient}`}
       />
       {!isTrigger && (
         <>
@@ -283,7 +303,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute left-[-20px] top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             IN
           </div>
-          <div 
+          <div
             className="group/handle absolute left-[-40px] top-1/2 -translate-x-1/2 -translate-y-1/2"
             onMouseEnter={() => setIsHandleHovered(true)}
             onMouseLeave={() => setIsHandleHovered(false)}
@@ -300,7 +320,12 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
               type="target"
               position={Position.Left}
               className="h-3! w-3! border-2! border-background! bg-foreground!"
-              style={{ position: 'relative', left: '0', top: '0', transform: 'none' }}
+              style={{
+                position: "relative",
+                left: "0",
+                top: "0",
+                transform: "none",
+              }}
             />
           </div>
         </>
@@ -339,7 +364,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute right-[-20px] top-[30%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             NO
           </div>
-          <div 
+          <div
             className="group/handle absolute right-[-40px] top-[30%] -translate-y-1/2 translate-x-1/2"
             onMouseEnter={() => setIsHandleHovered(true)}
             onMouseLeave={() => setIsHandleHovered(false)}
@@ -357,7 +382,12 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
               type="source"
               position={Position.Right}
               className="h-3! w-3! border-2! border-background! bg-foreground!"
-              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+              style={{
+                position: "relative",
+                right: "0",
+                top: "0",
+                transform: "none",
+              }}
             />
           </div>
 
@@ -366,7 +396,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute right-[-20px] top-[70%] z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             YES
           </div>
-          <div 
+          <div
             className="group/handle absolute right-[-40px] top-[70%] -translate-y-1/2 translate-x-1/2"
             onMouseEnter={() => setIsHandleHovered(true)}
             onMouseLeave={() => setIsHandleHovered(false)}
@@ -384,7 +414,12 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
               type="source"
               position={Position.Right}
               className="h-3! w-3! border-2! border-background! bg-foreground!"
-              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+              style={{
+                position: "relative",
+                right: "0",
+                top: "0",
+                transform: "none",
+              }}
             />
           </div>
         </>
@@ -396,7 +431,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
           <div className="pointer-events-none absolute right-[-20px] top-1/2 z-10 translate-x-1/2 -translate-y-1/2 bg-background px-1 py-0.5 text-[8px] font-bold tracking-wider text-foreground">
             OUT
           </div>
-          <div 
+          <div
             className="group/handle absolute right-[-40px] top-1/2 -translate-y-1/2 translate-x-1/2"
             onMouseEnter={() => setIsHandleHovered(true)}
             onMouseLeave={() => setIsHandleHovered(false)}
@@ -413,7 +448,12 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
               type="source"
               position={Position.Right}
               className="h-3! w-3! border-2! border-background! bg-foreground!"
-              style={{ position: 'relative', right: '0', top: '0', transform: 'none' }}
+              style={{
+                position: "relative",
+                right: "0",
+                top: "0",
+                transform: "none",
+              }}
             />
           </div>
         </>

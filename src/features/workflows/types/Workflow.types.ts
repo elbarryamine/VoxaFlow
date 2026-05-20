@@ -2,7 +2,7 @@ export interface Workflow {
   id: string;
   user_id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
   definition: {
     nodes: any[];
     edges: any[];

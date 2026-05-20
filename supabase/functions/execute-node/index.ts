@@ -62,7 +62,7 @@ Deno.serve(async (req: Request) => {
 
   // ── 3. Mark this node as running ─────────────────────────────────────────
   await supabase.from('node_executions')
-    .update({ status: 'running', started_at: new Date().toISOString() })
+    .update({ status: 'running' })
     .eq('execution_id', executionId)
     .eq('node_id', nodeId);
 
@@ -103,14 +103,12 @@ Deno.serve(async (req: Request) => {
     return new Response('unknown executor', { status: 200 });
   }
 
-  const startMs = Date.now();
   let result: ExecutionResult;
   try {
     result = await executor.execute(interpolatedNode, context);
   } catch (err: any) {
     result = { status: 'failed', error: String(err.message || err) };
   }
-  const durationMs = Date.now() - startMs;
 
   // ── 7. Write result ───────────────────────────────────────────────────────
   await supabase.from('node_executions').update({
@@ -118,8 +116,6 @@ Deno.serve(async (req: Request) => {
     output_data: result.output ?? {},
     input_data: interpolatedNode.data,
     error_message: result.error ?? null,
-    finished_at: new Date().toISOString(),
-    duration_ms: durationMs,
   }).eq('execution_id', executionId).eq('node_id', nodeId);
 
   // ── 8. Handle failure ─────────────────────────────────────────────────────

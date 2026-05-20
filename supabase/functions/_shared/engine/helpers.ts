@@ -1,5 +1,5 @@
 import { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.42.0';
-import { WorkflowDefinition } from '../types.ts';
+import { WorkflowDefinition } from './types.ts';
 
 export async function maybeMarkExecutionFailed(
   supabase: SupabaseClient,

@@ -20,8 +20,8 @@ export default async function ExecutionsPage() {
 
   const executions: Execution[] = (dbExecutions || []).map((exec: any) => {
     let durationStr = "—";
-    if (exec.started_at && exec.finished_at) {
-      const ms = new Date(exec.finished_at).getTime() - new Date(exec.started_at).getTime();
+    if (exec.created_at && exec.finished_at) {
+      const ms = new Date(exec.finished_at).getTime() - new Date(exec.created_at).getTime();
       const s = Math.floor(ms / 1000);
       if (s < 60) durationStr = `${s}s`;
       else durationStr = `${Math.floor(s / 60)}m ${s % 60}s`;
@@ -39,8 +39,8 @@ export default async function ExecutionsPage() {
       workflowName: exec.workflows?.name || "Unknown Workflow",
       status: mappedStatus,
       duration: durationStr,
-      trigger: exec.trigger_source || "Webhook",
-      startedAt: exec.started_at || exec.created_at,
+      trigger: "Webhook",
+      startedAt: exec.created_at,
     };
   });
 

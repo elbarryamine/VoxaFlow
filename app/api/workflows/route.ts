@@ -40,14 +40,13 @@ export async function POST(request: Request) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await request.json();
-    const { name, description, definition } = body;
+    const { name, definition } = body;
 
     const { data, error } = await supabase
       .from('workflows')
       .insert({
         user_id: user.id,
         name: name || 'Untitled Workflow',
-        description: description || '',
         definition: definition || { nodes: [], edges: [] },
         is_active: true
       })

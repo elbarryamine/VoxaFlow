@@ -37,9 +37,7 @@ Deno.serve(async (req: Request) => {
       workflow_id: workflow.id,
       user_id: workflow.user_id,
       status: 'running',
-      trigger_source: 'webhook',
       trigger_payload: triggerPayload,
-      started_at: new Date().toISOString(),
     })
     .select('id')
     .single();
