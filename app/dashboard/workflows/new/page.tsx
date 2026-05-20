@@ -34,7 +34,6 @@ export default function NewWorkflowPage() {
         router.push(`/dashboard/workflows/${data.id}`);
       } else {
         const errorData = await res.json();
-        console.error(errorData);
         alert(`Failed to save: ${errorData.error || res.statusText}`);
       }
     } catch (err) {

@@ -64,10 +64,7 @@ src/
 ```
 supabase/
 ├── migrations/                         # SQL schema and RLS policies
-│   ├── 20260510000000_workflow_execution_schema.sql  # Core tables (workflows, executions, node_executions, credentials)
-│   ├── 20260520000001_node_execution_timing.sql      # Adds started_at/finished_at to node_executions
-│   ├── 20260520000002_node_execution_logs.sql        # Adds node_execution_logs table (per-step log lines)
-│   └── 20260520000004_executions_realtime.sql      # Realtime on executions + node_executions
+│   └── 20260521000000_initial_schema.sql             # Full schema: workflows, executions, node_executions, node_execution_logs, credentials, RLS, realtime
 └── functions/                          # Edge Functions (Deno)
     ├── _shared/                        # Shared engine logic & executors
     │   └── engine/

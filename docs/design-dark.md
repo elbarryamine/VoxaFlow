@@ -92,11 +92,11 @@ typography:
     fontWeight: '500'
     lineHeight: 16px
 rounded:
-  sm: 0.125rem
-  DEFAULT: 0.25rem
-  md: 0.375rem
-  lg: 0.5rem
-  xl: 0.75rem
+  sm: 0.25rem
+  DEFAULT: 0.5rem
+  md: 0.75rem
+  lg: 1rem
+  xl: 1.5rem
   full: 9999px
 spacing:
   unit: 4px
@@ -141,7 +141,7 @@ In this dark mode environment, depth is communicated through **Tonal Layering** 
 - **Outlines:** Subtle, low-contrast borders (1px, 10% opacity white) are used to define edges where tonal shifts are too subtle. This maintains a flat, sophisticated appearance without the "heaviness" of shadows.
 
 ## Shapes
-The shape language is "Soft Professional." A modest corner radius of 4px (0.25rem) is applied to most UI components like buttons and input fields, reflecting a modern but grounded sensibility. Larger containers like cards may use up to 8px to feel more approachable, but the system avoids fully rounded or pill-shaped elements to maintain its intellectual, structured character.
+The shape language is "Soft Professional." Corner radii match light mode (`--radius-sm` through `--radius-xl` in `app/globals.css`) so components like workflow nodes and cards keep the same rounding when switching themes. Larger containers use `rounded-xl` (1.5rem); controls typically use `rounded-lg` or `rounded-xl`.
 
 ## Components
 - **Buttons:** Primary buttons use a solid parchment fill (#D4C5B0) with dark text (#1A1816). Secondary buttons are outlined in a muted wood-tone with no fill.
