@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentType, type ReactNode } from "react";
+import { useEffect, useRef, type ComponentType, type ReactNode } from "react";
 import { X } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/src/shared/utils/cn";
 
@@ -34,7 +34,6 @@ export const ModalShell = ({
   bodyClassName,
   onOpen,
 }: ModalShellProps) => {
-  const [isVisible, setIsVisible] = useState(false);
   const onOpenRef = useRef(onOpen);
 
   useEffect(() => {
@@ -44,37 +43,27 @@ export const ModalShell = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    onOpenRef.current?.();
-    const frame = requestAnimationFrame(() => setIsVisible(true));
+    const frame = requestAnimationFrame(() => {
+      onOpenRef.current?.();
+    });
 
-    return () => {
-      cancelAnimationFrame(frame);
-      setIsVisible(false);
-    };
+    return () => cancelAnimationFrame(frame);
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className={cn(
-        "fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6",
-        isVisible ? "pointer-events-auto" : "pointer-events-none",
-      )}
-    >
+    <div className="fixed inset-0 z-100 flex animate-in items-center justify-center p-4 duration-200 fade-in sm:p-6">
       <div
-        className={cn(
-          "absolute inset-0 bg-inverse-surface/40 transition-opacity duration-300",
-          isVisible ? "opacity-100" : "opacity-0",
-        )}
+        className="absolute inset-0 bg-inverse-surface/40"
         onClick={onClose}
+        aria-hidden
       />
 
       <div
         className={cn(
-          "relative flex max-h-[min(640px,90vh)] w-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-xl transition-all duration-300",
+          "relative flex max-h-[min(640px,90vh)] w-full animate-in flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-xl duration-300 zoom-in-95",
           maxWidthClass,
-          isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0",
         )}
         role="dialog"
         aria-modal="true"
@@ -85,7 +74,7 @@ export const ModalShell = ({
             <div className="flex items-center gap-2">
               {Icon && (
                 <Icon
-                  className="h-4 w-4 shrink-0 text-secondary"
+                  className="h-6 w-6 shrink-0 text-secondary"
                   weight="duotone"
                 />
               )}
