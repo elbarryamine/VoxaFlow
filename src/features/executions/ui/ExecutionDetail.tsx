@@ -170,7 +170,7 @@ const LOG_COLORS = {
 };
 
 function LogLine({ log }: { log: NodeExecutionLog }) {
-  const c = LOG_COLORS[log.level];
+  const c = LOG_COLORS[log.level] ?? LOG_COLORS.error;
   return (
     <div className="flex items-baseline gap-2.5 group">
       <span className={cn('mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', c.dot)} />

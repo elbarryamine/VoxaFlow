@@ -108,6 +108,7 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-destructive: var(--danger);
 
   --color-sidebar-bg: var(--sidebar-bg);
   --color-sidebar-fg: var(--sidebar-fg);
