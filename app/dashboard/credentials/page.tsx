@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { ModalShell } from "@/src/shared/ui/ModalShell";
+import { EmptyState } from "@/src/shared/ui/EmptyState";
 import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import {
   Key,
@@ -144,11 +145,15 @@ export default function CredentialsPage() {
   }
 
   const serviceConf = SERVICE_CONFIG[form.service];
+  const isEmpty = !loading && credentials.length === 0 && !showForm;
 
   return (
     <PageLayout
       title="Credentials"
       description="Securely store API keys used by your workflow nodes"
+      contentClassName={
+        isEmpty || loading ? "flex min-h-0 flex-1 flex-col" : "space-y-6"
+      }
       actions={
         <TopBarButton onClick={() => { setShowForm(true); setError(null); }}>
           <Plus className="h-4 w-4" weight="bold" />
@@ -156,7 +161,7 @@ export default function CredentialsPage() {
         </TopBarButton>
       }
     >
-      <div className="space-y-6">
+      <div className={isEmpty || loading ? "flex min-h-0 flex-1 flex-col" : "space-y-6"}>
         {/* Feedback banners */}
         {success && (
           <div className="flex items-center gap-3 rounded-xl border border-success/30 bg-success/10 px-5 py-4 font-manrope text-[14px] font-bold text-success shadow-sm">
@@ -295,26 +300,27 @@ export default function CredentialsPage() {
 
         {/* List */}
         {loading ? (
-          <div className="flex h-40 items-center justify-center">
+          <div className="flex flex-1 items-center justify-center">
             <CircleNotch className="h-8 w-8 animate-spin text-on-surface-variant" />
           </div>
-        ) : credentials.length === 0 && !showForm ? (
-          <div className="flex h-[380px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/60 bg-card/40 text-center font-manrope transition-colors hover:bg-card/60">
-            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-container/60">
-              <Key className="h-8 w-8 text-on-secondary-container" weight="duotone" />
-            </div>
-            <h3 className="mb-2 font-newsreader text-2xl font-bold text-on-surface">No credentials yet</h3>
-            <p className="mb-6 max-w-sm text-[15px] font-medium text-on-surface-variant">
-              Add API keys so your workflow nodes can authenticate with external services securely.
-            </p>
-            <button
-              onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
-            >
-              <Plus className="h-5 w-5" weight="bold" />
-              Add your first credential
-            </button>
-          </div>
+        ) : isEmpty ? (
+          <EmptyState
+            layout="page"
+            icon={Key}
+            title="No credentials yet"
+            description="Add API keys so your workflow nodes can authenticate with external services securely."
+            action={
+              <TopBarButton
+                onClick={() => {
+                  setShowForm(true);
+                  setError(null);
+                }}
+              >
+                <Plus className="h-4 w-4" weight="bold" />
+                Add your first credential
+              </TopBarButton>
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
             {credentials.map((cred) => {

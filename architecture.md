@@ -49,9 +49,9 @@ src/
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms
-│   └── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
+│   └── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server); no RecentActivity
 ├── shared/                             # Cross-cutting concerns
-│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar
+│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, EmptyState
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper
 │   └── theme/                          # ThemeProvider & Dark mode logic
 └── server/                             # Server-side specific logic

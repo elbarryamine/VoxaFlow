@@ -5,7 +5,7 @@ import {
 } from "@/src/features/executions/utils/mapDbExecution";
 import type { Execution } from "@/src/features/executions/types/Execution.types";
 import type { Workflow } from "@/src/features/workflows/types/Workflow.types";
-import type { ActivityItem, DashboardMetrics } from "../types/Dashboard.types";
+import type { DashboardMetrics } from "../types/Dashboard.types";
 import { formatRelativeTime } from "./formatRelativeTime";
 import { buildDashboardMetrics } from "./buildDashboardMetrics";
 
@@ -19,30 +19,6 @@ interface DbWorkflowRow {
   created_at: string;
   updated_at: string;
   executions?: { count: number }[];
-}
-
-const EXECUTION_ACTION: Record<Execution["status"], string> = {
-  success: "Run completed successfully",
-  failed: "Run failed",
-  running: "Run in progress",
-  waiting: "Run waiting to start",
-};
-
-function mapExecutionToActivity(execution: Execution): ActivityItem {
-  const outcome: ActivityItem["outcome"] =
-    execution.status === "success"
-      ? "success"
-      : execution.status === "failed"
-        ? "failed"
-        : "pending";
-
-  return {
-    id: execution.id,
-    workflow: execution.workflowName,
-    action: EXECUTION_ACTION[execution.status],
-    outcome,
-    time: formatRelativeTime(execution.startedAt),
-  };
 }
 
 function mapDbWorkflow(
@@ -67,7 +43,6 @@ function mapDbWorkflow(
 export interface DashboardData {
   executions: Execution[];
   workflows: Workflow[];
-  activities: ActivityItem[];
   metrics: DashboardMetrics;
 }
 
@@ -110,13 +85,11 @@ export async function loadDashboardData(userId: string): Promise<DashboardData> 
     ),
   );
 
-  const activities = executions.slice(0, 8).map(mapExecutionToActivity);
   const metrics = buildDashboardMetrics(executions, workflows);
 
   return {
     executions,
     workflows,
-    activities,
     metrics,
   };
 }

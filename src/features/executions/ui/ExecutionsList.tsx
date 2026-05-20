@@ -1,6 +1,8 @@
 'use client';
 
 import { Pulse } from '@phosphor-icons/react/dist/ssr';
+import { EmptyState } from '@/src/shared/ui/EmptyState';
+import { TopBarLink } from '@/src/shared/ui/TopBarButton';
 import { ExecutionCard } from './ExecutionCard';
 import { useExecutionsListLive } from '../hooks/useExecutionsListLive';
 import type { Execution } from '../types/Execution.types';
@@ -15,15 +17,17 @@ export const ExecutionsList = ({ initialExecutions, userId }: ExecutionsListProp
 
   if (executions.length === 0) {
     return (
-      <div className="flex h-[400px] flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-border/60 bg-card/40 text-center font-manrope transition-colors hover:bg-card/60">
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-secondary-container/60">
-          <Pulse className="h-8 w-8 text-on-secondary-container" weight="duotone" />
-        </div>
-        <h3 className="mb-2 font-newsreader text-2xl font-bold text-on-surface">No executions yet</h3>
-        <p className="max-w-sm text-[15px] font-medium text-on-surface-variant">
-          When your workflows run, their execution history and details will appear here.
-        </p>
-      </div>
+      <EmptyState
+        layout="page"
+        icon={Pulse}
+        title="No executions yet"
+        description="When your workflows run, their execution history and details will appear here."
+        action={
+          <TopBarLink href="/dashboard/workflows">
+            Go to workflows
+          </TopBarLink>
+        }
+      />
     );
   }
 

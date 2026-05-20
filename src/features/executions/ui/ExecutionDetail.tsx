@@ -385,7 +385,7 @@ export function ExecutionDetail({
     <div className="space-y-6 max-w-3xl mx-auto font-manrope">
 
       {/* ── Header card ────────────────────────────────────────────────────── */}
-      <div className="rounded-[2rem] border border-border/50 bg-card overflow-hidden shadow-sm">
+      <div className="rounded-4xl border border-border/50 bg-card overflow-hidden shadow-sm">
         {/* Accent top bar */}
         <div className={cn('h-1.5 w-full', cfg.barClass)} />
 
@@ -442,7 +442,7 @@ export function ExecutionDetail({
               <StatChip
                 label="Failed"
                 value={failedCount}
-                className="px-6 !text-error"
+                className="px-6 text-error!"
               />
             )}
           </div>
@@ -472,7 +472,7 @@ export function ExecutionDetail({
         </div>
 
         {nodeExecutions.length === 0 ? (
-          <div className="rounded-[2rem] border-2 border-dashed border-border/60 bg-card/40 px-6 py-12 text-center transition-colors hover:bg-card/60">
+          <div className="rounded-4xl border-2 border-dashed border-border/60 bg-card/40 px-6 py-12 text-center transition-colors hover:bg-card/60">
             <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-secondary-container/60 mx-auto mb-4">
               <Clock className="h-8 w-8 text-on-secondary-container" weight="duotone" />
             </div>

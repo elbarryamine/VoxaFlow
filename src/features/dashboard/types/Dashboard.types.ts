@@ -1,13 +1,3 @@
-export type ActivityOutcome = "success" | "failed" | "pending";
-
-export interface ActivityItem {
-  id: string;
-  workflow: string;
-  action: string;
-  outcome: ActivityOutcome;
-  time: string;
-}
-
 export interface DayBucket {
   date: string;
   label: string;

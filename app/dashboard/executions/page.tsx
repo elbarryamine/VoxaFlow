@@ -24,6 +24,11 @@ export default async function ExecutionsPage() {
     <PageLayout
       title="Executions"
       description="Monitor and manage your workflow execution history"
+      contentClassName={
+        executions.length === 0
+          ? "flex min-h-0 flex-1 flex-col"
+          : undefined
+      }
     >
       <ExecutionsList initialExecutions={executions} userId={user.id} />
     </PageLayout>
