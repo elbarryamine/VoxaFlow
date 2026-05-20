@@ -1,4 +1,4 @@
-import { NodeExecutor, WorkflowNode, ExecutionResult } from '../../types.ts';
+import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '../../types.ts';
 
 /**
  * DelayExecutor — pauses workflow progression for N seconds.
@@ -13,7 +13,8 @@ import { NodeExecutor, WorkflowNode, ExecutionResult } from '../../types.ts';
  * and this executor would write to a scheduled job table (future work).
  */
 export class DelayExecutor implements NodeExecutor {
-  async execute(node: WorkflowNode): Promise<ExecutionResult> {
+  async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+    const { logger } = context;
     const seconds = Number(node.data.seconds ?? 5);
 
     if (seconds < 0 || seconds > 300) {
@@ -23,7 +24,9 @@ export class DelayExecutor implements NodeExecutor {
       };
     }
 
+    await logger.info(`Waiting ${seconds}s`);
     await new Promise<void>((resolve) => setTimeout(resolve, seconds * 1000));
+    await logger.info(`Resumed after ${seconds}s`);
 
     return {
       status: 'success',

@@ -23,6 +23,8 @@ export interface WorkflowDefinition {
 
 // ─── Execution Runtime ───────────────────────────────────────────────────────
 
+import type { NodeLogger } from './NodeLogger.ts';
+
 export interface ExecutionContext {
   executionId: string;
   workflowId: string;
@@ -38,6 +40,9 @@ export interface ExecutionContext {
 
   // Resolves and decrypts a credential by ID
   resolveCredential(credentialId: string): Promise<Record<string, string>>;
+
+  // Writes structured log lines to node_execution_logs for this node's run
+  logger: NodeLogger;
 }
 
 export interface ExecutionResult {

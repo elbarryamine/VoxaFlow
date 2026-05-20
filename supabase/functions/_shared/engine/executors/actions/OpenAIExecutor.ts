@@ -13,6 +13,7 @@ import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '.
  */
 export class OpenAIExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+    const { logger } = context;
     try {
       if (!node.data.credentialId) {
         return { status: 'failed', error: 'Missing credentialId — configure an OpenAI credential on this node.' };
@@ -22,6 +23,7 @@ export class OpenAIExecutor implements NodeExecutor {
       if (!creds.apiKey) {
         return { status: 'failed', error: 'OpenAI credential is missing apiKey field.' };
       }
+      await logger.info('Credential resolved');
 
       const model = (node.data.model as string) || 'gpt-4o-mini';
       const temperature = Number(node.data.temperature ?? 0.7);
@@ -32,6 +34,8 @@ export class OpenAIExecutor implements NodeExecutor {
       if (!prompt) {
         return { status: 'failed', error: 'prompt is required for the OpenAI node.' };
       }
+
+      await logger.info(`Calling ${model}`, { model, temperature, max_tokens: maxTokens });
 
       const messages: { role: string; content: string }[] = [];
       if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
@@ -49,6 +53,7 @@ export class OpenAIExecutor implements NodeExecutor {
       const data = await response.json();
 
       if (!response.ok) {
+        await logger.error(`${response.status} ${response.statusText}`, data as Record<string, unknown>);
         return {
           status: 'failed',
           error: `OpenAI API error ${response.status}: ${data.error?.message ?? JSON.stringify(data)}`,
@@ -56,6 +61,8 @@ export class OpenAIExecutor implements NodeExecutor {
       }
 
       const choice = data.choices?.[0];
+      await logger.info(`${response.status} OK → finish_reason: ${choice?.finish_reason}`, { usage: data.usage });
+
       return {
         status: 'success',
         output: {
@@ -67,6 +74,7 @@ export class OpenAIExecutor implements NodeExecutor {
       };
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
+      await logger.error(errorMsg);
       return { status: 'failed', error: errorMsg };
     }
   }

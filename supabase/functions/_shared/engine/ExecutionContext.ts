@@ -1,4 +1,5 @@
 import { ExecutionContext } from './types.ts';
+import { NodeLogger } from './NodeLogger.ts';
 import { createSupabaseClient } from './supabaseClient.ts';
 
 function get(obj: unknown, path: string): unknown {
@@ -23,18 +24,15 @@ function get(obj: unknown, path: string): unknown {
   }, obj);
 }
 
-// Need to define decryptCredential or import it
-// Assuming we'll have it in supabaseClient or a crypto utils file.
-// For now, let's mock it or leave a comment.
-
 export function buildExecutionContext(params: {
   executionId: string;
   workflowId: string;
   userId: string;
   triggerPayload: Record<string, unknown>;
   state: Record<string, unknown>;
+  logger: NodeLogger;
 }): ExecutionContext {
-  const { executionId, workflowId, userId, triggerPayload, state } = params;
+  const { executionId, workflowId, userId, triggerPayload, state, logger } = params;
 
   function interpolateValue(value: unknown): unknown {
     if (typeof value === 'string') {
@@ -58,6 +56,7 @@ export function buildExecutionContext(params: {
     userId,
     triggerPayload,
     state,
+    logger,
     interpolate: <T>(template: T): T => interpolateValue(template) as T,
     resolveCredential: async (credentialId: string) => {
       const supabase = createSupabaseClient();

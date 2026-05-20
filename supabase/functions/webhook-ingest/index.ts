@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
 
   // 5. Fire execute-node for each trigger node via pg_net
   // Assuming pg_net is available or just using a regular Deno fetch to the edge function URL
-  const functionsUrl = Deno.env.get('SUPABASE_FUNCTIONS_URL');
+  const functionsUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1`;
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
   for (const node of triggerNodes) {

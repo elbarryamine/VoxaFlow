@@ -4,6 +4,7 @@ import { buildExecutionContext } from '../_shared/engine/ExecutionContext.ts';
 import { maybeMarkExecutionFailed, maybeMarkExecutionComplete } from '../_shared/engine/helpers.ts';
 import { initExecutors } from '../_shared/engine/executors/init.ts';
 import { ExecutorRegistry } from '../_shared/engine/executors/Registry.ts';
+import { NodeLogger } from '../_shared/engine/NodeLogger.ts';
 
 // Initialize the registry
 initExecutors();
@@ -50,21 +51,44 @@ Deno.serve(async (req: Request) => {
       .eq('execution_id', executionId)
       .in('node_id', parentNodeIds);
 
-    const allDone = parentNodeIds.every(id =>
-      parentRows?.find(r => r.node_id === id)?.status === 'success'
+    const TERMINAL_STATUSES = ['success', 'failed', 'skipped'];
+
+    const allSuccess = parentNodeIds.every(id =>
+      parentRows?.find((r: { node_id: string; status: string }) => r.node_id === id)?.status === 'success'
     );
 
-    if (!allDone) {
-      // Another parallel branch hasn't finished yet.
+    if (!allSuccess) {
+      const allTerminal = parentNodeIds.every(id =>
+        TERMINAL_STATUSES.includes(parentRows?.find((r: { node_id: string; status: string }) => r.node_id === id)?.status ?? '')
+      );
+
+      if (allTerminal) {
+        await supabase.from('node_executions')
+          .update({ status: 'skipped' })
+          .eq('execution_id', executionId)
+          .eq('node_id', nodeId);
+        await maybeMarkExecutionComplete(supabase, executionId);
+        return new Response('skipped — parent failed or was skipped', { status: 200 });
+      }
+
       return new Response('deferred — waiting for other parents', { status: 200 });
     }
   }
 
   // ── 3. Mark this node as running ─────────────────────────────────────────
-  await supabase.from('node_executions')
-    .update({ status: 'running' })
+  const { data: nodeExecRow, error: nodeExecRowError } = await supabase.from('node_executions')
+    .update({ status: 'running', started_at: new Date().toISOString() })
     .eq('execution_id', executionId)
-    .eq('node_id', nodeId);
+    .eq('node_id', nodeId)
+    .select('id')
+    .single();
+
+  if (nodeExecRowError || !nodeExecRow) {
+    console.error('Failed to mark node as running:', nodeExecRowError);
+    return new Response('node_execution row not found', { status: 200 });
+  }
+
+  const logger = new NodeLogger(nodeExecRow.id, supabase);
 
   // ── 4. Load all previous node outputs to build interpolation state ────────
   const { data: completedNodes } = await supabase
@@ -85,6 +109,7 @@ Deno.serve(async (req: Request) => {
     userId: execution.workflows.user_id,
     triggerPayload: execution.trigger_payload,
     state,
+    logger,
   });
 
   const interpolatedNode: WorkflowNode = {
@@ -97,7 +122,7 @@ Deno.serve(async (req: Request) => {
   const executor = ExecutorRegistry.get(nodeType);
   if (!executor) {
     await supabase.from('node_executions')
-      .update({ status: 'failed', error_message: `Unknown node type: ${nodeType}` })
+      .update({ status: 'failed', error_message: `Unknown node type: ${nodeType}`, finished_at: new Date().toISOString() })
       .eq('execution_id', executionId)
       .eq('node_id', nodeId);
     await maybeMarkExecutionFailed(supabase, executionId);
@@ -118,6 +143,7 @@ Deno.serve(async (req: Request) => {
     output_data: result.output ?? {},
     input_data: interpolatedNode.data,
     error_message: result.error ?? null,
+    finished_at: new Date().toISOString(),
   }).eq('execution_id', executionId).eq('node_id', nodeId);
 
   // ── 8. Handle failure ─────────────────────────────────────────────────────
@@ -135,7 +161,7 @@ Deno.serve(async (req: Request) => {
         .update({ status: 'pending', retry_count: (nodeExec?.retry_count ?? 0) + 1 })
         .eq('execution_id', executionId).eq('node_id', nodeId);
 
-      const functionsUrl = Deno.env.get('SUPABASE_FUNCTIONS_URL');
+      const functionsUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1`;
       const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
       fetch(`${functionsUrl}/execute-node`, {
         method: 'POST',
@@ -200,7 +226,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const functionsUrl = Deno.env.get('SUPABASE_FUNCTIONS_URL');
+    const functionsUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1`;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     fetch(`${functionsUrl}/execute-node`, {
       method: 'POST',

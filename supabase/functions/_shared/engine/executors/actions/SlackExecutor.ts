@@ -12,6 +12,7 @@ import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '.
  */
 export class SlackExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+    const { logger } = context;
     try {
       if (!node.data.credentialId) {
         return { status: 'failed', error: 'Missing credentialId — configure a Slack credential on this node.' };
@@ -21,12 +22,15 @@ export class SlackExecutor implements NodeExecutor {
       if (!creds.botToken) {
         return { status: 'failed', error: 'Slack credential is missing botToken field.' };
       }
+      await logger.info('Credential resolved');
 
       const channel = context.interpolate(node.data.channel as string || '');
       const text = context.interpolate(node.data.text as string || '');
 
       if (!channel) return { status: 'failed', error: 'channel is required for the Slack node.' };
       if (!text) return { status: 'failed', error: 'text is required for the Slack node.' };
+
+      await logger.info(`Posting to ${channel}`);
 
       const payload: Record<string, unknown> = { channel, text };
       if (node.data.username) payload.username = context.interpolate(node.data.username as string);
@@ -44,22 +48,22 @@ export class SlackExecutor implements NodeExecutor {
       const data = await response.json();
 
       if (!data.ok) {
+        await logger.error(`Slack API error: ${data.error ?? 'unknown'}`, data as Record<string, unknown>);
         return {
           status: 'failed',
           error: `Slack API error: ${data.error ?? JSON.stringify(data)}`,
         };
       }
 
+      await logger.info(`Message sent → ts: ${data.ts}`, { ts: data.ts, channel: data.channel });
+
       return {
         status: 'success',
-        output: {
-          ts: data.ts,
-          channel: data.channel,
-          message_text: text,
-        },
+        output: { ts: data.ts, channel: data.channel, message_text: text },
       };
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
+      await logger.error(errorMsg);
       return { status: 'failed', error: errorMsg };
     }
   }

@@ -2,6 +2,7 @@ import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '.
 
 export class ApiRequestExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+    const { logger } = context;
     try {
       const url = node.data.url as string;
       const method = (node.data.method as string) ?? 'GET';
@@ -29,17 +30,19 @@ export class ApiRequestExecutor implements NodeExecutor {
       // If a credential is provided, resolve it and append to headers/auth
       if (node.data.credentialId) {
         const creds = await context.resolveCredential(node.data.credentialId as string);
-        // Assuming simple Bearer auth for now, can be extended based on service type
         if (creds.apiKey) {
-           headers['Authorization'] = `Bearer ${creds.apiKey}`;
+          headers['Authorization'] = `Bearer ${creds.apiKey}`;
         }
+        await logger.info('Credential resolved');
       }
 
+      await logger.info(`${method} ${url}`);
+
       const response = await fetch(url, options);
-      
+
       let responseBody;
       const contentType = response.headers.get('content-type') || '';
-      
+
       if (contentType.includes('application/json')) {
         responseBody = await response.json();
       } else {
@@ -47,25 +50,23 @@ export class ApiRequestExecutor implements NodeExecutor {
       }
 
       if (!response.ok) {
+        await logger.error(`${response.status} ${response.statusText}`, { body: responseBody });
         return {
           status: 'failed',
           error: `HTTP Error ${response.status}: ${JSON.stringify(responseBody)}`,
-          output: {
-             statusCode: response.status,
-             body: responseBody
-          }
+          output: { statusCode: response.status, body: responseBody },
         };
       }
 
+      await logger.info(`${response.status} OK`, { statusCode: response.status });
+
       return {
         status: 'success',
-        output: {
-           statusCode: response.status,
-           body: responseBody,
-        },
+        output: { statusCode: response.status, body: responseBody },
       };
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
+      await logger.error(errorMsg);
       return { status: 'failed', error: errorMsg };
     }
   }

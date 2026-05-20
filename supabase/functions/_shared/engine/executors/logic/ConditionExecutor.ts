@@ -9,15 +9,22 @@ interface ConditionRule {
 
 export class ConditionExecutor implements NodeExecutor {
   async execute(node: WorkflowNode, context: ExecutionContext): Promise<ExecutionResult> {
+    const { logger } = context;
     const rules = (node.data.rules as ConditionRule[]) || [];
     const logic = (node.data.logic as string) ?? 'AND';
 
+    await logger.info(`Evaluating ${rules.length} rule${rules.length !== 1 ? 's' : ''} (${logic})`);
+
     const results = rules.map(rule => evaluateRule(rule, context.state, context.triggerPayload));
-    
+
     let passed = true;
     if (rules.length > 0) {
-       passed = logic === 'AND' ? results.every(Boolean) : results.some(Boolean);
+      passed = logic === 'AND' ? results.every(Boolean) : results.some(Boolean);
     }
+
+    await logger.info(`Condition ${passed ? 'passed → branch: true' : 'failed → branch: false'}`, {
+      rules: rules.map((r, i) => ({ ...r, result: results[i] })),
+    });
 
     return {
       status: 'success',

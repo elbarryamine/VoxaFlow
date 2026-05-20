@@ -63,8 +63,18 @@ src/
 ```
 supabase/
 ├── migrations/                         # SQL schema and RLS policies
+│   ├── 20260510000000_workflow_execution_schema.sql  # Core tables (workflows, executions, node_executions, credentials)
+│   ├── 20260520000001_node_execution_timing.sql      # Adds started_at/finished_at to node_executions
+│   └── 20260520000002_node_execution_logs.sql        # Adds node_execution_logs table (per-step log lines)
 └── functions/                          # Edge Functions (Deno)
     ├── _shared/                        # Shared engine logic & executors
+    │   └── engine/
+    │       ├── NodeLogger.ts           # Inserts structured log rows to node_execution_logs during execution;
+    │       │                           #   instantiated in execute-node with the node_executions.id UUID
+    │       ├── types.ts                # Core types — ExecutionContext includes logger: NodeLogger
+    │       ├── ExecutionContext.ts     # Builds ExecutionContext; accepts and exposes NodeLogger instance
+    │       ├── executors/actions/      # SendEmail, ApiRequest, Slack, OpenAI — all emit log lines via context.logger
+    │       └── executors/logic/        # Condition, Delay, Trigger — all emit log lines via context.logger
     ├── webhook-ingest/                 # Entry point for external triggers
-    └── execute-node/                   # Individual node execution runner
+    └── execute-node/                   # Individual node execution runner; instantiates NodeLogger after marking node running
 ```
