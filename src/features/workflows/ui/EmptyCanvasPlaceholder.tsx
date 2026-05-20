@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { Plus, GitBranch } from "@phosphor-icons/react/dist/ssr";
 
 interface EmptyCanvasPlaceholderProps {
   onClick: () => void;
@@ -8,16 +8,26 @@ interface EmptyCanvasPlaceholderProps {
 
 export const EmptyCanvasPlaceholder = ({ onClick }: EmptyCanvasPlaceholderProps) => {
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-6">
       <button
+        type="button"
         onClick={onClick}
-        className="group pointer-events-auto flex h-32 w-32 flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-border/50 bg-background/40 backdrop-blur-md transition-all hover:border-primary/50 hover:bg-background/60 hover:shadow-xl"
+        className="group pointer-events-auto flex max-w-sm flex-col items-center gap-4 rounded-2xl border border-dashed border-border/50 bg-card/90 px-8 py-8 text-center shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:shadow-md"
       >
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-transform group-hover:scale-110 group-active:scale-95">
-          <Plus weight="bold" className="h-6 w-6" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-300 group-hover:scale-105">
+          <GitBranch className="h-7 w-7" weight="duotone" />
         </div>
-        <span className="text-[13px] font-semibold text-muted-foreground group-hover:text-foreground">
-          Add First Node
+        <div>
+          <p className="font-newsreader text-xl font-bold tracking-tight text-on-surface">
+            Start your workflow
+          </p>
+          <p className="mt-1.5 font-manrope text-[13px] font-medium text-on-surface-variant">
+            Add a trigger or action from the component library
+          </p>
+        </div>
+        <span className="inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-4 font-manrope text-[13px] font-bold text-on-primary shadow-sm transition-all group-hover:bg-primary/90">
+          <Plus className="h-4 w-4" weight="bold" />
+          Add first node
         </span>
       </button>
     </div>

@@ -11,9 +11,11 @@ import {
   Lightning,
   DotsSixVertical,
   X,
+  SquaresFour,
 } from "@phosphor-icons/react/dist/ssr";
 import { NODE_TEMPLATES } from "../constants/NODE_TEMPLATES";
 import type { NodeTemplate } from "../constants/NODE_TEMPLATES";
+import { cn } from "@/src/shared/utils/cn";
 
 const CATEGORY_LABELS = {
   trigger: "Triggers",
@@ -82,74 +84,94 @@ export const NodePalette = ({
   });
 
   return (
-    <div className="h-full w-full shrink-0">
-      <div className="flex h-full w-full shrink-0 flex-col rounded-xl border border-border bg-card shadow-2xl">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <div>
-            <h3 className="text-sm font-semibold">Components</h3>
-            <p className="text-xs text-muted-foreground">
-              {isDraggable ? "Drag or click to add" : "Click to add to canvas"}
-            </p>
+    <div className="flex h-full w-full flex-col overflow-hidden border-l border-border/50 bg-card shadow-xl">
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/50 bg-surface-container-low px-4 py-3.5">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <SquaresFour
+              className="h-4 w-4 shrink-0 text-secondary"
+              weight="duotone"
+            />
+            <h3 className="font-newsreader text-lg font-bold tracking-tight text-on-surface">
+              Components
+            </h3>
           </div>
-          <button
-            onClick={() =>
-              window.dispatchEvent(new CustomEvent("close-node-palette"))
-            }
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <p className="mt-0.5 font-manrope text-[12px] font-medium text-on-surface-variant">
+            {isDraggable ? "Drag or click to add" : "Click to add to canvas"}
+          </p>
         </div>
-        <div className="flex-1 space-y-5 overflow-y-auto p-3 [scrollbar-color:var(--muted-foreground)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-muted-foreground/40 [&::-webkit-scrollbar-thumb]:border-2 [&::-webkit-scrollbar-thumb]:border-transparent [&::-webkit-scrollbar-thumb]:bg-clip-content [&::-webkit-scrollbar-thumb:hover]:bg-muted-foreground/60 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-2">
-          {sortedCategories.map((category) => {
-            const templates = grouped[category] || [];
-            if (templates.length === 0) return null;
+        <button
+          type="button"
+          onClick={() =>
+            window.dispatchEvent(new CustomEvent("close-node-palette"))
+          }
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
+          aria-label="Close components panel"
+        >
+          <X className="h-4 w-4" weight="bold" />
+        </button>
+      </div>
 
-            return (
-              <div key={category}>
-                <div className="flex items-center justify-between mb-2 px-1">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {CATEGORY_LABELS[category]}
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  {templates.map((template) => {
-                    const Icon =
-                      TYPE_ICONS[template.type as keyof typeof TYPE_ICONS] ??
-                      Globe;
-                    return (
-                      <div
-                        key={`${template.type}-${template.label}`}
-                        draggable={isDraggable}
-                        onDragStart={(e) => {
-                          if (isDraggable) {
-                            e.dataTransfer.effectAllowed = "move";
-                            onDragStart(template);
-                          }
-                        }}
-                        onClick={() => onAdd(template)}
-                        className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-border bg-background p-2.5 transition-colors hover:border-primary/30 hover:bg-secondary"
-                      >
-                        {isDraggable && (
-                          <DotsSixVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" />
-                        )}
-                        <Icon className="h-4 w-4 shrink-0 text-primary" />
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold">
-                            {template.label}
-                          </p>
-                          <p className="truncate text-[10px] text-muted-foreground">
-                            {template.description}
-                          </p>
-                        </div>
+      <div className="flex-1 space-y-5 overflow-y-auto p-3">
+        {sortedCategories.map((category) => {
+          const templates = grouped[category] || [];
+          if (templates.length === 0) return null;
+
+          const categoryEnabled = isConnectable(category);
+
+          return (
+            <div key={category}>
+              <p className="mb-2 px-1 font-manrope text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80">
+                {CATEGORY_LABELS[category]}
+              </p>
+              <div className="space-y-1.5">
+                {templates.map((template) => {
+                  const Icon =
+                    TYPE_ICONS[template.type as keyof typeof TYPE_ICONS] ??
+                    Globe;
+
+                  return (
+                    <div
+                      key={`${template.type}-${template.label}`}
+                      draggable={isDraggable && categoryEnabled}
+                      onDragStart={(e) => {
+                        if (isDraggable && categoryEnabled) {
+                          e.dataTransfer.effectAllowed = "move";
+                          onDragStart(template);
+                        }
+                      }}
+                      onClick={() => categoryEnabled && onAdd(template)}
+                      className={cn(
+                        "flex items-center gap-2.5 rounded-xl border p-2.5 transition-all duration-200",
+                        categoryEnabled
+                          ? "cursor-pointer border-border/50 bg-surface-container-lowest hover:border-primary/25 hover:bg-surface-variant/50"
+                          : "cursor-not-allowed border-border/30 bg-surface-variant/20 opacity-50",
+                      )}
+                    >
+                      {isDraggable && (
+                        <DotsSixVertical
+                          className="h-3.5 w-3.5 shrink-0 text-on-surface-variant/40"
+                          weight="bold"
+                        />
+                      )}
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-on-secondary-container">
+                        <Icon className="h-4 w-4" weight="duotone" />
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-manrope text-[13px] font-bold text-on-surface">
+                          {template.label}
+                        </p>
+                        <p className="truncate font-manrope text-[11px] font-medium text-on-surface-variant">
+                          {template.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
