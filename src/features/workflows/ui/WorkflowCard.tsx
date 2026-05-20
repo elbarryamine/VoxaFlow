@@ -3,75 +3,86 @@
 import Link from "next/link";
 import {
   GitBranch,
-  Play,
-  Clock,
   DotsThreeVertical,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Workflow } from "../types/Workflow.types";
+import { cn } from "@/src/shared/utils/cn";
 
 interface WorkflowCardProps {
   workflow: Workflow;
 }
 
-const STATUS_STYLES = {
-  active: "bg-success/10 text-success",
-  inactive: "bg-muted/10 text-muted-foreground",
-  draft: "bg-warning/10 text-warning",
+const STATUS_CONFIG = {
+  active: {
+    label: "Active",
+    iconClass: "bg-surface-variant/40 text-on-surface group-hover:bg-primary group-hover:text-on-primary",
+    pillClass: "bg-secondary-container/40 text-on-secondary-container",
+  },
+  inactive: {
+    label: "Inactive",
+    iconClass: "bg-surface-variant/40 text-on-surface group-hover:bg-primary group-hover:text-on-primary",
+    pillClass: "bg-surface-variant/50 text-on-surface-variant",
+  },
+  draft: {
+    label: "Draft",
+    iconClass: "bg-surface-variant/40 text-on-surface group-hover:bg-primary group-hover:text-on-primary",
+    pillClass: "bg-surface-variant/80 text-on-surface-variant",
+  }
 } as const;
 
 export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
   const status = workflow.is_active ? "active" : "inactive";
+  const config = STATUS_CONFIG[status];
   const runsCount = workflow.runsCount || 0;
   const lastRun = workflow.lastRun || "No runs";
 
   return (
     <Link
       href={`/dashboard/workflows/${workflow.id}`}
-      className="group block rounded-2xl border border-border/50 bg-card p-6 transition-all duration-300 hover:border-outline-variant hover:shadow-lg hover:-translate-y-0.5"
+      className="bg-card border border-border/50 rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer group block relative"
     >
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 transition-colors group-hover:bg-secondary-container">
-            <GitBranch className="h-6 w-6 text-on-secondary-container" weight="duotone" />
-          </div>
-          <div>
-            <h3 className="font-newsreader text-[20px] font-bold text-on-surface transition-colors group-hover:text-primary">
-              {workflow.name}
-            </h3>
-            <span
-              className={`mt-1 inline-block rounded-full px-2.5 py-0.5 font-manrope text-[11px] font-bold uppercase tracking-wider ${STATUS_STYLES[status]}`}
-            >
-              {status}
-            </span>
-          </div>
+      <div className="flex justify-between items-start mb-4">
+        <div className={cn("p-2.5 rounded-xl transition-colors", config.iconClass)}>
+          <GitBranch weight="duotone" className="h-6 w-6" />
         </div>
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          className="rounded-xl p-1.5 text-on-surface-variant opacity-0 transition-all hover:bg-surface-variant hover:text-on-surface group-hover:opacity-100"
-        >
-          <DotsThreeVertical className="h-5 w-5" />
-        </button>
-      </div>
-
-      {workflow.profileName && (
-        <div className="mt-5 flex items-center gap-2">
-          <span className="rounded-lg bg-surface-variant px-2.5 py-1 font-manrope text-[12px] font-semibold text-on-surface-variant">
-            {workflow.profileName}
+        <div className="flex items-center gap-2">
+          <span className={cn(
+            "px-3 py-1 rounded-full text-[12px] font-bold uppercase tracking-tight font-manrope",
+            config.pillClass
+          )}>
+            {config.label}
           </span>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            className="rounded-xl p-1.5 text-on-surface-variant opacity-0 transition-all hover:bg-surface-variant hover:text-on-surface group-hover:opacity-100"
+          >
+            <DotsThreeVertical className="h-5 w-5" weight="bold" />
+          </button>
         </div>
-      )}
-
-      <div className="mt-5 flex items-center gap-6 font-manrope text-[14px] text-on-surface-variant">
-        <div className="flex items-center gap-2">
-          <Play className="h-4 w-4" weight="duotone" />
-          <span className="font-medium">{runsCount.toLocaleString()} runs</span>
+      </div>
+      
+      <h4 className="text-2xl font-newsreader font-bold text-on-surface mb-1 transition-colors group-hover:text-primary">
+        {workflow.name}
+      </h4>
+      <p className="text-[14px] font-manrope font-medium text-on-surface-variant mb-6 min-h-[20px]">
+        {workflow.profileName ? workflow.profileName : "No profile"}
+      </p>
+      
+      <div className="space-y-3 font-manrope">
+        <div className="flex justify-between items-center text-[14px] font-bold border-b border-border/40 pb-2">
+          <span className="text-on-surface-variant/70">Workflow ID</span>
+          <span className="text-on-surface font-mono text-[13px]">#{workflow.id.substring(0, 8).toUpperCase()}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4" weight="duotone" />
-          <span className="font-medium">{lastRun}</span>
+        <div className="flex justify-between items-center text-[14px] font-bold border-b border-border/40 pb-2">
+          <span className="text-on-surface-variant/70">Total Runs</span>
+          <span className="text-on-surface">{runsCount.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between items-center text-[14px] font-bold">
+          <span className="text-on-surface-variant/70">Last Run</span>
+          <span className="text-on-surface">{lastRun}</span>
         </div>
       </div>
     </Link>
