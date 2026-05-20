@@ -76,56 +76,56 @@ const NODE_ICONS: Record<string, React.ElementType> = {
 const STATUS_CONFIG = {
   success: {
     label:       'Success',
-    textClass:   'text-success',
-    bgClass:     'bg-success/10',
-    borderClass: 'border-success/25',
-    barClass:    'bg-success',
-    dotClass:    'border-success bg-success',
+    textClass:   'text-on-secondary-container',
+    bgClass:     'bg-secondary-container/40',
+    borderClass: 'border-transparent',
+    barClass:    'bg-secondary-container',
+    dotClass:    'border-secondary-container bg-secondary-container',
     icon:        CheckCircle,
   },
   failed: {
     label:       'Failed',
-    textClass:   'text-destructive',
-    bgClass:     'bg-destructive/10',
-    borderClass: 'border-destructive/25',
-    barClass:    'bg-destructive',
-    dotClass:    'border-destructive bg-destructive',
+    textClass:   'text-error',
+    bgClass:     'bg-error/10',
+    borderClass: 'border-transparent',
+    barClass:    'bg-error',
+    dotClass:    'border-error bg-error',
     icon:        XCircle,
   },
   running: {
     label:       'Running',
     textClass:   'text-primary',
     bgClass:     'bg-primary/10',
-    borderClass: 'border-primary/25',
+    borderClass: 'border-transparent',
     barClass:    'bg-primary',
     dotClass:    'border-primary bg-primary',
     icon:        CircleNotch,
   },
   pending: {
     label:       'Pending',
-    textClass:   'text-muted-foreground',
-    bgClass:     'bg-muted/40',
-    borderClass: 'border-border',
-    barClass:    'bg-muted-foreground/30',
-    dotClass:    'border-muted-foreground/40 bg-muted',
+    textClass:   'text-on-surface-variant',
+    bgClass:     'bg-surface-variant/40',
+    borderClass: 'border-transparent',
+    barClass:    'bg-surface-variant',
+    dotClass:    'border-surface-variant bg-surface-variant',
     icon:        Timer,
   },
   skipped: {
     label:       'Skipped',
-    textClass:   'text-muted-foreground',
-    bgClass:     'bg-muted/40',
-    borderClass: 'border-border',
-    barClass:    'bg-muted-foreground/20',
-    dotClass:    'border-muted-foreground/40 bg-muted',
+    textClass:   'text-on-surface-variant',
+    bgClass:     'bg-surface-variant/40',
+    borderClass: 'border-transparent',
+    barClass:    'bg-surface-variant',
+    dotClass:    'border-surface-variant bg-surface-variant',
     icon:        SkipForward,
   },
   timed_out: {
     label:       'Timed Out',
-    textClass:   'text-destructive',
-    bgClass:     'bg-destructive/10',
-    borderClass: 'border-destructive/25',
-    barClass:    'bg-destructive',
-    dotClass:    'border-destructive bg-destructive',
+    textClass:   'text-error',
+    bgClass:     'bg-error/10',
+    borderClass: 'border-transparent',
+    barClass:    'bg-error',
+    dotClass:    'border-error bg-error',
     icon:        XCircle,
   },
 } as const;
@@ -164,9 +164,9 @@ function getCfg(status: string) {
 // ─── Log line ─────────────────────────────────────────────────────────────────
 
 const LOG_COLORS = {
-  info:  { dot: 'bg-success',      text: 'text-success',      dim: 'text-success/50'      },
-  warn:  { dot: 'bg-warning',      text: 'text-warning',      dim: 'text-warning/50'      },
-  error: { dot: 'bg-destructive',  text: 'text-destructive',  dim: 'text-destructive/50'  },
+  info:  { dot: 'bg-primary',      text: 'text-on-surface',      dim: 'text-on-surface-variant/50'      },
+  warn:  { dot: 'bg-secondary',      text: 'text-secondary',      dim: 'text-secondary/50'      },
+  error: { dot: 'bg-error',  text: 'text-error',  dim: 'text-error/50'  },
 };
 
 function LogLine({ log }: { log: NodeExecutionLog }) {
@@ -209,10 +209,10 @@ function LogPanel({
   }, [logs.length, errorMessage]);
 
   return (
-    <div className="mx-4 mb-4 rounded-lg overflow-hidden border border-border bg-muted/30">
-      <div className="px-4 py-3 space-y-1 max-h-56 overflow-y-auto">
+    <div className="mx-4 mb-4 rounded-xl overflow-hidden border border-border/50 bg-surface-variant/20 shadow-inner">
+      <div className="px-4 py-3 space-y-1.5 max-h-56 overflow-y-auto">
         {isEmpty ? (
-          <span className="font-mono text-[12px] text-muted-foreground italic">
+          <span className="font-mono text-[12px] text-on-surface-variant/70 italic">
             {isRunning ? 'Waiting for logs…' : 'No logs recorded.'}
           </span>
         ) : (
@@ -267,12 +267,12 @@ function StepCard({
   const isRunning = node.status === 'running';
 
   return (
-    <div className="relative flex gap-4 pb-3 last:pb-0">
-      {/* Timeline rail — stretches with card height; line bridges gap to next step */}
+    <div className="relative flex gap-4 pb-3 last:pb-0 font-manrope">
+      {/* Timeline rail */}
       <div className="relative w-3.5 shrink-0 self-stretch">
         {!isLast && (
           <div
-            className="absolute left-1/2 top-5.25 -bottom-8.25 w-px -translate-x-1/2 bg-border"
+            className="absolute left-1/2 top-5.25 -bottom-8.25 w-px -translate-x-1/2 bg-border/50"
             aria-hidden
           />
         )}
@@ -285,27 +285,27 @@ function StepCard({
       </div>
 
       {/* Card */}
-      <div className={cn('flex-1 rounded-xl border bg-card overflow-hidden transition-shadow', cfg.borderClass, isOpen && 'shadow-sm')}>
+      <div className={cn('flex-1 rounded-2xl border border-border/50 bg-card overflow-hidden transition-all duration-300', isOpen && 'shadow-md border-outline-variant')}>
         {/* Header row */}
         <button
           onClick={() => setIsOpen(o => !o)}
-          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary/60 transition-colors text-left"
+          className="w-full flex items-center gap-4 px-5 py-4 hover:bg-surface-variant/20 transition-colors text-left"
         >
           {/* Node type icon */}
-          <div className={cn('h-7 w-7 rounded-lg flex items-center justify-center shrink-0', cfg.bgClass)}>
+          <div className={cn('h-9 w-9 rounded-xl flex items-center justify-center shrink-0', cfg.bgClass)}>
             {isRunning
-              ? <ArrowsClockwise className={cn('h-3.5 w-3.5 animate-spin', cfg.textClass)} weight="bold" />
-              : <NodeIcon className={cn('h-3.5 w-3.5', cfg.textClass)} weight="duotone" />
+              ? <ArrowsClockwise className={cn('h-5 w-5 animate-spin', cfg.textClass)} weight="bold" />
+              : <NodeIcon className={cn('h-5 w-5', cfg.textClass)} weight="duotone" />
             }
           </div>
 
           {/* Name */}
-          <span className="flex-1 text-sm font-medium text-foreground truncate">{label}</span>
+          <span className="flex-1 text-[15px] font-bold text-on-surface truncate">{label}</span>
 
           {/* Status pill */}
           <span
             className={cn(
-              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold border shrink-0',
+              'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest border shrink-0',
               cfg.bgClass, cfg.textClass, cfg.borderClass,
             )}
           >
@@ -313,7 +313,7 @@ function StepCard({
           </span>
 
           {/* Duration */}
-          <span className="font-mono text-[11px] text-muted-foreground w-14 text-right shrink-0">
+          <span className="font-mono text-[12px] font-semibold text-on-surface-variant w-14 text-right shrink-0">
             {isRunning
               ? <span className="animate-pulse text-primary">…</span>
               : formatDuration(node.started_at, node.finished_at)
@@ -323,7 +323,7 @@ function StepCard({
           {/* Caret */}
           <CaretDown
             className={cn(
-              'h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200',
+              'h-4 w-4 text-on-surface-variant shrink-0 transition-transform duration-300',
               isOpen && 'rotate-180',
             )}
             weight="bold"
@@ -332,7 +332,7 @@ function StepCard({
 
         {/* Expandable body */}
         {isOpen && (
-          <div className="border-t border-border/50 pt-3">
+          <div className="border-t border-border/40 pt-4">
             <LogPanel logs={logs} isRunning={isRunning} errorMessage={node.error_message} />
           </div>
         )}
@@ -345,9 +345,9 @@ function StepCard({
 
 function StatChip({ label, value, className }: { label: string; value: string | number; className?: string }) {
   return (
-    <div className={cn('flex flex-col items-center gap-0.5 px-4 first:pl-0 last:pr-0', className)}>
-      <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">{label}</span>
-      <span className="text-sm font-semibold text-foreground tabular-nums">{value}</span>
+    <div className={cn('flex flex-col items-center gap-1 px-5 first:pl-0 last:pr-0', className)}>
+      <span className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/70">{label}</span>
+      <span className="text-[15px] font-bold text-on-surface tabular-nums">{value}</span>
     </div>
   );
 }
@@ -382,35 +382,35 @@ export function ExecutionDetail({
   const shortId      = execution.id.split('-')[0];
 
   return (
-    <div className="space-y-5 max-w-3xl mx-auto">
+    <div className="space-y-6 max-w-3xl mx-auto font-manrope">
 
       {/* ── Header card ────────────────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="rounded-[2rem] border border-border/50 bg-card overflow-hidden shadow-sm">
         {/* Accent top bar */}
-        <div className={cn('h-0.75', cfg.barClass)} />
+        <div className={cn('h-1.5 w-full', cfg.barClass)} />
 
-        <div className="p-5">
+        <div className="p-6 sm:p-8">
           {/* Top row: identity + status */}
           <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-4 min-w-0">
               {/* Status icon circle */}
-              <div className={cn('h-11 w-11 rounded-xl flex items-center justify-center shrink-0', cfg.bgClass)}>
+              <div className={cn('h-14 w-14 rounded-xl flex items-center justify-center shrink-0', cfg.bgClass)}>
                 {isRunning
-                  ? <CircleNotch className={cn('h-5 w-5 animate-spin', cfg.textClass)} weight="bold" />
-                  : <ExecIcon className={cn('h-5 w-5', cfg.textClass)} weight="duotone" />
+                  ? <CircleNotch className={cn('h-7 w-7 animate-spin', cfg.textClass)} weight="bold" />
+                  : <ExecIcon className={cn('h-7 w-7', cfg.textClass)} weight="duotone" />
                 }
               </div>
 
               <div className="min-w-0">
-                <h2 className="text-base font-semibold text-foreground truncate">{workflowName}</h2>
-                <p className="text-xs text-muted-foreground font-mono mt-0.5">#{shortId}…</p>
+                <h2 className="text-3xl font-newsreader font-bold text-on-surface truncate">{workflowName}</h2>
+                <p className="text-[13px] text-on-surface-variant font-mono mt-1 font-semibold uppercase tracking-widest">#{shortId}…</p>
               </div>
             </div>
 
             {/* Status badge */}
             <span
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border shrink-0',
+                'inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[12px] font-bold uppercase tracking-widest border shrink-0',
                 cfg.bgClass, cfg.textClass, cfg.borderClass,
               )}
             >
@@ -419,30 +419,30 @@ export function ExecutionDetail({
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-border mt-4 mb-4" />
+          <div className="h-px bg-border/50 mt-6 mb-6" />
 
           {/* Stats strip */}
-          <div className="flex items-center divide-x divide-border">
+          <div className="flex items-center divide-x divide-border/50">
             <StatChip
               label="Started"
               value={formatDate(execution.created_at)}
-              className="pr-4"
+              className="pr-6"
             />
             <StatChip
               label="Duration"
               value={isRunning ? '…' : formatDuration(execution.created_at, execution.finished_at)}
-              className="px-4"
+              className="px-6"
             />
             <StatChip
               label="Steps"
               value={total === 0 ? '—' : `${successCount} / ${total}`}
-              className="px-4"
+              className="px-6"
             />
             {failedCount > 0 && (
               <StatChip
                 label="Failed"
                 value={failedCount}
-                className="px-4 text-destructive"
+                className="px-6 !text-error"
               />
             )}
           </div>
@@ -451,36 +451,36 @@ export function ExecutionDetail({
 
       {/* ── Top-level error banner ──────────────────────────────────────────── */}
       {execution.error_message && (
-        <div className="flex items-start gap-3 rounded-xl border border-destructive/25 bg-destructive/8 px-4 py-3.5">
-          <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" weight="fill" />
+        <div className="flex items-start gap-4 rounded-2xl border border-error/30 bg-error/10 px-5 py-4 shadow-sm">
+          <XCircle className="mt-0.5 h-6 w-6 shrink-0 text-error" weight="fill" />
           <div>
-            <p className="text-sm font-semibold text-destructive">Execution failed</p>
-            <p className="text-xs text-destructive/80 mt-0.5">{execution.error_message}</p>
+            <p className="text-[15px] font-bold text-error">Execution failed</p>
+            <p className="text-[14px] font-medium text-error/80 mt-1">{execution.error_message}</p>
           </div>
         </div>
       )}
 
       {/* ── Steps timeline ──────────────────────────────────────────────────── */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-sm font-semibold text-foreground">Steps</h3>
+      <div className="pt-2">
+        <div className="flex items-center gap-3 mb-6">
+          <h3 className="text-2xl font-newsreader font-bold text-on-surface">Steps</h3>
           {total > 0 && (
-            <span className="rounded-full bg-secondary border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <span className="rounded-full bg-surface-variant/50 border border-border/50 px-2.5 py-0.5 text-[12px] font-bold text-on-surface-variant">
               {total}
             </span>
           )}
         </div>
 
         {nodeExecutions.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card px-6 py-10 text-center">
-            <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-secondary mx-auto mb-3">
-              <Clock className="h-4 w-4 text-muted-foreground" weight="duotone" />
+          <div className="rounded-[2rem] border-2 border-dashed border-border/60 bg-card/40 px-6 py-12 text-center transition-colors hover:bg-card/60">
+            <div className="flex items-center justify-center h-16 w-16 rounded-2xl bg-secondary-container/60 mx-auto mb-4">
+              <Clock className="h-8 w-8 text-on-secondary-container" weight="duotone" />
             </div>
-            <p className="text-sm font-medium text-foreground mb-1">No steps yet</p>
-            <p className="text-xs text-muted-foreground">Steps will appear here as the execution runs.</p>
+            <p className="text-2xl font-newsreader font-bold text-on-surface mb-2">No steps yet</p>
+            <p className="text-[15px] font-medium text-on-surface-variant max-w-sm mx-auto">Steps will appear here as the execution runs.</p>
           </div>
         ) : (
-          <div>
+          <div className="space-y-1">
             {nodeExecutions.map((node, i) => (
               <StepCard
                 key={node.id}
