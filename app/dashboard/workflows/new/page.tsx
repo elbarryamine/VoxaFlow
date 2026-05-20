@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import { Play, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 
 import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
@@ -51,18 +52,14 @@ export default function NewWorkflowPage() {
       onTitleChange={setName}
       actions={
         <>
-          <button className="flex items-center gap-2 rounded-md border border-border px-5 py-2 text-sm font-semibold text-foreground hover:bg-secondary transition-colors">
+          <TopBarButton variant="secondary" type="button">
             <Play className="h-4 w-4" />
             Test Run
-          </button>
-          <button 
-            onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
+          </TopBarButton>
+          <TopBarButton onClick={handleSave} disabled={saving}>
             {saving ? <CircleNotch className="h-4 w-4 animate-spin" /> : <FloppyDisk className="h-4 w-4" />}
             Save
-          </button>
+          </TopBarButton>
         </>
       }
       withContentPadding={false}

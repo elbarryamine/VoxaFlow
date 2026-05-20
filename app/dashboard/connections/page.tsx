@@ -4,6 +4,7 @@ import { Plus } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 import type { Connection, ConnectionType } from "@/src/features/connections/types/Connection.types";
 import { CONNECTION_TYPE_LABELS } from "@/src/features/connections/types/Connection.types";
 import { useConnectionsStore } from "@/src/features/connections/store/useConnectionsStore";
@@ -38,13 +39,10 @@ export default function ConnectionsPage() {
         title="Connections"
         description="Manage credentials for AI providers, messaging platforms, and data services"
         actions={
-          <Link
-            href="/dashboard/connections/new"
-            className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
+          <TopBarLink href="/dashboard/connections/new">
+            <Plus className="h-4 w-4" weight="bold" />
             New Connection
-          </Link>
+          </TopBarLink>
         }
       >
         <div className="space-y-10">

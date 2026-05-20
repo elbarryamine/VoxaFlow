@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import {
   Key,
   Plus,
@@ -148,13 +149,10 @@ export default function CredentialsPage() {
       title="Credentials"
       description="Securely store API keys used by your workflow nodes"
       actions={
-        <button
-          onClick={() => { setShowForm(true); setError(null); }}
-          className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 font-manrope text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md"
-        >
-          <Plus className="h-4.5 w-4.5" weight="bold" />
+        <TopBarButton onClick={() => { setShowForm(true); setError(null); }}>
+          <Plus className="h-4 w-4" weight="bold" />
           Add Credential
-        </button>
+        </TopBarButton>
       }
     >
       <div className="space-y-6">

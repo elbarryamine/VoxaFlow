@@ -1,12 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import {
-  MagnifyingGlass,
-  Bell,
-  ArrowLeft,
-} from "@phosphor-icons/react/dist/ssr";
+import { Bell, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
+import { cn } from "@/src/shared/utils/cn";
 
 interface TopBarProps {
   title?: string;
@@ -16,6 +13,9 @@ interface TopBarProps {
   onTitleChange?: (newTitle: string) => void;
 }
 
+const toolbarIconClass =
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-on-surface-variant transition-colors duration-300 hover:bg-surface-variant hover:text-on-surface";
+
 export const TopBar = ({
   title,
   description,
@@ -24,17 +24,18 @@ export const TopBar = ({
   onTitleChange,
 }: TopBarProps) => {
   return (
-    <header className="flex h-[72px] shrink-0 items-center justify-between px-6 border-b border-border/40 bg-surface/50 backdrop-blur-md transition-colors duration-300">
-      <div className="flex items-center gap-4">
+    <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border/50 bg-surface-container-low px-6 transition-colors duration-300">
+      <div className="flex min-w-0 items-center gap-3">
         {backHref && (
           <Link
             href={backHref}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-300 hover:bg-surface-variant hover:text-on-surface"
+            className={toolbarIconClass}
+            aria-label="Go back"
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
         )}
-        <div>
+        <div className="min-w-0">
           {onTitleChange ? (
             <input
               key={title}
@@ -50,27 +51,42 @@ export const TopBar = ({
                   e.currentTarget.blur();
                 }
               }}
-              className="bg-transparent text-2xl font-newsreader font-bold tracking-tight text-on-surface outline-none border-b border-transparent hover:border-outline-variant/50 focus:border-primary transition-all px-0 w-full min-w-[200px]"
+              className="w-full min-w-[200px] border-b border-transparent bg-transparent px-0 font-newsreader text-2xl font-bold tracking-tight text-on-surface outline-none transition-all hover:border-outline-variant/50 focus:border-primary"
             />
           ) : (
-            <h1 className="text-2xl font-newsreader font-bold tracking-tight text-on-surface">{title}</h1>
+            title && (
+              <h1 className="truncate font-newsreader text-2xl font-bold tracking-tight text-on-surface">
+                {title}
+              </h1>
+            )
           )}
           {description && (
-            <p className="text-[14px] font-manrope font-medium text-on-surface-variant mt-0.5">{description}</p>
+            <p className="mt-0.5 truncate font-manrope text-[14px] font-medium text-on-surface-variant">
+              {description}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        {actions}
-        <ThemeToggle />
-        <button className="flex h-10 w-10 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-300 hover:bg-surface-variant hover:text-on-surface">
-          <MagnifyingGlass className="h-5 w-5" />
-        </button>
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-xl text-on-surface-variant transition-all duration-300 hover:bg-surface-variant hover:text-on-surface">
+      <div className="flex shrink-0 items-center gap-2">
+        {actions && (
+          <>
+            <div className="flex items-center gap-2">{actions}</div>
+            <div
+              className="mx-1 hidden h-6 w-px bg-outline-variant/60 sm:block"
+              aria-hidden
+            />
+          </>
+        )}
+        <button
+          type="button"
+          className={cn(toolbarIconClass, "relative")}
+          aria-label="Notifications"
+        >
           <Bell className="h-5 w-5" />
-          <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-error ring-2 ring-surface" />
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-error ring-2 ring-surface-container-low" />
         </button>
+        <ThemeToggle />
       </div>
     </header>
   );

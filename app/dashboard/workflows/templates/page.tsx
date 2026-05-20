@@ -5,6 +5,7 @@ import { CaretRight, Plus, MagnifyingGlass } from "@phosphor-icons/react";
 import { useState } from "react";
 
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 import { WORKFLOW_TEMPLATES } from "@/src/features/workflows/constants/WORKFLOW_TEMPLATES";
 
 export default function TemplatesPage() {
@@ -22,13 +23,10 @@ export default function TemplatesPage() {
       description="Start with a pre-built workflow template"
       backHref="/dashboard/workflows"
       actions={
-        <Link
-          href="/dashboard/workflows/new"
-          className="flex items-center gap-2 rounded-md border border-border bg-background px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-        >
-          <Plus className="h-4 w-4" />
+        <TopBarLink href="/dashboard/workflows/new" variant="secondary">
+          <Plus className="h-4 w-4" weight="bold" />
           Blank Workflow
-        </Link>
+        </TopBarLink>
       }
     >
       <div className="mb-8 relative max-w-md">

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
 import { StartWorkflowModal } from "@/src/features/workflows/ui/StartWorkflowModal";
 import { CircleNotch, Plus } from "@phosphor-icons/react/dist/ssr";
@@ -37,13 +38,10 @@ export default function WorkflowsPage() {
         title="Workflows"
         description="Automate AI-driven processes and integrations"
         actions={
-          <button
-            onClick={() => setIsStartModalOpen(true)}
-            className="flex items-center gap-2 rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/80"
-          >
-            <Plus className="h-4 w-4" />
+          <TopBarButton onClick={() => setIsStartModalOpen(true)}>
+            <Plus className="h-4 w-4" weight="bold" />
             New Workflow
-          </button>
+          </TopBarButton>
         }
       >
         {loading ? (
