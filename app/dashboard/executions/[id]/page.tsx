@@ -48,6 +48,7 @@ interface NodeExecution {
   node_type: string;
   node_id: string;
   status: string;
+  error_message?: string | null;
   created_at: string;
 }
 
@@ -124,13 +125,14 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                 <tr>
                   <th className="px-6 py-4">Node Type</th>
                   <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Failure Reason</th>
                   <th className="px-6 py-4">Executed At</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {nodeExecutions?.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
+                    <td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">
                       No nodes executed yet.
                     </td>
                   </tr>
@@ -138,6 +140,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                   (nodeExecutions as unknown as NodeExecution[] | null)?.map((node: NodeExecution) => {
                     const nodeConfig = STATUS_CONFIG[node.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
                     const NodeIcon = nodeConfig.icon;
+                    const isFailed = node.status === 'failed';
                     return (
                       <tr key={node.id} className="hover:bg-muted/10 transition-colors">
                         <td className="px-6 py-4">
@@ -154,6 +157,18 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                             <NodeIcon className="h-3 w-3" />
                             {nodeConfig.label}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 max-w-xs">
+                          {isFailed && node.error_message ? (
+                            <div className="flex items-start gap-2 rounded-lg border border-destructive/25 bg-destructive/8 px-3 py-2">
+                              <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" weight="fill" />
+                              <p className="break-words text-[11px] font-medium leading-snug text-destructive">
+                                {node.error_message}
+                              </p>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 text-muted-foreground">
                           {node.created_at ? new Date(node.created_at).toLocaleTimeString() : '—'}

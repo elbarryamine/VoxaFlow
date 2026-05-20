@@ -166,15 +166,12 @@ export const NodeConfigSidebar = ({
 }: NodeConfigSidebarProps) => {
   const [mockDataText, setMockDataText] = useState(() => getInitialMockData(node));
   const [jsonError, setJsonError] = useState<string | null>(null);
-  const [prevNodeId, setPrevNodeId] = useState<string | null>(null);
 
-  if (node && node.id !== prevNodeId) {
-    setPrevNodeId(node.id);
-    const initialText = getInitialMockData(node);
-    setMockDataText(initialText);
-    setJsonError(null);
-  }
-
+  // Write the default mock data back to the workflow node data the first time a
+  // trigger node is opened without any saved mock (so it persists on save).
+  // The dep array is narrowed to stable identifiers — `node?.id` and
+  // `node?.data?.type` — so this only re-fires when the selected node actually
+  // changes, not on every render caused by unrelated field edits.
   useEffect(() => {
     if (!node) return;
     const template = NODE_TEMPLATES.find((t) => t.type === node.data.type);
@@ -190,7 +187,8 @@ export const NodeConfigSidebar = ({
         return () => clearTimeout(timer);
       }
     }
-  }, [node, onUpdateNode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [node?.id, node?.data?.type, onUpdateNode]);
 
   const handleMockDataChange = (value: string) => {
     setMockDataText(value);

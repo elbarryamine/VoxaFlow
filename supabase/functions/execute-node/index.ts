@@ -93,10 +93,11 @@ Deno.serve(async (req: Request) => {
   };
 
   // ── 6. Execute ────────────────────────────────────────────────────────────
-  const executor = ExecutorRegistry.get(node.type);
+  const nodeType = node.data.type as string;
+  const executor = ExecutorRegistry.get(nodeType);
   if (!executor) {
     await supabase.from('node_executions')
-      .update({ status: 'failed', error_message: `Unknown node type: ${node.type}` })
+      .update({ status: 'failed', error_message: `Unknown node type: ${nodeType}` })
       .eq('execution_id', executionId)
       .eq('node_id', nodeId);
     await maybeMarkExecutionFailed(supabase, executionId);
@@ -172,7 +173,7 @@ Deno.serve(async (req: Request) => {
         await supabase.from('node_executions').insert({
           execution_id: executionId,
           node_id: edge.target,
-          node_type: definition.nodes.find(n => n.id === edge.target)?.type ?? 'unknown',
+          node_type: (definition.nodes.find(n => n.id === edge.target)?.data?.type as string) ?? 'unknown',
           status: 'skipped',
         });
       }
@@ -194,7 +195,7 @@ Deno.serve(async (req: Request) => {
       await supabase.from('node_executions').insert({
         execution_id: executionId,
         node_id: edge.target,
-        node_type: nextNode.type,
+        node_type: nextNode.data.type as string,
         status: 'pending',
       });
     }

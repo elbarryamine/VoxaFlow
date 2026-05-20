@@ -16,9 +16,7 @@ export const FieldLabel = ({ children, htmlFor, hint }: FieldLabelProps) => (
     >
       {children}
     </label>
-    {hint && (
-      <div className="flex-shrink-0">{hint}</div>
-    )}
+    {hint && <div className="shrink-0">{hint}</div>}
   </div>
 );
 
@@ -137,11 +135,17 @@ export interface NodeConfigProps {
   data: Record<string, unknown>;
   onUpdate: (
     field: string,
-    value: string | number | boolean | unknown[] | Record<string, unknown> | undefined,
+    value:
+      | string
+      | number
+      | boolean
+      | unknown[]
+      | Record<string, unknown>
+      | undefined,
   ) => void;
-  inputVariables?: { 
-    nodeId: string; 
-    nodeLabel: string; 
+  inputVariables?: {
+    nodeId: string;
+    nodeLabel: string;
     fields: { name: string; type: string; description: string }[];
   }[];
 }
@@ -203,7 +207,11 @@ export function CredentialPicker({
       ) : credentials.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border bg-muted/10 px-3 py-2.5 text-[11px] text-muted-foreground">
           No {service} credentials found.{" "}
-          <a href="/dashboard/credentials" target="_blank" className="text-primary hover:underline">
+          <a
+            href="/dashboard/credentials"
+            target="_blank"
+            className="text-primary hover:underline"
+          >
             Add one →
           </a>
         </div>
@@ -254,7 +262,7 @@ export const AutocompleteTextArea = ({
     if (!textareaRef.current) return;
     const cursorPosition = textareaRef.current.selectionStart;
     const textBeforeCursor = value.slice(0, cursorPosition);
-    
+
     // Match {{ followed by anything except whitespace/braces, up to the cursor
     const match = textBeforeCursor.match(/\{\{([^{}\s]*)$/);
     if (match) {
@@ -266,16 +274,10 @@ export const AutocompleteTextArea = ({
     }
   };
 
-  // Check cursor position when value changes (e.g. typing)
-  useEffect(() => {
-    checkCursor();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
-
   const filteredOptions = options.filter(
     (o) =>
       o.label.toLowerCase().includes(filterText.toLowerCase()) ||
-      o.value.toLowerCase().includes(filterText.toLowerCase())
+      o.value.toLowerCase().includes(filterText.toLowerCase()),
   );
 
   const insertOption = (option: AutocompleteOption) => {
@@ -283,17 +285,17 @@ export const AutocompleteTextArea = ({
     const cursorPosition = textareaRef.current.selectionStart;
     const textBeforeCursor = value.slice(0, cursorPosition);
     const textAfterCursor = value.slice(cursorPosition);
-    
+
     const match = textBeforeCursor.match(/\{\{([^{}\s]*)$/);
     if (match) {
       const startPos = cursorPosition - match[0].length;
       const newBefore = value.slice(0, startPos);
       const inserted = `{{${option.value}}}`;
       const newValue = newBefore + inserted + textAfterCursor;
-      
+
       onChange(newValue);
       setShowSuggestions(false);
-      
+
       // Restore focus and put cursor after the inserted variable
       setTimeout(() => {
         if (textareaRef.current) {
@@ -307,14 +309,16 @@ export const AutocompleteTextArea = ({
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (!showSuggestions || filteredOptions.length === 0) return;
-    
+
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setSelectedIndex((s) => (s + 1) % filteredOptions.length);
       scrollSelectedIntoView(selectedIndex + 1);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setSelectedIndex((s) => (s - 1 + filteredOptions.length) % filteredOptions.length);
+      setSelectedIndex(
+        (s) => (s - 1 + filteredOptions.length) % filteredOptions.length,
+      );
       scrollSelectedIntoView(selectedIndex - 1);
     } else if (e.key === "Enter") {
       e.preventDefault();
@@ -327,7 +331,8 @@ export const AutocompleteTextArea = ({
   const scrollSelectedIntoView = (index: number) => {
     if (!menuRef.current) return;
     const items = menuRef.current.querySelectorAll("li");
-    const normalizedIndex = (index + filteredOptions.length) % filteredOptions.length;
+    const normalizedIndex =
+      (index + filteredOptions.length) % filteredOptions.length;
     const item = items[normalizedIndex];
     if (item) {
       item.scrollIntoView({ block: "nearest" });
@@ -348,9 +353,9 @@ export const AutocompleteTextArea = ({
         onKeyUp={checkCursor}
         className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-ring"
       />
-      
+
       {showSuggestions && filteredOptions.length > 0 && (
-        <div 
+        <div
           ref={menuRef}
           className="absolute left-0 right-0 z-50 mt-1 max-h-[200px] overflow-y-auto rounded-md border border-border bg-card shadow-lg"
         >

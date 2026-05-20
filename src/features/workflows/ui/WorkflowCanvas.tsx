@@ -132,6 +132,7 @@ const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
       >
         <div className="pointer-events-auto h-full w-full">
           <NodeConfigSidebar
+            key={selectedNode?.id ?? "none"}
             node={selectedNode}
             nodes={nodes}
             edges={edges}

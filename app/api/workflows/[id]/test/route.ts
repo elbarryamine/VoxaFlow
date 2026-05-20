@@ -36,7 +36,8 @@ export async function POST(
 
     const nodesWithIncoming = new Set(edges.map((e) => e.target));
     const triggerNodes = nodes.filter((n) => {
-      const isTriggerType = n.type?.startsWith('webhook-') || n.type === 'trigger';
+      const dataType = n.data?.type as string | undefined;
+      const isTriggerType = dataType?.startsWith('webhook-') || dataType === 'trigger';
       const hasNoIncoming = !nodesWithIncoming.has(n.id);
       return isTriggerType || hasNoIncoming;
     });
@@ -58,10 +59,10 @@ export async function POST(
         } catch (e) {
           console.error("Failed to parse mock data for node", triggerNode.id, e);
           // Fall back to default mock data if saved mock data is invalid JSON
-          mockPayload = (DEFAULT_TRIGGER_MOCK_DATA[triggerNode.type as WorkflowNodeType] || {}) as Record<string, unknown>;
+          mockPayload = (DEFAULT_TRIGGER_MOCK_DATA[triggerNode.data?.type as WorkflowNodeType] || {}) as Record<string, unknown>;
         }
       } else {
-        mockPayload = (DEFAULT_TRIGGER_MOCK_DATA[triggerNode.type as WorkflowNodeType] || {}) as Record<string, unknown>;
+        mockPayload = (DEFAULT_TRIGGER_MOCK_DATA[triggerNode.data?.type as WorkflowNodeType] || {}) as Record<string, unknown>;
       }
 
       // Create execution record
@@ -85,7 +86,7 @@ export async function POST(
       const { error: nodeExecError } = await supabase.from('node_executions').insert({
         execution_id: execution.id,
         node_id: triggerNode.id,
-        node_type: triggerNode.type,
+        node_type: triggerNode.data?.type as string ?? triggerNode.type,
         status: 'pending',
       });
 

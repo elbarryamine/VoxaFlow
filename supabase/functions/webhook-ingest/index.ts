@@ -60,7 +60,7 @@ Deno.serve(async (req: Request) => {
     triggerNodes.map(n => ({
       execution_id: execution.id,
       node_id: n.id,
-      node_type: n.type,
+      node_type: (n.data?.type as string) ?? n.type,
       status: 'pending',
     }))
   );
