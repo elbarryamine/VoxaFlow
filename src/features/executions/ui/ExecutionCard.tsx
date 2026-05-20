@@ -20,28 +20,28 @@ interface ExecutionCardProps {
 const STATUS_CONFIG = {
   success: {
     label: "Success",
-    containerClass: "",
-    iconClass: "bg-surface-variant/40 text-on-surface group-hover:bg-primary group-hover:text-on-primary",
-    pillClass: "bg-secondary-container/40 text-on-secondary-container",
+    railClass: "border-success/40",
+    iconClass: "bg-success/10 text-success group-hover:bg-success group-hover:text-white",
+    pillClass: "bg-success/15 text-success",
     icon: CheckCircle,
   },
   failed: {
     label: "Failed",
-    containerClass: "border-l-4 border-l-error",
-    iconClass: "bg-error/10 text-error",
-    pillClass: "bg-error/10 text-error",
+    railClass: "border-error/40",
+    iconClass: "bg-error/10 text-error group-hover:bg-error group-hover:text-on-error",
+    pillClass: "bg-error/15 text-error",
     icon: XCircle,
   },
   running: {
     label: "Running",
-    containerClass: "border-l-4 border-l-primary",
+    railClass: "border-primary/40",
     iconClass: "bg-primary/10 text-primary",
     pillClass: "bg-primary/10 text-primary",
     icon: PlayCircle,
   },
   waiting: {
     label: "Waiting",
-    containerClass: "",
+    railClass: "border-outline-variant/40",
     iconClass: "bg-surface-variant/50 text-on-surface-variant",
     pillClass: "bg-surface-variant/50 text-on-surface-variant",
     icon: Timer,
@@ -56,8 +56,9 @@ export const ExecutionCard = ({ execution }: ExecutionCardProps) => {
     <Link
       href={`/dashboard/executions/${execution.id}`}
       className={cn(
-        "bg-card border border-border/50 rounded-2xl p-6 hover:shadow-xl transition-all cursor-pointer group block",
-        config.containerClass
+        "group block cursor-pointer rounded-2xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:border-outline-variant hover:shadow-xl",
+        config.railClass,
+        "border-l-[3px]",
       )}
     >
       <div className="flex justify-between items-start mb-4">

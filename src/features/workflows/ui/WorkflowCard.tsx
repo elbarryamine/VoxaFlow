@@ -12,16 +12,16 @@ interface WorkflowCardProps {
 const STATUS_CONFIG = {
   active: {
     label: "Active",
-    railClass: "border-secondary/30",
+    railClass: "border-success/40",
     iconClass:
-      "bg-secondary-container/60 text-on-secondary-container group-hover:bg-primary group-hover:text-on-primary",
-    pillClass: "bg-secondary-container/40 text-on-secondary-container",
+      "bg-success/15 text-success group-hover:bg-success group-hover:text-white",
+    pillClass: "bg-success/15 text-success",
   },
   inactive: {
     label: "Inactive",
     railClass: "border-outline-variant/40",
     iconClass:
-      "bg-surface-variant/40 text-on-surface group-hover:bg-primary group-hover:text-on-primary",
+      "bg-surface-variant/40 text-on-surface-variant group-hover:bg-surface-variant group-hover:text-on-surface",
     pillClass: "bg-surface-variant/50 text-on-surface-variant",
   },
 } as const;
