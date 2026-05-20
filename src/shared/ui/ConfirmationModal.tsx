@@ -50,23 +50,20 @@ export const ConfirmationModal = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${
-        isVisible ? "pointer-events-auto" : "pointer-events-none"
-      }`}
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? "pointer-events-auto" : "pointer-events-none"
+        }`}
     >
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"
+          }`}
         onClick={onClose}
       />
 
       {/* Modal Content */}
       <div
-        className={`relative w-full max-w-[360px] overflow-hidden rounded-2xl bg-background p-6 shadow-2xl border border-border transition-all duration-300 ${
-          isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
-        }`}
+        className={`relative w-full max-w-[360px] overflow-hidden rounded-2xl bg-background p-6 shadow-2xl border border-border transition-all duration-300 ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
+          }`}
       >
         <h3 className="text-base font-semibold text-foreground">{title}</h3>
         <p className="mt-2 text-sm text-muted-foreground leading-relaxed">

@@ -15,6 +15,7 @@ import {
   Lightning,
   Globe,
   EnvelopeSimple,
+  ShieldCheck,
 } from "@phosphor-icons/react/dist/ssr";
 import { cn } from "@/src/shared/utils/cn";
 
@@ -165,106 +166,124 @@ export default function CredentialsPage() {
           </div>
         )}
 
-        {/* Add form */}
+        {/* Add form Modal */}
         {showForm && (
-          <div className="rounded-2xl border border-border/50 bg-card p-6 shadow-sm font-manrope sm:p-8">
-            <h3 className="mb-6 font-newsreader text-2xl font-bold text-on-surface">New Credential</h3>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {error && (
-                <div className="flex items-center gap-3 rounded-xl border border-error/30 bg-error/10 px-5 py-4 text-[14px] font-bold text-error shadow-sm">
-                  <XCircle className="h-5 w-5 shrink-0" weight="duotone" />
-                  {error}
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div>
-                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
-                    Display Name
-                  </label>
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                    placeholder='e.g. "My OpenAI Key"'
-                    className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-                <div>
-                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
-                    Service
-                  </label>
-                  <select
-                    value={form.service}
-                    onChange={(e) => handleServiceChange(e.target.value)}
-                    className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none"
-                  >
-                    {Object.entries(SERVICE_CONFIG).map(([key, conf]) => (
-                      <option key={key} value={key}>{conf.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {serviceConf.fields.map((field) => (
-                <div key={field.key}>
-                  <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
-                    {field.label}
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={field.sensitive && !showFields[field.key] ? "password" : "text"}
-                      value={form.fields[field.key] || ""}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          fields: { ...p.fields, [field.key]: e.target.value },
-                        }))
-                      }
-                      placeholder={field.placeholder}
-                      className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 pr-11 text-[14px] font-mono text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    />
-                    {field.sensitive && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowFields((p) => ({ ...p, [field.key]: !p[field.key] }))
-                        }
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
-                      >
-                        {showFields[field.key] ? (
-                          <EyeSlash className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    )}
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
+            <div className="w-full max-w-xl overflow-hidden rounded-[2rem] border border-border/50 bg-card shadow-2xl font-manrope animate-in zoom-in-95 duration-200">
+              <div className="border-b border-border/50 bg-surface-variant/30 px-6 py-5 sm:px-8 sm:py-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-sm">
+                    <Key className="h-6 w-6 text-on-primary" weight="duotone" />
+                  </div>
+                  <div>
+                    <h3 className="font-newsreader text-2xl font-bold tracking-tight text-on-surface">New Credential</h3>
+                    <p className="text-[14px] font-medium text-on-surface-variant">Add an API key or token for external services</p>
                   </div>
                 </div>
-              ))}
-
-              <p className="text-[13px] font-medium text-on-surface-variant/80">
-                Keys are encrypted before storage and never returned to the UI after saving. Reference credentials in nodes using their ID.
-              </p>
-
-              <div className="flex items-center justify-end gap-3 border-t border-border/40 pt-5 mt-2">
-                <button
-                  type="button"
-                  onClick={() => { setShowForm(false); setError(null); }}
-                  className="rounded-xl px-5 py-2.5 text-[14px] font-bold text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-60"
-                >
-                  {saving && <CircleNotch className="h-4.5 w-4.5 animate-spin" />}
-                  {saving ? "Saving…" : "Save Credential"}
-                </button>
               </div>
-            </form>
+
+              <div className="p-6 sm:p-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <div className="flex items-center gap-3 rounded-xl border border-error/30 bg-error/10 px-5 py-4 text-[14px] font-bold text-error shadow-sm">
+                      <XCircle className="h-5 w-5 shrink-0" weight="duotone" />
+                      {error}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
+                        Display Name
+                      </label>
+                      <input
+                        required
+                        value={form.name}
+                        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                        placeholder='e.g. "My Key"'
+                        className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
+                        Service
+                      </label>
+                      <select
+                        value={form.service}
+                        onChange={(e) => handleServiceChange(e.target.value)}
+                        className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 text-[14px] text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none"
+                      >
+                        {Object.entries(SERVICE_CONFIG).map(([key, conf]) => (
+                          <option key={key} value={key}>{conf.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {serviceConf.fields.map((field) => (
+                    <div key={field.key}>
+                      <label className="mb-2 block text-[13px] font-bold text-on-surface-variant uppercase tracking-wide">
+                        {field.label}
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={field.sensitive && !showFields[field.key] ? "password" : "text"}
+                          value={form.fields[field.key] || ""}
+                          onChange={(e) =>
+                            setForm((p) => ({
+                              ...p,
+                              fields: { ...p.fields, [field.key]: e.target.value },
+                            }))
+                          }
+                          placeholder={field.placeholder}
+                          className="w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 pr-11 text-[14px] font-mono text-on-surface placeholder-on-surface-variant/50 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        />
+                        {field.sensitive && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowFields((p) => ({ ...p, [field.key]: !p[field.key] }))
+                            }
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                          >
+                            {showFields[field.key] ? (
+                              <EyeSlash className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="flex items-center gap-4 rounded-xl border border-border/40 bg-surface-variant/20 p-4">
+                    <ShieldCheck className="h-6 w-6 shrink-0 text-primary" weight="duotone" />
+                    <p className="text-[13px] font-medium leading-relaxed text-on-surface-variant/90">
+                      Keys are encrypted before storage and never returned to the UI after saving. Reference credentials in nodes using their ID.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => { setShowForm(false); setError(null); }}
+                      className="rounded-xl px-6 py-3 text-[14px] font-bold text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-60"
+                    >
+                      {saving && <CircleNotch className="h-4.5 w-4.5 animate-spin" />}
+                      {saving ? "Saving…" : "Save Credential"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
         )}
 

@@ -22,7 +22,7 @@ export default async function SignInPage() {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10 font-manrope">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.12),transparent_45%)]" />
-      <section className="relative grid w-full max-w-5xl gap-6 rounded-[2rem] border border-border/50 bg-surface-container-lowest/80 p-3 shadow-2xl backdrop-blur-xl md:grid-cols-[1.1fr_0.9fr] md:p-4">
+      <section className="relative grid w-full max-w-5xl gap-6 rounded-[2rem] border border-border/50 bg-surface-container-lowest p-3 shadow-2xl md:grid-cols-[1.1fr_0.9fr] md:p-4">
         <div className="rounded-3xl border border-border/50 bg-gradient-to-b from-surface-variant/40 to-surface-container-lowest p-6 shadow-sm md:p-8">
           <div className="mb-8 flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-sm">

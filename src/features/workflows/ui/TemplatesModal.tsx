@@ -58,7 +58,7 @@ export const TemplatesModal = ({
     >
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
         onClick={onClose}
