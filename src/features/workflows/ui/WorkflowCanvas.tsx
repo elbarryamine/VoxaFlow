@@ -99,7 +99,7 @@ const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
             />
             {showMiniMap && (
               <MiniMap
-                className="rounded-xl! border-border/50! bg-surface-container-low/95! shadow-sm! backdrop-blur-sm!"
+                className="rounded-sm! overflow-hidden border-border/50! bg-surface-container-low/95! shadow-sm! backdrop-blur-sm!"
                 nodeColor="var(--primary)"
                 maskColor="var(--flow-minimap-mask)"
                 maskStrokeWidth={1}

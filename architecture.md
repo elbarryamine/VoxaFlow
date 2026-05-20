@@ -51,7 +51,7 @@ src/
 │   ├── credentials/                    # Credential management UI and forms
 │   └── dashboard/                      # Dashboard summary widgets
 ├── shared/                             # Cross-cutting concerns
-│   ├── ui/                             # PageLayout, TopBar, TopBarButton, Sidebar, Modals
+│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper
 │   └── theme/                          # ThemeProvider & Dark mode logic
 └── server/                             # Server-side specific logic

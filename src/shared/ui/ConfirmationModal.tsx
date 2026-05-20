@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { ModalShell } from "./ModalShell";
+import { TopBarButton } from "./TopBarButton";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -21,70 +23,31 @@ export const ConfirmationModal = ({
   confirmText = "Confirm",
   cancelText = "Cancel",
 }: ConfirmationModalProps) => {
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-  const [shouldRender, setShouldRender] = useState(isOpen);
-  const [isVisible, setIsVisible] = useState(false);
-
-  if (isOpen !== prevIsOpen) {
-    setPrevIsOpen(isOpen);
-    if (isOpen) {
-      setShouldRender(true);
-    }
-  }
-
-  useEffect(() => {
-    if (isOpen) {
-      const timer = requestAnimationFrame(() => setIsVisible(true));
-      return () => cancelAnimationFrame(timer);
-    } else {
-      const animTimer = requestAnimationFrame(() => setIsVisible(false));
-      const closeTimer = setTimeout(() => setShouldRender(false), 300);
-      return () => {
-        cancelAnimationFrame(animTimer);
-        clearTimeout(closeTimer);
-      };
-    }
-  }, [isOpen]);
-
-  if (!shouldRender) return null;
-
   return (
-    <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-300 ${isVisible ? "pointer-events-auto" : "pointer-events-none"
-        }`}
-    >
-      {/* Backdrop */}
-      <div
-        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"
-          }`}
-        onClick={onClose}
-      />
-
-      {/* Modal Content */}
-      <div
-        className={`relative w-full max-w-[360px] overflow-hidden rounded-2xl bg-background p-6 shadow-2xl border border-border transition-all duration-300 ${isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
-          }`}
-      >
-        <h3 className="text-base font-semibold text-foreground">{title}</h3>
-        <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-          {message}
-        </p>
-
-        <div className="mt-8 flex items-center justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors"
-          >
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      icon={WarningCircle}
+      maxWidthClass="max-w-[440px]"
+      footer={
+        <>
+          <TopBarButton variant="secondary" type="button" onClick={onClose}>
             {cancelText}
-          </button>
+          </TopBarButton>
           <button
+            type="button"
             onClick={onConfirm}
-            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+            className="inline-flex h-10 items-center rounded-xl bg-error px-5 font-manrope text-[14px] font-bold text-on-error shadow-sm transition-all hover:bg-error/90 active:scale-[0.98]"
           >
             {confirmText}
           </button>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    >
+      <p className="font-manrope text-[14px] font-medium leading-relaxed text-on-surface-variant">
+        {message}
+      </p>
+    </ModalShell>
   );
 };

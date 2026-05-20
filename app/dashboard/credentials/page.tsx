@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
+import { ModalShell } from "@/src/shared/ui/ModalShell";
 import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import {
   Key,
@@ -164,24 +165,51 @@ export default function CredentialsPage() {
           </div>
         )}
 
-        {/* Add form Modal */}
-        {showForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-            <div className="w-full max-w-xl overflow-hidden rounded-[2rem] border border-border/50 bg-card shadow-2xl font-manrope animate-in zoom-in-95 duration-200">
-              <div className="border-b border-border/50 bg-surface-variant/30 px-6 py-5 sm:px-8 sm:py-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-sm">
-                    <Key className="h-6 w-6 text-on-primary" weight="duotone" />
-                  </div>
-                  <div>
-                    <h3 className="font-newsreader text-2xl font-bold tracking-tight text-on-surface">New Credential</h3>
-                    <p className="text-[14px] font-medium text-on-surface-variant">Add an API key or token for external services</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
+        <ModalShell
+          isOpen={showForm}
+          onClose={() => {
+            setShowForm(false);
+            setError(null);
+          }}
+          title="New credential"
+          description="Add an API key or token for external services"
+          icon={Key}
+          maxWidthClass="max-w-xl"
+          onOpen={() => setError(null)}
+          footer={
+            <>
+              <TopBarButton
+                variant="secondary"
+                type="button"
+                onClick={() => {
+                  setShowForm(false);
+                  setError(null);
+                }}
+              >
+                Cancel
+              </TopBarButton>
+              <TopBarButton
+                type="submit"
+                form="new-credential-form"
+                disabled={saving}
+              >
+                {saving ? (
+                  <>
+                    <CircleNotch className="h-4 w-4 animate-spin" />
+                    Saving…
+                  </>
+                ) : (
+                  "Save credential"
+                )}
+              </TopBarButton>
+            </>
+          }
+        >
+          <form
+            id="new-credential-form"
+            onSubmit={handleSubmit}
+            className="space-y-6 font-manrope"
+          >
                   {error && (
                     <div className="flex items-center gap-3 rounded-xl border border-error/30 bg-error/10 px-5 py-4 text-[14px] font-bold text-error shadow-sm">
                       <XCircle className="h-5 w-5 shrink-0" weight="duotone" />
@@ -262,28 +290,8 @@ export default function CredentialsPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-end gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => { setShowForm(false); setError(null); }}
-                      className="rounded-xl px-6 py-3 text-[14px] font-bold text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={saving}
-                      className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-[14px] font-bold text-on-primary shadow-sm transition-all hover:bg-primary/90 hover:shadow-md disabled:opacity-60"
-                    >
-                      {saving && <CircleNotch className="h-4.5 w-4.5 animate-spin" />}
-                      {saving ? "Saving…" : "Save Credential"}
-                    </button>
-                  </div>
                 </form>
-              </div>
-            </div>
-          </div>
-        )}
+        </ModalShell>
 
         {/* List */}
         {loading ? (

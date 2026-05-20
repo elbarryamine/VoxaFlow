@@ -1,8 +1,8 @@
 "use client";
 
-import { X, FilePlus, Copy } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { FilePlus, Copy, GitBranch } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { ModalShell } from "@/src/shared/ui/ModalShell";
 
 interface StartWorkflowModalProps {
   isOpen: boolean;
@@ -10,96 +10,48 @@ interface StartWorkflowModalProps {
 }
 
 export const StartWorkflowModal = ({ isOpen, onClose }: StartWorkflowModalProps) => {
-  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
-  const [shouldRender, setShouldRender] = useState(isOpen);
-  const [isVisible, setIsVisible] = useState(false);
-
-  if (isOpen !== prevIsOpen) {
-    setPrevIsOpen(isOpen);
-    if (isOpen) {
-      setShouldRender(true);
-    }
-  }
-
-  useEffect(() => {
-    if (isOpen) {
-      const timer = requestAnimationFrame(() => setIsVisible(true));
-      return () => cancelAnimationFrame(timer);
-    } else {
-      const animTimer = requestAnimationFrame(() => setIsVisible(false));
-      const closeTimer = setTimeout(() => setShouldRender(false), 300);
-      return () => {
-        cancelAnimationFrame(animTimer);
-        clearTimeout(closeTimer);
-      };
-    }
-  }, [isOpen]);
-
-  if (!shouldRender) return null;
-
   return (
-    <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 ${
-        isVisible ? "pointer-events-auto" : "pointer-events-none"
-      }`}
+    <ModalShell
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Create new workflow"
+      description="How would you like to start?"
+      icon={GitBranch}
+      maxWidthClass="max-w-[520px]"
     >
-      {/* Backdrop */}
-      <div
-        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-        onClick={onClose}
-      />
-
-      {/* Modal Content */}
-      <div
-        className={`relative w-full max-w-[500px] overflow-hidden rounded-2xl bg-background p-6 shadow-2xl border border-border transition-all duration-300 ${
-          isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0"
-        }`}
-      >
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-bold text-foreground">Create New Workflow</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              How would you like to start?
-            </p>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Link
+          href="/dashboard/workflows/new"
+          onClick={onClose}
+          className="group flex flex-col items-center rounded-xl border border-border/50 bg-surface-container-lowest p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
+        >
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-200 group-hover:scale-105">
+            <FilePlus className="h-6 w-6" weight="duotone" />
           </div>
-          <button
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+          <span className="font-manrope text-[14px] font-bold text-on-surface">
+            Start fresh
+          </span>
+          <p className="mt-2 font-manrope text-[12px] font-medium leading-relaxed text-on-surface-variant">
+            Build a custom workflow from scratch on a blank canvas
+          </p>
+        </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link
-            href="/dashboard/workflows/new"
-            className="group flex flex-col items-center text-center p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-secondary/50 transition-all"
-          >
-            <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-              <FilePlus className="h-6 w-6 text-primary" weight="bold" />
-            </div>
-            <span className="font-bold text-foreground">Start Fresh</span>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Build a custom workflow from scratch on a blank canvas.
-            </p>
-          </Link>
-
-          <Link
-            href="/dashboard/workflows/templates"
-            className="group flex flex-col items-center text-center p-6 rounded-xl border border-border bg-card hover:border-primary/50 hover:bg-secondary/50 transition-all"
-          >
-            <div className="h-12 w-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110">
-              <Copy className="h-6 w-6 text-blue-500" weight="bold" />
-            </div>
-            <span className="font-bold text-foreground">Use Template</span>
-            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-              Start with a pre-built template to save time and effort.
-            </p>
-          </Link>
-        </div>
+        <Link
+          href="/dashboard/workflows/templates"
+          onClick={onClose}
+          className="group flex flex-col items-center rounded-xl border border-border/50 bg-surface-container-lowest p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
+        >
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-200 group-hover:scale-105">
+            <Copy className="h-6 w-6" weight="duotone" />
+          </div>
+          <span className="font-manrope text-[14px] font-bold text-on-surface">
+            Use template
+          </span>
+          <p className="mt-2 font-manrope text-[12px] font-medium leading-relaxed text-on-surface-variant">
+            Start with a pre-built template to save time and effort
+          </p>
+        </Link>
       </div>
-    </div>
+    </ModalShell>
   );
 };
