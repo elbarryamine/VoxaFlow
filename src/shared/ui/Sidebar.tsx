@@ -22,7 +22,10 @@ const NAV_ITEMS = [
   { href: "/dashboard/executions", label: "Executions", icon: Pulse },
   { href: "/dashboard/credentials", label: "Credentials", icon: Key },
   { href: "/dashboard/settings", label: "Settings", icon: Gear },
-];
+] as const;
+
+const navLinkBase =
+  "group relative flex items-center rounded-lg font-manrope transition-colors duration-300";
 
 interface SidebarProps {
   userName: string;
@@ -67,7 +70,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
   return (
     <aside
       className={cn(
-        "relative z-30 flex h-full shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar-bg text-sidebar-fg transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+        "relative z-30 flex h-full shrink-0 flex-col border-r border-sidebar-border/50 bg-sidebar-bg text-sidebar-fg transition-all duration-300 ease-in-out",
         isCollapsed ? "w-20" : "w-[280px]"
       )}
     >
@@ -85,12 +88,13 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
             </div>
           )}
           <button
+            type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-              isCollapsed 
-                ? "bg-surface-variant text-sidebar-title shadow-sm" 
-                : "text-sidebar-fg hover:bg-surface-variant hover:text-sidebar-title"
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-on-surface-variant transition-colors duration-300",
+              isCollapsed
+                ? "bg-surface-variant text-on-surface shadow-sm"
+                : "hover:bg-surface-variant hover:text-on-surface",
             )}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -108,7 +112,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1.5 px-3 py-4 font-manrope">
+      <nav className="flex-1 space-y-0.5 px-2 py-2">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -116,30 +120,46 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
               key={href}
               href={href}
               className={cn(
-                "group relative flex items-center rounded-xl transition-all duration-300 ease-out",
-                isCollapsed 
-                  ? "h-12 w-12 justify-center mx-auto" 
-                  : "gap-3.5 px-3.5 py-3",
+                navLinkBase,
+                "border",
+                isCollapsed
+                  ? "mx-auto h-9 w-9 justify-center"
+                  : "gap-2 px-2 py-1.5",
                 active
-                  ? "bg-sidebar-active text-sidebar-active-foreground shadow-sm"
-                  : "text-sidebar-fg hover:bg-sidebar-hover-bg hover:text-sidebar-title"
+                  ? "border-primary/25 bg-primary text-on-primary"
+                  : "border-transparent text-on-surface-variant hover:border-border/50 hover:bg-surface-variant/50 hover:text-on-surface",
               )}
               title={isCollapsed ? label : undefined}
             >
-              <Icon 
-                weight={active ? "duotone" : "regular"} 
-                className={cn(
-                  "h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-110",
-                  active ? "text-sidebar-active-foreground" : "text-sidebar-fg group-hover:text-sidebar-title"
-                )} 
-              />
-              {!isCollapsed && (
-                <span className="truncate text-[14px] font-semibold tracking-wide">
-                  {label}
-                </span>
-              )}
-              {active && !isCollapsed && (
-                <div className="absolute left-0 h-5 w-1 rounded-r-full bg-primary-foreground/40" />
+              {isCollapsed ? (
+                <Icon
+                  weight={active ? "duotone" : "regular"}
+                  className="h-4 w-4 shrink-0"
+                />
+              ) : (
+                <>
+                  <span
+                    className={cn(
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-300",
+                      active
+                        ? "bg-on-primary/15 text-on-primary"
+                        : "bg-surface-container-high text-on-surface-variant group-hover:bg-secondary-container/50 group-hover:text-on-secondary-container",
+                    )}
+                  >
+                    <Icon
+                      weight={active ? "duotone" : "regular"}
+                      className="h-4 w-4 shrink-0"
+                    />
+                  </span>
+                  <span
+                    className={cn(
+                      "truncate text-[14px] font-semibold leading-tight",
+                      active ? "text-on-primary" : "text-on-surface",
+                    )}
+                  >
+                    {label}
+                  </span>
+                </>
               )}
             </Link>
           );
