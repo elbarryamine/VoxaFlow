@@ -46,26 +46,26 @@ export const ExecutionCard = ({ execution }: ExecutionCardProps) => {
   return (
     <Link
       href={`/dashboard/executions/${execution.id}`}
-      className="group block rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md"
+      className="group block rounded-2xl border border-border/50 bg-card p-5 transition-all duration-300 hover:border-outline-variant hover:shadow-lg hover:-translate-y-0.5"
     >
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <div className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-xl border shadow-sm",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition-colors",
             config.className
           )}>
             <Icon weight="duotone" className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-foreground group-hover:text-primary">
+            <h3 className="truncate font-newsreader text-[19px] font-bold text-on-surface transition-colors group-hover:text-primary">
               {execution.workflowName}
             </h3>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+            <div className="mt-0.5 flex items-center gap-2 font-manrope">
+              <span className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
                 ID: {execution.id}
               </span>
               <span className="h-1 w-1 rounded-full bg-border" />
-              <span className="text-[11px] font-medium text-muted-foreground">
+              <span className="text-[13px] font-medium text-on-surface-variant">
                 {execution.trigger}
               </span>
             </div>
@@ -73,25 +73,25 @@ export const ExecutionCard = ({ execution }: ExecutionCardProps) => {
         </div>
         <button
           onClick={(e) => e.preventDefault()}
-          className="rounded-lg p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-secondary hover:text-secondary-foreground group-hover:opacity-100"
+          className="rounded-xl p-1.5 text-on-surface-variant opacity-0 transition-all hover:bg-surface-variant hover:text-on-surface group-hover:opacity-100"
         >
-          <DotsThreeVertical className="h-4 w-4" />
+          <DotsThreeVertical className="h-5 w-5" />
         </button>
       </div>
 
-      <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4 text-xs text-muted-foreground">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5" />
-            <span>{new Date(execution.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+      <div className="mt-5 flex items-center justify-between border-t border-border/40 pt-4 font-manrope text-sm text-on-surface-variant">
+        <div className="flex items-center gap-5">
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4" weight="duotone" />
+            <span className="font-medium">{new Date(execution.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Timer className="h-3.5 w-3.5" />
-            <span>{execution.duration}</span>
+          <div className="flex items-center gap-2">
+            <Timer className="h-4 w-4" weight="duotone" />
+            <span className="font-medium">{execution.duration}</span>
           </div>
         </div>
         <span className={cn(
-          "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border",
+          "rounded-full border px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest",
           config.className
         )}>
           {config.label}

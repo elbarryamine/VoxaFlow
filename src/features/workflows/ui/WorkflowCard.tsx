@@ -27,19 +27,19 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
   return (
     <Link
       href={`/dashboard/workflows/${workflow.id}`}
-      className="group block rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-md"
+      className="group block rounded-2xl border border-border/50 bg-card p-6 transition-all duration-300 hover:border-outline-variant hover:shadow-lg hover:-translate-y-0.5"
     >
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary">
-            <GitBranch className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 transition-colors group-hover:bg-secondary-container">
+            <GitBranch className="h-6 w-6 text-on-secondary-container" weight="duotone" />
           </div>
           <div>
-            <h3 className="font-semibold text-foreground group-hover:text-primary">
+            <h3 className="font-newsreader text-[20px] font-bold text-on-surface transition-colors group-hover:text-primary">
               {workflow.name}
             </h3>
             <span
-              className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize ${STATUS_STYLES[status]}`}
+              className={`mt-1 inline-block rounded-full px-2.5 py-0.5 font-manrope text-[11px] font-bold uppercase tracking-wider ${STATUS_STYLES[status]}`}
             >
               {status}
             </span>
@@ -50,28 +50,28 @@ export const WorkflowCard = ({ workflow }: WorkflowCardProps) => {
             e.preventDefault();
             e.stopPropagation();
           }}
-          className="rounded-lg p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-secondary hover:text-secondary-foreground group-hover:opacity-100"
+          className="rounded-xl p-1.5 text-on-surface-variant opacity-0 transition-all hover:bg-surface-variant hover:text-on-surface group-hover:opacity-100"
         >
-          <DotsThreeVertical className="h-4 w-4" />
+          <DotsThreeVertical className="h-5 w-5" />
         </button>
       </div>
 
       {workflow.profileName && (
-        <div className="mt-4 flex items-center gap-2">
-          <span className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-primary">
+        <div className="mt-5 flex items-center gap-2">
+          <span className="rounded-lg bg-surface-variant px-2.5 py-1 font-manrope text-[12px] font-semibold text-on-surface-variant">
             {workflow.profileName}
           </span>
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-5 text-sm text-muted-foreground">
-        <div className="flex items-center gap-1.5">
-          <Play className="h-3.5 w-3.5" />
-          <span>{runsCount.toLocaleString()} runs</span>
+      <div className="mt-5 flex items-center gap-6 font-manrope text-[14px] text-on-surface-variant">
+        <div className="flex items-center gap-2">
+          <Play className="h-4 w-4" weight="duotone" />
+          <span className="font-medium">{runsCount.toLocaleString()} runs</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <Clock className="h-3.5 w-3.5" />
-          <span>{lastRun}</span>
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4" weight="duotone" />
+          <span className="font-medium">{lastRun}</span>
         </div>
       </div>
     </Link>

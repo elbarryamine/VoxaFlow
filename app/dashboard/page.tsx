@@ -26,10 +26,10 @@ export default function DashboardPage() {
     <PageLayout
       title="Dashboard"
       description="Overview of your workflow automations"
-      contentClassName="space-y-8"
+      contentClassName="space-y-10"
     >
       {/* Stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Total Executions"
           value={String(executions.length)}
@@ -57,16 +57,16 @@ export default function DashboardPage() {
 
       {/* Executions preview */}
       <section>
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold">Recent Executions</h2>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-newsreader text-2xl font-bold text-on-surface">Recent Executions</h2>
           <Link
             href="/dashboard/executions"
-            className="text-sm font-medium text-primary hover:text-primary/80"
+            className="font-manrope text-[14px] font-bold text-primary transition-colors hover:text-primary/80"
           >
             View all
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {executions.slice(0, 3).map((execution) => (
             <ExecutionCard key={execution.id} execution={execution} />
           ))}
@@ -75,16 +75,16 @@ export default function DashboardPage() {
 
       {/* Workflows preview */}
       <section>
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="text-lg font-semibold">Your Workflows</h2>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-newsreader text-2xl font-bold text-on-surface">Your Workflows</h2>
           <Link
             href="/dashboard/workflows"
-            className="text-sm font-medium text-primary hover:text-primary/80"
+            className="font-manrope text-[14px] font-bold text-primary transition-colors hover:text-primary/80"
           >
             View all
           </Link>
         </div>
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {workflows.map((wf) => (
             <WorkflowCard key={wf.id} workflow={wf} />
           ))}

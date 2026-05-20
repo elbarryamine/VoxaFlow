@@ -15,21 +15,21 @@ export const StatCard = ({
 }: StatCardProps) => {
   const changeColor = {
     positive: "text-success",
-    negative: "text-danger",
-    neutral: "text-muted-foreground",
+    negative: "text-error",
+    neutral: "text-on-surface-variant",
   }[changeType];
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6">
+    <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-6 shadow-sm transition-all duration-300 hover:border-outline-variant hover:shadow-lg">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
-          <Icon className="h-5 w-5 text-primary" />
+        <p className="text-[14px] font-manrope font-semibold tracking-wide text-on-surface-variant">{label}</p>
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-300 group-hover:scale-110">
+          <Icon className="h-6 w-6" weight="duotone" />
         </div>
       </div>
-      <p className="mt-3 text-3xl font-bold tracking-tight">{value}</p>
+      <p className="mt-4 text-4xl font-newsreader font-bold tracking-tight text-on-surface">{value}</p>
       {change && (
-        <p className={`mt-1 text-sm font-medium ${changeColor}`}>{change}</p>
+        <p className={`mt-2 font-manrope text-[13px] font-bold ${changeColor}`}>{change}</p>
       )}
     </div>
   );

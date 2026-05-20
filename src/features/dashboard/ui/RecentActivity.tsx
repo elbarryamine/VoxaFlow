@@ -51,26 +51,26 @@ const OUTCOME_ICON = {
 
 export const RecentActivity = () => {
   return (
-    <div className="rounded-xl border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-6 py-4">
-        <h3 className="font-semibold">Recent Activity</h3>
+    <div className="rounded-2xl border border-border/50 bg-card font-manrope shadow-sm transition-all duration-300 hover:shadow-md">
+      <div className="flex items-center justify-between border-b border-border/50 px-6 py-5">
+        <h3 className="font-newsreader text-xl font-bold text-on-surface">Recent Activity</h3>
       </div>
-      <div className="divide-y divide-border">
+      <div className="divide-y divide-border/40">
         {ACTIVITIES.map((activity) => (
           <div
             key={activity.id}
-            className="flex items-center gap-4 px-6 py-3.5"
+            className="group flex items-center gap-5 px-6 py-4 transition-colors hover:bg-surface-variant/30"
           >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary">
-              <Pulse className="h-4 w-4 text-primary" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-container/40 text-on-primary-container transition-transform duration-300 group-hover:scale-110">
+              <Pulse className="h-5 w-5" weight="duotone" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{activity.action}</p>
-              <p className="text-xs text-muted-foreground">{activity.workflow}</p>
+              <p className="truncate text-[15px] font-semibold text-on-surface">{activity.action}</p>
+              <p className="mt-1 text-[13px] font-medium text-on-surface-variant">{activity.workflow}</p>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2.5">
               {OUTCOME_ICON[activity.outcome as keyof typeof OUTCOME_ICON]}
-              <span className="text-xs text-muted-foreground">
+              <span className="text-[13px] font-semibold text-on-surface-variant">
                 {activity.time}
               </span>
             </div>
