@@ -1,8 +1,7 @@
 "use client";
 
 import type { NodeConfigProps } from "./shared";
-import { FieldLabel, SelectInput, TextAreaInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { FieldLabel, SelectInput, TextInput, SectionDivider, CredentialPicker, AutocompleteTextArea } from "./shared";
 
 const METHOD_OPTIONS = [
   { value: "POST", label: "POST" },
@@ -14,13 +13,24 @@ const METHOD_OPTIONS = [
 export const WebhookIntegrationConfig = ({
   data,
   onUpdate,
+  inputVariables,
 }: NodeConfigProps) => {
+  const autocompleteOptions = inputVariables
+    ? inputVariables.flatMap((group) =>
+        group.fields.map((field) => ({
+          value: `${group.nodeId}.${field.name}`,
+          label: `${group.nodeLabel}: ${field.name}`,
+          type: field.type,
+          description: field.description,
+        }))
+      )
+    : [];
   return (
     <div className="space-y-4">
-      <ConnectionPicker
-        connectionType="webhook"
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service="http"
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <SectionDivider label="Request Settings" />
@@ -47,10 +57,11 @@ export const WebhookIntegrationConfig = ({
 
       <div>
         <FieldLabel htmlFor="integration-body">Request Body</FieldLabel>
-        <TextAreaInput
+        <AutocompleteTextArea
           id="integration-body"
           value={String(data.bodyTemplate ?? "")}
           onChange={(value) => onUpdate("bodyTemplate", value)}
+          options={autocompleteOptions}
           placeholder='{"leadId":"{{lead.id}}"}'
           rows={4}
         />

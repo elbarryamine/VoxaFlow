@@ -5,6 +5,7 @@ import { SlackExecutor }       from './actions/SlackExecutor.ts';
 import { OpenAIExecutor }      from './actions/OpenAIExecutor.ts';
 import { ConditionExecutor }   from './logic/ConditionExecutor.ts';
 import { DelayExecutor }       from './logic/DelayExecutor.ts';
+import { TriggerExecutor }     from './logic/TriggerExecutor.ts';
 
 export function initExecutors() {
   // Actions
@@ -16,4 +17,11 @@ export function initExecutors() {
   // Logic
   ExecutorRegistry.register('condition',     new ConditionExecutor());
   ExecutorRegistry.register('delay',         new DelayExecutor());
+
+  // Triggers
+  const triggerExecutor = new TriggerExecutor();
+  ExecutorRegistry.register('webhook-shopify',      triggerExecutor);
+  ExecutorRegistry.register('webhook-lightfunnels', triggerExecutor);
+  ExecutorRegistry.register('webhook-youcan',       triggerExecutor);
+  ExecutorRegistry.register('webhook-custom',       triggerExecutor);
 }

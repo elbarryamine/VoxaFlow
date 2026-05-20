@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { X, BracketsCurly, TreeStructure } from "@phosphor-icons/react/dist/ssr";
 import type { Node, Edge } from "@xyflow/react";
 
@@ -9,6 +10,8 @@ import type {
   WorkflowNodeType,
 } from "../types/Workflow.types";
 import { NODE_OUTPUT_SCHEMAS } from "../constants/NODE_OUTPUT_SCHEMAS";
+import { NODE_TEMPLATES } from "../constants/NODE_TEMPLATES";
+import { DEFAULT_TRIGGER_MOCK_DATA } from "../constants/DEFAULT_TRIGGER_MOCK_DATA";
 import { ShopifyTriggerConfig } from "./node-configs/ShopifyTriggerConfig";
 import { LightfunnelsTriggerConfig } from "./node-configs/LightfunnelsTriggerConfig";
 import { YoucanTriggerConfig } from "./node-configs/YoucanTriggerConfig";
@@ -82,6 +85,78 @@ const CONFIG_MAP: Record<
   "delay": DelayConfig,
 };
 
+interface ExpandedField {
+  name: string;
+  type: string;
+  description: string;
+}
+
+function expandBaseFields(fields: ExpandedField[]): ExpandedField[] {
+  const expanded = [...fields];
+  const existingNames = new Set(fields.map((f) => f.name));
+
+  for (const field of fields) {
+    if (field.name === "usage" && field.type === "object") {
+      const subfields = [
+        { name: "usage.prompt_tokens", type: "number", description: "Number of prompt tokens used" },
+        { name: "usage.completion_tokens", type: "number", description: "Number of completion tokens used" },
+        { name: "usage.total_tokens", type: "number", description: "Total tokens used" },
+      ];
+      for (const sf of subfields) {
+        if (!existingNames.has(sf.name)) {
+          expanded.push(sf);
+          existingNames.add(sf.name);
+        }
+      }
+    }
+  }
+  return expanded;
+}
+
+function flattenMockData(obj: unknown, prefix = ""): ExpandedField[] {
+  if (obj === null || obj === undefined) return [];
+  if (typeof obj !== "object") return [];
+
+  if (Array.isArray(obj)) {
+    if (obj.length > 0 && typeof obj[0] === "object" && obj[0] !== null) {
+      return flattenMockData(obj[0], `${prefix}[]`);
+    }
+    return [];
+  }
+
+  const results: ExpandedField[] = [];
+  const record = obj as Record<string, unknown>;
+  for (const key of Object.keys(record)) {
+    const val = record[key];
+    const path = prefix ? `${prefix}.${key}` : key;
+    const type = Array.isArray(val) ? "array" : (val === null ? "null" : typeof val);
+
+    results.push({
+      name: path,
+      type,
+      description: `Nested field: ${path}`,
+    });
+
+    if (typeof val === "object" && val !== null) {
+      results.push(...flattenMockData(val, path));
+    }
+  }
+  return results;
+}
+
+function getInitialMockData(node: Node<WorkflowNodeData> | null): string {
+  if (!node) return "";
+  const template = NODE_TEMPLATES.find((t) => t.type === node.data.type);
+  const isTriggerNode = template?.category === "trigger";
+  if (!isTriggerNode) return "";
+  const currentMock = node.data.testMockData;
+  if (currentMock === undefined || currentMock === null || currentMock === "") {
+    const defaultData = DEFAULT_TRIGGER_MOCK_DATA[node.data.type] || {};
+    return JSON.stringify(defaultData, null, 2);
+  }
+  return typeof currentMock === "string" ? currentMock : JSON.stringify(currentMock, null, 2);
+}
+
 export const NodeConfigSidebar = ({
   node,
   nodes,
@@ -89,9 +164,56 @@ export const NodeConfigSidebar = ({
   onUpdateNode,
   onClose,
 }: NodeConfigSidebarProps) => {
+  const [mockDataText, setMockDataText] = useState(() => getInitialMockData(node));
+  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [prevNodeId, setPrevNodeId] = useState<string | null>(null);
+
+  if (node && node.id !== prevNodeId) {
+    setPrevNodeId(node.id);
+    const initialText = getInitialMockData(node);
+    setMockDataText(initialText);
+    setJsonError(null);
+  }
+
+  useEffect(() => {
+    if (!node) return;
+    const template = NODE_TEMPLATES.find((t) => t.type === node.data.type);
+    const isTriggerNode = template?.category === "trigger";
+    if (isTriggerNode) {
+      const currentMock = node.data.testMockData;
+      if (currentMock === undefined || currentMock === null || currentMock === "") {
+        const defaultData = DEFAULT_TRIGGER_MOCK_DATA[node.data.type] || {};
+        const mockStr = JSON.stringify(defaultData, null, 2);
+        const timer = setTimeout(() => {
+          onUpdateNode("testMockData", mockStr);
+        }, 0);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [node, onUpdateNode]);
+
+  const handleMockDataChange = (value: string) => {
+    setMockDataText(value);
+    try {
+      if (value.trim() === "") {
+        setJsonError(null);
+        onUpdateNode("testMockData", "");
+        return;
+      }
+      JSON.parse(value);
+      setJsonError(null);
+      onUpdateNode("testMockData", value);
+    } catch (e) {
+      setJsonError(e instanceof Error ? e.message : "Invalid JSON");
+      onUpdateNode("testMockData", value);
+    }
+  };
+
   if (!node) return null;
 
   const ConfigComponent = CONFIG_MAP[node.data.type];
+  const template = NODE_TEMPLATES.find((t) => t.type === node.data.type);
+  const isTrigger = template?.category === "trigger";
   const typeLabel = TYPE_LABELS[node.data.type] ?? node.data.type;
   
   const schemaDef = NODE_OUTPUT_SCHEMAS[node.data.type];
@@ -130,13 +252,46 @@ export const NodeConfigSidebar = ({
   const inputVariables = upstreamNodes
     .map((upNode) => {
       const upSchemaDef = NODE_OUTPUT_SCHEMAS[upNode.data.type];
-      const fields = typeof upSchemaDef === "function" 
+      const baseFields = typeof upSchemaDef === "function" 
         ? upSchemaDef(upNode.data as unknown as Record<string, unknown>) 
         : upSchemaDef;
+      
+      let fieldsList: ExpandedField[] = [];
+      if (baseFields) {
+        fieldsList = expandBaseFields(baseFields.map((f) => ({ ...f })));
+
+        // Check if there is testMockData or fallback to DEFAULT_TRIGGER_MOCK_DATA
+        let mockObj: unknown = null;
+        if (
+          upNode.data.testMockData &&
+          typeof upNode.data.testMockData === "string" &&
+          upNode.data.testMockData.trim() !== ""
+        ) {
+          try {
+            mockObj = JSON.parse(upNode.data.testMockData);
+          } catch {
+            // JSON parse failed
+          }
+        } else {
+          mockObj = DEFAULT_TRIGGER_MOCK_DATA[upNode.data.type as keyof typeof DEFAULT_TRIGGER_MOCK_DATA];
+        }
+
+        if (mockObj) {
+          const flatMock = flattenMockData(mockObj);
+          const existingNames = new Set(fieldsList.map((f) => f.name));
+          for (const f of flatMock) {
+            if (!existingNames.has(f.name)) {
+              fieldsList.push(f);
+              existingNames.add(f.name);
+            }
+          }
+        }
+      }
+
       return {
         nodeId: upNode.id,
         nodeLabel: upNode.data.label || upNode.id,
-        fields: fields || [],
+        fields: fieldsList,
       };
     })
     .filter((group) => group.fields.length > 0);
@@ -197,6 +352,41 @@ export const NodeConfigSidebar = ({
               onUpdate={onUpdateNode}
               inputVariables={inputVariables}
             />
+
+            {isTrigger && (
+              <>
+                <div className="flex items-center gap-2 pt-4">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+                    Test Mock Data
+                  </span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                <div className="space-y-2">
+                  <FieldLabel
+                    htmlFor="test-mock-data"
+                    hint={
+                      <span className={`text-[10px] ${jsonError ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
+                        {jsonError ? "Invalid JSON" : "JSON payload for Test Run"}
+                      </span>
+                    }
+                  >
+                    Mock Trigger Payload
+                  </FieldLabel>
+                  <TextAreaInput
+                    id="test-mock-data"
+                    value={mockDataText}
+                    onChange={handleMockDataChange}
+                    placeholder="{}"
+                    rows={8}
+                  />
+                  {jsonError && (
+                    <p className="text-[10px] font-medium text-red-500">
+                      {jsonError}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
 
             {inputVariables.length > 0 && (
               <div className="mt-8 space-y-3">

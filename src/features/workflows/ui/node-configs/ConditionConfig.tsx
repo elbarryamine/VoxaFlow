@@ -1,7 +1,6 @@
 "use client";
 
 
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 import {
   FieldLabel,
   SelectInput,
@@ -10,14 +9,14 @@ import {
   AutocompleteTextArea,
   type NodeConfigProps,
   MODEL_OPTIONS,
-  getConnectionType,
+  CredentialPicker,
 } from "./shared";
 
 
 export const ConditionConfig = ({ data, onUpdate, inputVariables }: NodeConfigProps) => {
   const aiConditionPrompt = (data.aiConditionPrompt as string) ?? "";
   const modelName = String(data.modelName ?? "gpt-4.1-mini");
-  const connectionType = getConnectionType(modelName);
+  const serviceType = modelName === "custom" ? "http" : "openai";
 
   const autocompleteOptions = inputVariables
     ? inputVariables.flatMap((group) =>
@@ -32,10 +31,10 @@ export const ConditionConfig = ({ data, onUpdate, inputVariables }: NodeConfigPr
 
   return (
     <div className="space-y-4">
-      <ConnectionPicker
-        connectionType={connectionType}
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service={serviceType}
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <SectionDivider label="Node Details" />

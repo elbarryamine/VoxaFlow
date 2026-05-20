@@ -29,6 +29,7 @@ app/
 ├── api/                                # Next.js API Routes
 │   ├── workflows/                      # GET (list), POST (create)
 │   ├── workflows/[id]/                 # GET, PATCH (save), DELETE
+│   ├── workflows/[id]/test/            # POST (trigger test execution)
 │   ├── credentials/                    # GET (list), POST (create)
 │   ├── credentials/[id]/               # DELETE
 │   └── executions/                     # Run management & logs

@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash } from "@phosphor-icons/react/dist/ssr";
 import type { NodeConfigProps } from "./shared";
-import { FieldLabel, SelectInput, TextAreaInput, TextInput } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { FieldLabel, SelectInput, TextInput, CredentialPicker, AutocompleteTextArea } from "./shared";
 
 const METHOD_OPTIONS = [
   { value: "GET", label: "GET" },
@@ -103,8 +102,20 @@ const KeyValueEditor = ({
 export const ApiRequestConfig = ({
   data,
   onUpdate,
+  inputVariables,
 }: NodeConfigProps) => {
   const [activeTab, setActiveTab] = useState<"params" | "headers" | "body" | "output">("params");
+
+  const autocompleteOptions = inputVariables
+    ? inputVariables.flatMap((group) =>
+        group.fields.map((field) => ({
+          value: `${group.nodeId}.${field.name}`,
+          label: `${group.nodeLabel}: ${field.name}`,
+          type: field.type,
+          description: field.description,
+        }))
+      )
+    : [];
 
   const fields = Array.isArray(data.expectedOutputFields) ? data.expectedOutputFields : [];
   const queryParams = Array.isArray(data.apiQueryParams) ? data.apiQueryParams : [];
@@ -136,10 +147,10 @@ export const ApiRequestConfig = ({
 
   return (
     <div className="space-y-5">
-      <ConnectionPicker
-        connectionType="webhook"
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service="http"
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <div className="flex gap-2 items-start">
@@ -208,10 +219,11 @@ export const ApiRequestConfig = ({
             
             <div className="mt-6 pt-4 border-t border-border/50">
               <FieldLabel htmlFor="api-headers">Raw Headers (JSON fallback)</FieldLabel>
-              <TextAreaInput
+              <AutocompleteTextArea
                 id="api-headers"
                 value={String(data.headersTemplate ?? "")}
                 onChange={(value) => onUpdate("headersTemplate", value)}
+                options={autocompleteOptions}
                 placeholder='{"Authorization": "Bearer {{token}}"}'
                 rows={2}
               />
@@ -274,10 +286,11 @@ export const ApiRequestConfig = ({
 
             {bodyType === "raw" && (
               <div>
-                <TextAreaInput
+                <AutocompleteTextArea
                   id="api-body"
                   value={String(data.bodyTemplate ?? "")}
                   onChange={(value) => onUpdate("bodyTemplate", value)}
+                  options={autocompleteOptions}
                   placeholder='{&#10;  "name": "{{lead.name}}"&#10;}'
                   rows={8}
                 />

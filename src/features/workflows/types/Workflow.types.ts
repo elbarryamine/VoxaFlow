@@ -48,6 +48,7 @@ export type WorkflowNodeData = {
   profileName?: string;
   // Trigger specifics
   webhookPath?: string;
+  testMockData?: string;
   // Intelligent actions
   modelName?: string;
   customModelName?: string;

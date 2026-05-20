@@ -1,8 +1,7 @@
 "use client";
 
 import type { NodeConfigProps } from "./shared";
-import { FieldLabel, SelectInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { FieldLabel, SelectInput, TextInput, SectionDivider, CredentialPicker } from "./shared";
 
 const WRITE_MODE_OPTIONS = [
   { value: "append", label: "Append Row" },
@@ -15,10 +14,10 @@ export const SpreadsheetIntegrationConfig = ({
 }: NodeConfigProps) => {
   return (
     <div className="space-y-4">
-      <ConnectionPicker
-        connectionType="google-sheets"
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service="google"
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <SectionDivider label="Sheet Settings" />

@@ -16,6 +16,32 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [testing, setTesting] = useState(false);
+
+  const handleTestRun = async () => {
+    setTesting(true);
+    try {
+      const res = await fetch(`/api/workflows/${id}/test`, {
+        method: "POST",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.executionIds && data.executionIds.length > 0) {
+          router.push(`/dashboard/executions/${data.executionIds[0]}`);
+        } else {
+          alert("No test executions were started.");
+        }
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || "Failed to trigger test run. Please configure a trigger with valid mock data first.");
+      }
+    } catch (err) {
+      console.error("Failed to execute test run:", err);
+      alert("An unexpected error occurred while starting the test run.");
+    } finally {
+      setTesting(false);
+    }
+  };
 
   useEffect(() => {
     async function fetchWorkflow() {
@@ -111,8 +137,12 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
             </span>
           )}
           
-          <button className="flex items-center gap-2 rounded-md border border-border px-5 py-2 text-sm font-semibold text-foreground hover:bg-secondary transition-colors">
-            <Play className="h-4 w-4" />
+          <button 
+            onClick={handleTestRun}
+            disabled={testing || saving}
+            className="flex items-center gap-2 rounded-md border border-border px-5 py-2 text-sm font-semibold text-foreground hover:bg-secondary transition-colors disabled:opacity-50"
+          >
+            {testing ? <CircleNotch className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
             Test Run
           </button>
           <button 

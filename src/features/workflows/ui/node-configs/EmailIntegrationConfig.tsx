@@ -1,46 +1,61 @@
 "use client";
 
 import type { NodeConfigProps } from "./shared";
-import { FieldLabel, TextAreaInput, TextInput, SectionDivider } from "./shared";
-import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
+import { FieldLabel, SectionDivider, CredentialPicker, AutocompleteTextArea } from "./shared";
 
-export const EmailIntegrationConfig = ({ data, onUpdate }: NodeConfigProps) => {
+export const EmailIntegrationConfig = ({ data, onUpdate, inputVariables }: NodeConfigProps) => {
+  const autocompleteOptions = inputVariables
+    ? inputVariables.flatMap((group) =>
+        group.fields.map((field) => ({
+          value: `${group.nodeId}.${field.name}`,
+          label: `${group.nodeLabel}: ${field.name}`,
+          type: field.type,
+          description: field.description,
+        }))
+      )
+    : [];
+
   return (
     <div className="space-y-4">
-      <ConnectionPicker
-        connectionType="email"
-        value={data.connectionId as string | undefined}
-        onChange={(id) => onUpdate("connectionId", id)}
+      <CredentialPicker
+        service="resend"
+        value={data.credentialId as string | undefined}
+        onChange={(id) => onUpdate("credentialId", id)}
       />
 
       <SectionDivider label="Email Settings" />
 
       <div>
         <FieldLabel htmlFor="email-to">To</FieldLabel>
-        <TextInput
+        <AutocompleteTextArea
           id="email-to"
           value={String(data.emailTo ?? "")}
           onChange={(value) => onUpdate("emailTo", value)}
+          options={autocompleteOptions}
           placeholder="ops@company.com"
+          rows={1}
         />
       </div>
 
       <div>
         <FieldLabel htmlFor="email-subject">Subject</FieldLabel>
-        <TextInput
+        <AutocompleteTextArea
           id="email-subject"
           value={String(data.emailSubject ?? "")}
           onChange={(value) => onUpdate("emailSubject", value)}
+          options={autocompleteOptions}
           placeholder="New lead notification"
+          rows={1}
         />
       </div>
 
       <div>
         <FieldLabel htmlFor="email-body">Body Template</FieldLabel>
-        <TextAreaInput
+        <AutocompleteTextArea
           id="email-body"
           value={String(data.emailBody ?? "")}
           onChange={(value) => onUpdate("emailBody", value)}
+          options={autocompleteOptions}
           placeholder="Lead: {{customer.name}}"
           rows={4}
         />
