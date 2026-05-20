@@ -4,7 +4,7 @@ import { NodeExecutor, WorkflowNode, ExecutionContext, ExecutionResult } from '.
 interface ConditionRule {
   field: string;
   operator: string;
-  value: any;
+  value: unknown;
 }
 
 export class ConditionExecutor implements NodeExecutor {
@@ -43,24 +43,24 @@ function evaluateRule(rule: ConditionRule, state: Record<string, unknown>, trigg
   }
 }
 
-function get(obj: any, path: string): any {
-  return path.split('.').reduce((acc, part) => {
+function get(obj: unknown, path: string): unknown {
+  return path.split('.').reduce<unknown>((acc, part) => {
     if (acc === null || acc === undefined) return undefined;
     const bracketIndex = part.indexOf('[');
     if (bracketIndex !== -1) {
       const key = part.slice(0, bracketIndex);
       const arrayPart = part.slice(bracketIndex);
-      let currentVal = key ? acc[key] : acc;
+      let currentVal = key ? (acc as Record<string, unknown>)[key] : acc;
       const matches = arrayPart.match(/\[(\d+)\]/g);
       if (matches) {
         for (const match of matches) {
           if (currentVal === null || currentVal === undefined) return undefined;
           const idx = parseInt(match.replace(/[\[\]]/g, ''), 10);
-          currentVal = currentVal[idx];
+          currentVal = (currentVal as unknown[])[idx];
         }
       }
       return currentVal;
     }
-    return acc[part];
+    return (acc as Record<string, unknown>)[part];
   }, obj);
 }

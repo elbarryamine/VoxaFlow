@@ -6,6 +6,7 @@ import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { Play, FloppyDisk, CircleNotch } from "@phosphor-icons/react/dist/ssr";
 
 import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
+import type { WorkflowDefinition } from "@/src/features/workflows/types/Workflow.types";
 
 export default function NewWorkflowPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function NewWorkflowPage() {
     window.dispatchEvent(new CustomEvent("save-workflow-trigger"));
   };
 
-  const onActualSave = async (definition: any) => {
+  const onActualSave = async (definition: WorkflowDefinition) => {
     setSaving(true);
     try {
       const res = await fetch("/api/workflows", {

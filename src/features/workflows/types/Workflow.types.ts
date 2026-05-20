@@ -1,12 +1,16 @@
+import type { Node, Edge } from "@xyflow/react";
+
+export interface WorkflowDefinition {
+  nodes: Node<WorkflowNodeData>[];
+  edges: Edge[];
+}
+
 export interface Workflow {
   id: string;
   user_id: string;
   name: string;
   description?: string | null;
-  definition: {
-    nodes: any[];
-    edges: any[];
-  };
+  definition: WorkflowDefinition;
   is_active: boolean;
   created_at: string;
   updated_at: string;

@@ -65,8 +65,9 @@ export class OpenAIExecutor implements NodeExecutor {
           finish_reason: choice?.finish_reason,
         },
       };
-    } catch (err: any) {
-      return { status: 'failed', error: err.message };
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      return { status: 'failed', error: errorMsg };
     }
   }
 }

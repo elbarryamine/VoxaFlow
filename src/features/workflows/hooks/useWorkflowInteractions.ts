@@ -16,7 +16,7 @@ export const useWorkflowInteractions = (
   );
 
   const onNodeClick = useCallback(
-    (_: any, node: Node<WorkflowNodeData>) => {
+    (_: unknown, node: Node<WorkflowNodeData>) => {
       setSelectedNodeId(node.id);
     },
     [],
@@ -50,7 +50,8 @@ export const useWorkflowInteractions = (
     if (!selectedNodeId) return;
     const hasNode = nodes.some((node) => node.id === selectedNodeId);
     if (!hasNode) {
-      setSelectedNodeId(null);
+      const timer = requestAnimationFrame(() => setSelectedNodeId(null));
+      return () => cancelAnimationFrame(timer);
     }
   }, [nodes, selectedNodeId]);
 

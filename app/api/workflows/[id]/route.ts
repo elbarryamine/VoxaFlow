@@ -23,8 +23,9 @@ export async function GET(
     if (!data) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -42,7 +43,7 @@ export async function PATCH(
     const body = await request.json();
     const { name, definition, is_active } = body;
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (definition !== undefined) updateData.definition = definition;
     if (is_active !== undefined) updateData.is_active = is_active;
@@ -59,8 +60,9 @@ export async function PATCH(
     if (error) throw error;
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
 
@@ -84,7 +86,8 @@ export async function DELETE(
     if (error) throw error;
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

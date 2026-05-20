@@ -12,7 +12,7 @@ export const useWorkflowEvents = ({
 }: {
   nodes: Node<WorkflowNodeData>[];
   edges: Edge[];
-  onSave?: (definition: any) => void;
+  onSave?: (definition: { nodes: Node<WorkflowNodeData>[]; edges: Edge[] }) => void;
   callbacks: {
     setIsPaletteOpen: (open: boolean) => void;
     setSourceNodeIdForAdd: (id: string | null) => void;
@@ -33,12 +33,18 @@ export const useWorkflowEvents = ({
   }, [nodes, edges, onSave]);
 
   useEffect(() => {
-    const handleOpenPalette = (e: any) => {
+    const handleOpenPalette = (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        sourceNodeId?: string | null;
+        sourceHandle?: string | null;
+        targetNodeId?: string | null;
+        targetHandle?: string | null;
+      }>;
       callbacks.setIsPaletteOpen(true);
-      callbacks.setSourceNodeIdForAdd(e?.detail?.sourceNodeId || null);
-      callbacks.setSourceHandleForAdd(e?.detail?.sourceHandle || null);
-      callbacks.setTargetNodeIdForAdd(e?.detail?.targetNodeId || null);
-      callbacks.setTargetHandleForAdd(e?.detail?.targetHandle || null);
+      callbacks.setSourceNodeIdForAdd(customEvent.detail?.sourceNodeId || null);
+      callbacks.setSourceHandleForAdd(customEvent.detail?.sourceHandle || null);
+      callbacks.setTargetNodeIdForAdd(customEvent.detail?.targetNodeId || null);
+      callbacks.setTargetHandleForAdd(customEvent.detail?.targetHandle || null);
       callbacks.setSelectedNodeId(null);
     };
 
@@ -50,8 +56,9 @@ export const useWorkflowEvents = ({
       callbacks.setTargetHandleForAdd(null);
     };
 
-    const handleOpenConfig = (e: any) => {
-      callbacks.setSelectedNodeId(e.detail.nodeId);
+    const handleOpenConfig = (e: Event) => {
+      const customEvent = e as CustomEvent<{ nodeId: string }>;
+      callbacks.setSelectedNodeId(customEvent.detail?.nodeId || null);
       callbacks.setIsPaletteOpen(false);
       callbacks.setSourceNodeIdForAdd(null);
     };

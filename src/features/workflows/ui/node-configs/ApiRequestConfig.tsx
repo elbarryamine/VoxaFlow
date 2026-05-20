@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, Trash } from "@phosphor-icons/react/dist/ssr";
 import type { NodeConfigProps } from "./shared";
-import { FieldLabel, SelectInput, TextAreaInput, TextInput, SectionDivider } from "./shared";
+import { FieldLabel, SelectInput, TextAreaInput, TextInput } from "./shared";
 import { ConnectionPicker } from "@/src/features/connections/ui/ConnectionPicker";
 
 const METHOD_OPTIONS = [
@@ -13,6 +13,92 @@ const METHOD_OPTIONS = [
   { value: "PATCH", label: "PATCH" },
   { value: "DELETE", label: "DELETE" },
 ];
+
+interface KeyValueItem {
+  key: string;
+  value: string;
+  description: string;
+}
+
+interface KeyValueEditorProps {
+  items: KeyValueItem[];
+  fieldKey: string;
+  addButtonLabel: string;
+  keyPlaceholder?: string;
+  valuePlaceholder?: string;
+  onUpdate: (
+    field: string,
+    value: string | number | boolean | unknown[] | Record<string, unknown> | undefined,
+  ) => void;
+}
+
+const KeyValueEditor = ({
+  items,
+  fieldKey,
+  addButtonLabel,
+  keyPlaceholder = "Key",
+  valuePlaceholder = "Value",
+  onUpdate,
+}: KeyValueEditorProps) => {
+  const handleAdd = () => {
+    onUpdate(fieldKey, [...items, { key: "", value: "", description: "" }]);
+  };
+
+  const handleUpdate = (index: number, field: string, value: string) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    onUpdate(fieldKey, newItems);
+  };
+
+  const handleRemove = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    onUpdate(fieldKey, newItems);
+  };
+
+  return (
+    <div className="space-y-3 pt-2">
+      {items.map((item, index) => (
+        <div key={index} className="flex flex-col gap-2 rounded-lg border border-border bg-muted/20 p-3">
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <TextInput
+                value={item.key}
+                onChange={(v) => handleUpdate(index, "key", v)}
+                placeholder={keyPlaceholder}
+              />
+            </div>
+            <div className="flex-1">
+              <TextInput
+                value={item.value}
+                onChange={(v) => handleUpdate(index, "value", v)}
+                placeholder={valuePlaceholder}
+              />
+            </div>
+            <button
+              onClick={() => handleRemove(index)}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title="Remove item"
+            >
+              <Trash className="h-4 w-4" />
+            </button>
+          </div>
+          <TextInput
+            value={item.description}
+            onChange={(v) => handleUpdate(index, "description", v)}
+            placeholder="Description (optional)"
+          />
+        </div>
+      ))}
+      <button
+        onClick={handleAdd}
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-transparent py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+      >
+        <Plus className="h-4 w-4" />
+        {addButtonLabel}
+      </button>
+    </div>
+  );
+};
 
 export const ApiRequestConfig = ({
   data,
@@ -46,78 +132,7 @@ export const ApiRequestConfig = ({
     onUpdate("expectedOutputFields", newFields);
   };
 
-  const KeyValueEditor = ({
-    items,
-    fieldKey,
-    addButtonLabel,
-    keyPlaceholder = "Key",
-    valuePlaceholder = "Value"
-  }: {
-    items: any[];
-    fieldKey: string;
-    addButtonLabel: string;
-    keyPlaceholder?: string;
-    valuePlaceholder?: string;
-  }) => {
-    const handleAdd = () => {
-      onUpdate(fieldKey, [...items, { key: "", value: "", description: "" }]);
-    };
-  
-    const handleUpdate = (index: number, field: string, value: string) => {
-      const newItems = [...items];
-      newItems[index] = { ...newItems[index], [field]: value };
-      onUpdate(fieldKey, newItems);
-    };
-  
-    const handleRemove = (index: number) => {
-      const newItems = items.filter((_, i) => i !== index);
-      onUpdate(fieldKey, newItems);
-    };
-  
-    return (
-      <div className="space-y-3 pt-2">
-        {items.map((item, index) => (
-          <div key={index} className="flex flex-col gap-2 rounded-lg border border-border bg-muted/20 p-3">
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <TextInput
-                  value={item.key}
-                  onChange={(v) => handleUpdate(index, "key", v)}
-                  placeholder={keyPlaceholder}
-                />
-              </div>
-              <div className="flex-1">
-                <TextInput
-                  value={item.value}
-                  onChange={(v) => handleUpdate(index, "value", v)}
-                  placeholder={valuePlaceholder}
-                />
-              </div>
-              <button
-                onClick={() => handleRemove(index)}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                title="Remove item"
-              >
-                <Trash className="h-4 w-4" />
-              </button>
-            </div>
-            <TextInput
-              value={item.description}
-              onChange={(v) => handleUpdate(index, "description", v)}
-              placeholder="Description (optional)"
-            />
-          </div>
-        ))}
-        <button
-          onClick={handleAdd}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-transparent py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
-        >
-          <Plus className="h-4 w-4" />
-          {addButtonLabel}
-        </button>
-      </div>
-    );
-  };
+
 
   return (
     <div className="space-y-5">
@@ -149,15 +164,17 @@ export const ApiRequestConfig = ({
       </div>
 
       <div className="flex space-x-1 border-b border-border/50 text-[13px] font-medium overflow-x-auto no-scrollbar">
-        {[
-          { id: "params", label: "Params" },
-          { id: "headers", label: "Headers" },
-          { id: "body", label: "Body" },
-          { id: "output", label: "Output" },
-        ].map((tab) => (
+        {(
+          [
+            { id: "params", label: "Params" },
+            { id: "headers", label: "Headers" },
+            { id: "body", label: "Body" },
+            { id: "output", label: "Output" },
+          ] as const
+        ).map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => setActiveTab(tab.id)}
             className={`px-3 py-2 border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? "border-primary text-foreground"
@@ -175,6 +192,7 @@ export const ApiRequestConfig = ({
             items={queryParams} 
             fieldKey="apiQueryParams" 
             addButtonLabel="Add Query Parameter" 
+            onUpdate={onUpdate}
           />
         )}
 
@@ -185,6 +203,7 @@ export const ApiRequestConfig = ({
               fieldKey="apiHeaders" 
               addButtonLabel="Add Header" 
               keyPlaceholder="Authorization, Content-Type..."
+              onUpdate={onUpdate}
             />
             
             <div className="mt-6 pt-4 border-t border-border/50">
@@ -249,6 +268,7 @@ export const ApiRequestConfig = ({
                 items={formData} 
                 fieldKey="apiFormData" 
                 addButtonLabel="Add Form Data Field" 
+                onUpdate={onUpdate}
               />
             )}
 

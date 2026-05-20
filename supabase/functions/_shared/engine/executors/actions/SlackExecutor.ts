@@ -58,8 +58,9 @@ export class SlackExecutor implements NodeExecutor {
           message_text: text,
         },
       };
-    } catch (err: any) {
-      return { status: 'failed', error: err.message };
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      return { status: 'failed', error: errorMsg };
     }
   }
 }

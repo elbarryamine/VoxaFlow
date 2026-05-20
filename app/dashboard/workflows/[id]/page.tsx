@@ -6,7 +6,7 @@ import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { Play, FloppyDisk, CircleNotch, CheckCircle, XCircle } from "@phosphor-icons/react/dist/ssr";
 
 import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
-import type { Workflow } from "@/src/features/workflows/types/Workflow.types";
+import type { Workflow, WorkflowDefinition } from "@/src/features/workflows/types/Workflow.types";
 
 export default function EditWorkflowPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -18,34 +18,35 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   useEffect(() => {
-    if (id) fetchWorkflow();
-  }, [id]);
-
-  async function fetchWorkflow() {
-    try {
-      const res = await fetch(`/api/workflows/${id}`);
-      if (res.ok) {
-        const data = await res.json();
-        setWorkflow(data);
-      } else {
-        const errorData = await res.json().catch(() => ({}));
-        console.error("Fetch workflow failed:", res.status, errorData);
+    async function fetchWorkflow() {
+      try {
+        const res = await fetch(`/api/workflows/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setWorkflow(data);
+        } else {
+          const errorData = await res.json().catch(() => ({}));
+          console.error("Fetch workflow failed:", res.status, errorData);
+          router.push("/dashboard/workflows");
+        }
+      } catch (err) {
+        console.error("Failed to fetch workflow exception:", err);
         router.push("/dashboard/workflows");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to fetch workflow exception:", err);
-      router.push("/dashboard/workflows");
-    } finally {
-      setLoading(false);
     }
-  }
+    if (id) {
+      fetchWorkflow();
+    }
+  }, [id, router]);
 
   const handleSave = () => {
     // Dispatch custom event that WorkflowCanvas will listen to
     window.dispatchEvent(new CustomEvent("save-workflow-trigger"));
   };
 
-  const onActualSave = async (definition: any) => {
+  const onActualSave = async (definition: WorkflowDefinition) => {
     if (!workflow) return;
     setSaving(true);
     setSaveStatus('idle');

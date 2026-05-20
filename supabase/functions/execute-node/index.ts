@@ -12,7 +12,7 @@ Deno.serve(async (req: Request) => {
   let reqBody;
   try {
     reqBody = await req.json();
-  } catch (e) {
+  } catch {
     return new Response('invalid json', { status: 400 });
   }
 
@@ -99,15 +99,16 @@ Deno.serve(async (req: Request) => {
       .update({ status: 'failed', error_message: `Unknown node type: ${node.type}` })
       .eq('execution_id', executionId)
       .eq('node_id', nodeId);
-    await maybeMarkExecutionFailed(supabase, executionId, definition);
+    await maybeMarkExecutionFailed(supabase, executionId);
     return new Response('unknown executor', { status: 200 });
   }
 
   let result: ExecutionResult;
   try {
     result = await executor.execute(interpolatedNode, context);
-  } catch (err: any) {
-    result = { status: 'failed', error: String(err.message || err) };
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    result = { status: 'failed', error: errorMsg };
   }
 
   // ── 7. Write result ───────────────────────────────────────────────────────
@@ -145,7 +146,7 @@ Deno.serve(async (req: Request) => {
       }).catch(console.error);
 
     } else {
-      await maybeMarkExecutionFailed(supabase, executionId, definition);
+      await maybeMarkExecutionFailed(supabase, executionId);
     }
     return new Response('node failed', { status: 200 });
   }
@@ -212,7 +213,7 @@ Deno.serve(async (req: Request) => {
 
   // ── 11. Check if execution is complete ────────────────────────────────────
   if (activeEdges.length === 0) {
-    await maybeMarkExecutionComplete(supabase, executionId, definition);
+    await maybeMarkExecutionComplete(supabase, executionId);
   }
 
   return new Response('ok', { status: 200 });

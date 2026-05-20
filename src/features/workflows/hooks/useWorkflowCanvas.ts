@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { type OnConnect, addEdge, useReactFlow } from "@xyflow/react";
+import { type OnConnect, addEdge } from "@xyflow/react";
 import { useCallback } from "react";
 
-import type { Workflow } from "../types/Workflow.types";
+import type { Workflow, WorkflowDefinition } from "../types/Workflow.types";
 import { useWorkflowState } from "./useWorkflowState";
 import { useWorkflowInteractions } from "./useWorkflowInteractions";
 import { useWorkflowPalette } from "./useWorkflowPalette";
@@ -21,7 +21,7 @@ const getConditionBranchLabel = (sourceHandle: string | null | undefined) => {
   return undefined;
 };
 
-export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definition: any) => void) => {
+export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definition: WorkflowDefinition) => void) => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   
   // 1. Core State
@@ -30,7 +30,6 @@ export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definiti
   // 2. Interactions (Selection, Updating)
   const { 
     selectedNode, 
-    selectedNodeId, 
     setSelectedNodeId, 
     onNodeClick, 
     onPaneClick, 
@@ -43,11 +42,9 @@ export const useWorkflowCanvas = (initialWorkflow?: Workflow, onSave?: (definiti
     setIsPaletteOpen,
     sourceNodeIdForAdd,
     setSourceNodeIdForAdd,
-    sourceHandleForAdd,
     setSourceHandleForAdd,
     targetNodeIdForAdd,
     setTargetNodeIdForAdd,
-    targetHandleForAdd,
     setTargetHandleForAdd,
     onDragStart,
     onDragOver,

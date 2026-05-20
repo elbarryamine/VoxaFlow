@@ -71,10 +71,6 @@ export default function CredentialsPage() {
 
   const [showFields, setShowFields] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
-    fetchCredentials();
-  }, []);
-
   async function fetchCredentials() {
     setLoading(true);
     const res = await fetch("/api/credentials");
@@ -84,6 +80,13 @@ export default function CredentialsPage() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => {
+      fetchCredentials();
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
 
   function handleServiceChange(service: string) {
     setForm((prev) => ({ ...prev, service, fields: {} }));

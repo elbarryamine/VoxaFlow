@@ -64,7 +64,7 @@ export default function TemplatesPage() {
           ))
         ) : (
           <div className="col-span-full py-12 text-center text-muted-foreground">
-            <p>No templates found matching "{searchQuery}"</p>
+            <p>No templates found matching &quot;{searchQuery}&quot;</p>
           </div>
         )}
       </div>

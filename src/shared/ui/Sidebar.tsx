@@ -11,7 +11,6 @@ import {
   GitBranch,
   Gear,
   Lightning,
-  Link as LinkIcon,
   Key,
   SignOut,
   SidebarSimple,
@@ -37,11 +36,14 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Auto-collapse on smaller screens on initial load
-    if (window.innerWidth < 1280) {
-      setIsCollapsed(true);
-    }
+    const timer = requestAnimationFrame(() => {
+      setMounted(true);
+      // Auto-collapse on smaller screens on initial load
+      if (window.innerWidth < 1280) {
+        setIsCollapsed(true);
+      }
+    });
+    return () => cancelAnimationFrame(timer);
   }, []);
 
   const initial = userName?.trim()?.charAt(0)?.toUpperCase() || "U";

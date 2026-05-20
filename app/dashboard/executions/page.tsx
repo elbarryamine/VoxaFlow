@@ -3,6 +3,15 @@ import { ExecutionCard } from "@/src/features/executions/ui/ExecutionCard";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 import { Execution } from "@/src/features/executions/types/Execution.types";
 
+interface DbExecution {
+  id: string;
+  workflow_id: string;
+  status: string;
+  created_at: string;
+  finished_at: string | null;
+  workflows: { name: string } | null;
+}
+
 export default async function ExecutionsPage() {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -18,7 +27,7 @@ export default async function ExecutionsPage() {
     .order('created_at', { ascending: false })
     .limit(50);
 
-  const executions: Execution[] = (dbExecutions || []).map((exec: any) => {
+  const executions: Execution[] = (dbExecutions as unknown as DbExecution[] || []).map((exec: DbExecution) => {
     let durationStr = "—";
     if (exec.created_at && exec.finished_at) {
       const ms = new Date(exec.finished_at).getTime() - new Date(exec.created_at).getTime();
@@ -29,9 +38,12 @@ export default async function ExecutionsPage() {
 
     // Map 'timed_out' and 'pending' to frontend expected statuses if necessary
     // 'timed_out' -> 'failed', 'pending' -> 'waiting'
-    let mappedStatus = exec.status;
-    if (mappedStatus === 'timed_out') mappedStatus = 'failed';
-    if (mappedStatus === 'pending') mappedStatus = 'waiting';
+    let mappedStatus: "success" | "failed" | "running" | "waiting" = "waiting";
+    if (exec.status === "success" || exec.status === "failed" || exec.status === "running" || exec.status === "waiting") {
+      mappedStatus = exec.status;
+    } else if (exec.status === 'timed_out') {
+      mappedStatus = 'failed';
+    }
 
     return {
       id: exec.id,

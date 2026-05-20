@@ -39,8 +39,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       | Theme
       | null;
     const initialTheme = storedTheme ?? getSystemTheme();
-    setThemeState(initialTheme);
-    applyTheme(initialTheme);
+    const timer = requestAnimationFrame(() => {
+      setThemeState(initialTheme);
+      applyTheme(initialTheme);
+    });
+    return () => cancelAnimationFrame(timer);
   }, []);
 
   const setTheme = useCallback((nextTheme: Theme) => {

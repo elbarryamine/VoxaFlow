@@ -64,8 +64,9 @@ export class ApiRequestExecutor implements NodeExecutor {
            body: responseBody,
         },
       };
-    } catch (err: any) {
-      return { status: 'failed', error: err.message };
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      return { status: 'failed', error: errorMsg };
     }
   }
 }

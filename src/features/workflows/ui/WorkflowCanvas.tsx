@@ -19,7 +19,7 @@ import { CanvasControls } from "./CanvasControls";
 import { EmptyCanvasPlaceholder } from "./EmptyCanvasPlaceholder";
 import { WorkflowActions } from "./WorkflowActions";
 
-import type { Workflow } from "../types/Workflow.types";
+import type { Workflow, WorkflowDefinition } from "../types/Workflow.types";
 
 const NODE_TYPES = {
   workflowNode: WorkflowNode,
@@ -27,7 +27,7 @@ const NODE_TYPES = {
 
 interface WorkflowCanvasProps {
   initialWorkflow?: Workflow;
-  onSave?: (definition: any) => void;
+  onSave?: (definition: WorkflowDefinition) => void;
 }
 
 const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {

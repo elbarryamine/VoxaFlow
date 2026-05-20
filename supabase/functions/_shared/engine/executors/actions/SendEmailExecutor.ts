@@ -67,8 +67,9 @@ export class SendEmailExecutor implements NodeExecutor {
           subject,
         },
       };
-    } catch (err: any) {
-      return { status: 'failed', error: err.message };
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      return { status: 'failed', error: errorMsg };
     }
   }
 }

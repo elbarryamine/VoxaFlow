@@ -41,10 +41,11 @@ export const NODE_OUTPUT_SCHEMAS: Record<WorkflowNodeType, OutputSchemaDefinitio
         ];
 
     if (data.outputFormat === "json" && Array.isArray(data.jsonSchemaFields)) {
-      const customFields = data.jsonSchemaFields
-        .filter((field: any) => field && typeof field.name === "string" && field.name.trim() !== "")
-        .map((field: any) => ({
-          name: field.name.trim(),
+      const jsonFields = data.jsonSchemaFields as { name?: string; type?: string; description?: string }[];
+      const customFields = jsonFields
+        .filter((field) => field && typeof field.name === "string" && field.name.trim() !== "")
+        .map((field) => ({
+          name: (field.name || "").trim(),
           type: typeof field.type === "string" ? field.type : "unknown",
           description: typeof field.description === "string" && field.description.trim() ? field.description : "Custom JSON field",
         }));
@@ -76,10 +77,11 @@ export const NODE_OUTPUT_SCHEMAS: Record<WorkflowNodeType, OutputSchemaDefinitio
     ];
     
     if (Array.isArray(data.expectedOutputFields)) {
-      const customFields = data.expectedOutputFields
-        .filter((field: any) => field && typeof field.name === "string" && field.name.trim() !== "")
-        .map((field: any) => ({
-          name: field.name.trim(),
+      const outputFields = data.expectedOutputFields as { name?: string; type?: string; description?: string }[];
+      const customFields = outputFields
+        .filter((field) => field && typeof field.name === "string" && field.name.trim() !== "")
+        .map((field) => ({
+          name: (field.name || "").trim(),
           type: typeof field.type === "string" ? field.type : "unknown",
           description: typeof field.description === "string" && field.description.trim() ? field.description : "Custom response field",
         }));

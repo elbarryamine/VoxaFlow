@@ -32,7 +32,8 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json(executions);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }

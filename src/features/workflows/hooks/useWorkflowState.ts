@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useNodesState, useEdgesState, type Node, type Edge } from "@xyflow/react";
 import { useReactFlow } from "@xyflow/react";
 import type { Workflow, WorkflowNodeData } from "../types/Workflow.types";
@@ -32,7 +32,7 @@ export const useWorkflowState = (initialWorkflow?: Workflow) => {
       setEdges(initialEdges);
       
       // Reset counter to avoid ID collisions
-      const maxId = Math.max(0, ...initialNodes.map((n: any) => parseInt(n.id) || 0));
+      const maxId = Math.max(0, ...initialNodes.map((n: Node) => parseInt(n.id) || 0));
       setNodeIdCounter(maxId);
 
       // Fit view after nodes are set
@@ -42,6 +42,7 @@ export const useWorkflowState = (initialWorkflow?: Workflow) => {
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialWorkflow?.id, setNodes, setEdges, fitView]);
 
   return {

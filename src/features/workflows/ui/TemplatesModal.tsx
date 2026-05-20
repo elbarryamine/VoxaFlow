@@ -15,20 +15,30 @@ export const TemplatesModal = ({
   onClose,
   onSelect,
 }: TemplatesModalProps) => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [isVisible, setIsVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setShouldRender(true);
       setSearchQuery(""); // Reset search on open
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
       const timer = requestAnimationFrame(() => setIsVisible(true));
       return () => cancelAnimationFrame(timer);
     } else {
-      setIsVisible(false);
-      const timer = setTimeout(() => setShouldRender(false), 300);
-      return () => clearTimeout(timer);
+      const animTimer = requestAnimationFrame(() => setIsVisible(false));
+      const closeTimer = setTimeout(() => setShouldRender(false), 300);
+      return () => {
+        cancelAnimationFrame(animTimer);
+        clearTimeout(closeTimer);
+      };
     }
   }, [isOpen]);
 
@@ -109,7 +119,7 @@ export const TemplatesModal = ({
             ))
           ) : (
             <div className="col-span-1 md:col-span-2 text-center py-8 text-sm text-muted-foreground">
-              No templates found matching "{searchQuery}"
+              No templates found matching &quot;{searchQuery}&quot;
             </div>
           )}
         </div>

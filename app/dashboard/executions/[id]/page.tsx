@@ -43,6 +43,14 @@ const STATUS_CONFIG = {
   }
 } as const;
 
+interface NodeExecution {
+  id: string;
+  node_type: string;
+  node_id: string;
+  status: string;
+  created_at: string;
+}
+
 export default async function ExecutionDetailsPage({ params }: PageProps) {
   const { id } = await params;
   const supabase = await createSupabaseServerClient();
@@ -127,7 +135,7 @@ export default async function ExecutionDetailsPage({ params }: PageProps) {
                     </td>
                   </tr>
                 ) : (
-                  nodeExecutions?.map((node: any) => {
+                  (nodeExecutions as unknown as NodeExecution[] | null)?.map((node: NodeExecution) => {
                     const nodeConfig = STATUS_CONFIG[node.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
                     const NodeIcon = nodeConfig.icon;
                     return (
