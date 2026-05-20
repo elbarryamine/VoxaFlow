@@ -1,5 +1,6 @@
 import { createSupabaseClient } from '../_shared/engine/supabaseClient.ts';
 import { WorkflowDefinition } from '../_shared/engine/types.ts';
+import { invokeExecuteNode } from '../_shared/engine/runExecuteNode.ts';
 
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
@@ -65,24 +66,10 @@ Deno.serve(async (req: Request) => {
     }))
   );
 
-  // 5. Fire execute-node for each trigger node via pg_net
-  // Assuming pg_net is available or just using a regular Deno fetch to the edge function URL
-  const functionsUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1`;
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-
-  for (const node of triggerNodes) {
-    // using raw fetch to trigger the next function instead of pg_net for edge-function to edge-function call
-    // pg_net is best when triggered from pg triggers. Here we're already in Deno
-    // We do it asynchronously without awaiting the response
-    fetch(`${functionsUrl}/execute-node`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${serviceKey}`
-      },
-      body: JSON.stringify({ executionId: execution.id, nodeId: node.id }),
-    }).catch(console.error);
-  }
+  // 5. Fire execute-node for each trigger (await — fire-and-forget fetch is cancelled on function exit)
+  await Promise.all(
+    triggerNodes.map(node => invokeExecuteNode(execution.id, node.id)),
+  );
 
   // Immediate 200 — caller doesn't wait for execution
   return new Response(JSON.stringify({ executionId: execution.id }), {

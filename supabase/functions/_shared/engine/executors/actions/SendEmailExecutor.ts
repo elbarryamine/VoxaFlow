@@ -25,10 +25,10 @@ export class SendEmailExecutor implements NodeExecutor {
       }
       await logger.info('Credential resolved');
 
-      const from = context.interpolate(node.data.from as string || '');
-      const toRaw = context.interpolate(node.data.to as string || '');
-      const subject = context.interpolate(node.data.subject as string || '');
-      const html = context.interpolate(node.data.html as string || '');
+      const from = context.interpolate(String(node.data.from ?? node.data.emailFrom ?? ''));
+      const toRaw = context.interpolate(String(node.data.to ?? node.data.emailTo ?? ''));
+      const subject = context.interpolate(String(node.data.subject ?? node.data.emailSubject ?? ''));
+      const html = context.interpolate(String(node.data.html ?? node.data.emailBody ?? ''));
       const text = node.data.text ? context.interpolate(node.data.text as string) : undefined;
 
       if (!from) return { status: 'failed', error: 'from is required.' };

@@ -1,16 +1,7 @@
 import { PageLayout } from "@/src/shared/ui/PageLayout";
-import { ExecutionCard } from "@/src/features/executions/ui/ExecutionCard";
+import { ExecutionsList } from "@/src/features/executions/ui/ExecutionsList";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
-import { Execution } from "@/src/features/executions/types/Execution.types";
-
-interface DbExecution {
-  id: string;
-  workflow_id: string;
-  status: string;
-  created_at: string;
-  finished_at: string | null;
-  workflows: { name: string } | null;
-}
+import { mapDbExecution, type DbExecutionRow } from "@/src/features/executions/utils/mapDbExecution";
 
 export default async function ExecutionsPage() {
   const supabase = await createSupabaseServerClient();
@@ -27,54 +18,14 @@ export default async function ExecutionsPage() {
     .order('created_at', { ascending: false })
     .limit(50);
 
-  const executions: Execution[] = (dbExecutions as unknown as DbExecution[] || []).map((exec: DbExecution) => {
-    let durationStr = "—";
-    if (exec.created_at && exec.finished_at) {
-      const ms = new Date(exec.finished_at).getTime() - new Date(exec.created_at).getTime();
-      const s = Math.floor(ms / 1000);
-      if (s < 60) durationStr = `${s}s`;
-      else durationStr = `${Math.floor(s / 60)}m ${s % 60}s`;
-    }
-
-    // Map 'timed_out' and 'pending' to frontend expected statuses if necessary
-    // 'timed_out' -> 'failed', 'pending' -> 'waiting'
-    let mappedStatus: "success" | "failed" | "running" | "waiting" = "waiting";
-    if (exec.status === "success" || exec.status === "failed" || exec.status === "running" || exec.status === "waiting") {
-      mappedStatus = exec.status;
-    } else if (exec.status === 'timed_out') {
-      mappedStatus = 'failed';
-    }
-
-    return {
-      id: exec.id,
-      workflowId: exec.workflow_id,
-      workflowName: exec.workflows?.name || "Unknown Workflow",
-      status: mappedStatus,
-      duration: durationStr,
-      trigger: "Webhook",
-      startedAt: exec.created_at,
-    };
-  });
+  const executions = (dbExecutions as DbExecutionRow[] | null ?? []).map(mapDbExecution);
 
   return (
     <PageLayout
       title="Executions"
       description="Monitor and manage your workflow execution history"
     >
-      {executions.length === 0 ? (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card/50 text-center">
-          <h3 className="mb-1 text-lg font-medium text-foreground">No executions yet</h3>
-          <p className="text-sm text-muted-foreground">
-            When your workflows run, their history will appear here.
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {executions.map((execution) => (
-            <ExecutionCard key={execution.id} execution={execution} />
-          ))}
-        </div>
-      )}
+      <ExecutionsList initialExecutions={executions} userId={user.id} />
     </PageLayout>
   );
 }

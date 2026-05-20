@@ -1,48 +1,31 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getSupabaseClient } from '@/src/shared/utils/supabase-client';
 import { cn } from '@/src/shared/utils/cn';
 import {
+  useExecutionLiveData,
+  type ExecutionData,
+  type NodeExecutionData,
+  type NodeExecutionLog,
+} from '../hooks/useExecutionLiveData';
+import {
   CheckCircle,
-  XCircleIcon,
-  PlayCircle,
+  XCircle,
+  CircleNotch,
+  Clock,
   Timer,
-  ClockIcon,
-  CaretRight,
+  CaretDown,
+  Envelope,
+  Globe,
+  GitBranch,
+  Hourglass,
+  Sparkle,
+  FlowArrow,
+  SkipForward,
+  ArrowsClockwise,
 } from '@phosphor-icons/react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-interface ExecutionData {
-  id: string;
-  status: string;
-  created_at: string;
-  finished_at: string | null;
-  error_message: string | null;
-  workflows: { name: string } | null;
-}
-
-interface NodeExecutionData {
-  id: string;
-  node_id: string;
-  node_type: string;
-  status: string;
-  error_message: string | null;
-  created_at: string;
-  started_at: string | null;
-  finished_at: string | null;
-}
-
-interface NodeExecutionLog {
-  id: string;
-  node_execution_id: string;
-  level: 'info' | 'warn' | 'error';
-  message: string;
-  data: Record<string, unknown> | null;
-  elapsed_ms: number | null;
-  created_at: string;
-}
 
 interface ExecutionDetailProps {
   initialExecution: ExecutionData;
@@ -53,63 +36,109 @@ interface ExecutionDetailProps {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const NODE_LABELS: Record<string, string> = {
-  'webhook-shopify': 'Shopify Trigger',
-  'webhook-lightfunnels': 'Lightfunnels Trigger',
-  'webhook-youcan': 'YouCan Trigger',
-  'webhook-custom': 'Custom Webhook',
-  'send-email': 'Send Email',
-  slack: 'Slack',
-  openai: 'OpenAI',
-  'api-request': 'API Request',
-  condition: 'Condition',
-  delay: 'Delay',
-  'ai-custom-model': 'AI Custom Model',
-  'integration-slack': 'Slack',
-  'integration-email': 'Email',
+  'webhook-shopify':       'Shopify Trigger',
+  'webhook-lightfunnels':  'Lightfunnels Trigger',
+  'webhook-youcan':        'YouCan Trigger',
+  'webhook-custom':        'Custom Webhook',
+  'send-email':            'Send Email',
+  slack:                   'Slack',
+  openai:                  'OpenAI',
+  'api-request':           'API Request',
+  condition:               'Condition',
+  delay:                   'Delay',
+  'ai-custom-model':       'AI Custom Model',
+  'integration-slack':     'Slack',
+  'integration-email':     'Email',
   'integration-spreadsheet': 'Spreadsheet',
-  'integration-webhook': 'Webhook',
+  'integration-webhook':   'Webhook',
 };
 
+// Icon per node type
+const NODE_ICONS: Record<string, React.ElementType> = {
+  'webhook-shopify':      FlowArrow,
+  'webhook-lightfunnels': FlowArrow,
+  'webhook-youcan':       FlowArrow,
+  'webhook-custom':       FlowArrow,
+  'send-email':           Envelope,
+  slack:                  FlowArrow,
+  openai:                 Sparkle,
+  'api-request':          Globe,
+  condition:              GitBranch,
+  delay:                  Hourglass,
+  'ai-custom-model':      Sparkle,
+  'integration-slack':    FlowArrow,
+  'integration-email':    Envelope,
+  'integration-spreadsheet': Globe,
+  'integration-webhook':  FlowArrow,
+};
+
+// Per-status colours (all using design-system semantic tokens)
 const STATUS_CONFIG = {
   success: {
-    label: 'Success',
-    badgeClass: 'bg-success/10 text-success border-success/20',
-    icon: CheckCircle,
+    label:       'Success',
+    textClass:   'text-success',
+    bgClass:     'bg-success/10',
+    borderClass: 'border-success/25',
+    barClass:    'bg-success',
+    dotClass:    'border-success bg-success/20',
+    icon:        CheckCircle,
   },
   failed: {
-    label: 'Failed',
-    badgeClass: 'bg-destructive/10 text-destructive border-destructive/20',
-    icon: XCircleIcon,
+    label:       'Failed',
+    textClass:   'text-destructive',
+    bgClass:     'bg-destructive/10',
+    borderClass: 'border-destructive/25',
+    barClass:    'bg-destructive',
+    dotClass:    'border-destructive bg-destructive/20',
+    icon:        XCircle,
   },
   running: {
-    label: 'Running',
-    badgeClass: 'bg-primary/10 text-primary border-primary/20',
-    icon: PlayCircle,
+    label:       'Running',
+    textClass:   'text-primary',
+    bgClass:     'bg-primary/10',
+    borderClass: 'border-primary/25',
+    barClass:    'bg-primary',
+    dotClass:    'border-primary bg-primary/20',
+    icon:        CircleNotch,
   },
   pending: {
-    label: 'Pending',
-    badgeClass: 'bg-muted/10 text-muted-foreground border-muted/20',
-    icon: Timer,
+    label:       'Pending',
+    textClass:   'text-muted-foreground',
+    bgClass:     'bg-muted/40',
+    borderClass: 'border-border',
+    barClass:    'bg-muted-foreground/30',
+    dotClass:    'border-border bg-muted/40',
+    icon:        Timer,
   },
   skipped: {
-    label: 'Skipped',
-    badgeClass: 'bg-muted/10 text-muted-foreground border-muted/20',
-    icon: Timer,
+    label:       'Skipped',
+    textClass:   'text-muted-foreground',
+    bgClass:     'bg-muted/40',
+    borderClass: 'border-border',
+    barClass:    'bg-muted-foreground/20',
+    dotClass:    'border-border bg-muted/30',
+    icon:        SkipForward,
   },
   timed_out: {
-    label: 'Timed Out',
-    badgeClass: 'bg-destructive/10 text-destructive border-destructive/20',
-    icon: XCircleIcon,
+    label:       'Timed Out',
+    textClass:   'text-destructive',
+    bgClass:     'bg-destructive/10',
+    borderClass: 'border-destructive/25',
+    barClass:    'bg-destructive',
+    dotClass:    'border-destructive bg-destructive/20',
+    icon:        XCircle,
   },
 } as const;
+
+type StatusKey = keyof typeof STATUS_CONFIG;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDuration(startedAt: string | null, finishedAt: string | null): string {
   if (!startedAt) return '—';
   const start = new Date(startedAt).getTime();
-  const end = finishedAt ? new Date(finishedAt).getTime() : Date.now();
-  const ms = end - start;
+  const end   = finishedAt ? new Date(finishedAt).getTime() : Date.now();
+  const ms    = end - start;
   if (ms < 1000) return `${ms}ms`;
   if (ms < 60_000) return `${(ms / 1000).toFixed(1)}s`;
   return `${Math.floor(ms / 60_000)}m ${Math.floor((ms % 60_000) / 1000)}s`;
@@ -121,35 +150,39 @@ function formatElapsed(ms: number | null): string {
   return `+${(ms / 1000).toFixed(1)}s`;
 }
 
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
+
 function isTerminal(status: string): boolean {
   return ['success', 'failed', 'skipped', 'timed_out'].includes(status);
 }
 
-// ─── Terminal log line ────────────────────────────────────────────────────────
+function getCfg(status: string) {
+  return STATUS_CONFIG[status as StatusKey] ?? STATUS_CONFIG.pending;
+}
 
-const LEVEL_STYLE: Record<NodeExecutionLog['level'], string> = {
-  info:  'text-emerald-400',
-  warn:  'text-yellow-400',
-  error: 'text-red-400',
+// ─── Log line ─────────────────────────────────────────────────────────────────
+
+const LOG_COLORS = {
+  info:  { dot: 'bg-success',      text: 'text-success',      dim: 'text-success/50'      },
+  warn:  { dot: 'bg-warning',      text: 'text-warning',      dim: 'text-warning/50'      },
+  error: { dot: 'bg-destructive',  text: 'text-destructive',  dim: 'text-destructive/50'  },
 };
 
-const LEVEL_PREFIX: Record<NodeExecutionLog['level'], string> = {
-  info:  '●',
-  warn:  '▲',
-  error: '✕',
-};
-
-function TerminalLine({ log }: { log: NodeExecutionLog }) {
+function LogLine({ log }: { log: NodeExecutionLog }) {
+  const c = LOG_COLORS[log.level];
   return (
-    <div className="flex items-baseline gap-2 leading-5">
-      <span className={cn('text-[11px] shrink-0 mt-px', LEVEL_STYLE[log.level])}>
-        {LEVEL_PREFIX[log.level]}
-      </span>
-      <span className={cn('font-mono text-[12px] flex-1', LEVEL_STYLE[log.level])}>
+    <div className="flex items-baseline gap-2.5 group">
+      <span className={cn('mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full', c.dot)} />
+      <span className={cn('font-mono text-[12px] flex-1 leading-5', c.text)}>
         {log.message}
       </span>
       {log.elapsed_ms !== null && (
-        <span className="font-mono text-[10px] text-muted-foreground/40 shrink-0 tabular-nums">
+        <span className={cn('font-mono text-[10px] shrink-0 tabular-nums opacity-0 group-hover:opacity-100 transition-opacity', c.dim)}>
           {formatElapsed(log.elapsed_ms)}
         </span>
       )}
@@ -157,122 +190,149 @@ function TerminalLine({ log }: { log: NodeExecutionLog }) {
   );
 }
 
-// ─── Node accordion item ──────────────────────────────────────────────────────
+// ─── Step log panel ───────────────────────────────────────────────────────────
 
-function NodeAccordionItem({
+function LogPanel({ logs, isRunning }: { logs: NodeExecutionLog[]; isRunning: boolean }) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [logs.length]);
+
+  return (
+    <div className="mx-4 mb-4 rounded-lg overflow-hidden border border-border bg-muted/30">
+      <div className="px-4 py-3 space-y-1 max-h-56 overflow-y-auto">
+        {logs.length === 0 ? (
+          <span className="font-mono text-[12px] text-muted-foreground italic">
+            {isRunning ? 'Waiting for logs…' : 'No logs recorded.'}
+          </span>
+        ) : (
+          logs.map(log => <LogLine key={log.id} log={log} />)
+        )}
+
+        {isRunning && (
+          <div className="flex items-center gap-1.5 pt-0.5">
+            <span className="font-mono text-[12px] text-muted-foreground">$</span>
+            <span className="inline-block h-3 w-1.5 rounded-[1px] bg-success/60 animate-pulse" />
+          </div>
+        )}
+
+        <div ref={bottomRef} />
+      </div>
+    </div>
+  );
+}
+
+// ─── Timeline step card ───────────────────────────────────────────────────────
+
+function StepCard({
   node,
   logs,
   defaultOpen,
+  isLast,
 }: {
   node: NodeExecutionData;
   logs: NodeExecutionLog[];
   defaultOpen: boolean;
+  isLast: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const cfg = STATUS_CONFIG[node.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.pending;
-  const Icon = cfg.icon;
-  const label = NODE_LABELS[node.node_type] ?? node.node_type;
+  const cfg       = getCfg(node.status);
+  const NodeIcon  = NODE_ICONS[node.node_type] ?? FlowArrow;
+  const label     = NODE_LABELS[node.node_type] ?? node.node_type;
   const isRunning = node.status === 'running';
 
-  // Auto-scroll terminal to bottom when new logs arrive while open
-  useEffect(() => {
-    if (isOpen && bottomRef.current) {
-      bottomRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-  }, [logs.length, isOpen]);
-
   return (
-    <div className="border-b border-border last:border-b-0">
-      {/* ── Header ── */}
-      <button
-        onClick={() => setIsOpen(o => !o)}
-        className="w-full flex items-center gap-3 px-5 py-3.5 hover:bg-muted/20 transition-colors text-left"
-      >
-        <CaretRight
+    <div className="relative flex gap-4">
+      {/* Timeline spine */}
+      <div className="flex flex-col items-center shrink-0 pt-3.5">
+        {/* Dot */}
+        <div
           className={cn(
-            'h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200',
-            isOpen && 'rotate-90',
+            'h-3.5 w-3.5 rounded-full border-2 shrink-0 z-10',
+            cfg.dotClass,
           )}
-          weight="bold"
         />
-
-        {isRunning ? (
-          <span className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin shrink-0" />
-        ) : (
-          <Icon
-            className={cn('h-4 w-4 shrink-0', {
-              'text-success':       node.status === 'success',
-              'text-destructive':   node.status === 'failed' || node.status === 'timed_out',
-              'text-muted-foreground': node.status === 'pending' || node.status === 'skipped',
-            })}
-            weight="fill"
-          />
+        {/* Connector line */}
+        {!isLast && (
+          <div className="flex-1 w-px bg-border mt-1 min-h-4" />
         )}
+      </div>
 
-        <span className="flex-1 text-sm font-medium text-foreground">{label}</span>
-
-        <span
-          className={cn(
-            'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider border shrink-0',
-            cfg.badgeClass,
-          )}
+      {/* Card */}
+      <div className={cn('flex-1 mb-3 rounded-xl border bg-card overflow-hidden transition-shadow', cfg.borderClass, isOpen && 'shadow-sm')}>
+        {/* Header row */}
+        <button
+          onClick={() => setIsOpen(o => !o)}
+          className="w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary/60 transition-colors text-left"
         >
-          {cfg.label}
-        </span>
-
-        <span className="text-xs text-muted-foreground font-mono w-14 text-right shrink-0">
-          {isRunning
-            ? <span className="animate-pulse">…</span>
-            : formatDuration(node.started_at, node.finished_at)}
-        </span>
-      </button>
-
-      {/* ── Terminal body ── */}
-      {isOpen && (
-        <div className="px-5 pb-4 pt-1 bg-muted/5">
-          <div className="rounded-lg bg-[#0d0d0d] border border-border/60 overflow-hidden">
-            {/* window chrome */}
-            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border/40 bg-[#161616]">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-              <span className="ml-2 font-mono text-[11px] text-muted-foreground/50">{label}</span>
-            </div>
-
-            {/* log lines */}
-            <div className="px-4 py-3 space-y-1 max-h-64 overflow-y-auto">
-              {logs.length === 0 ? (
-                <span className="font-mono text-[12px] text-muted-foreground/40 italic">
-                  {isRunning ? 'Waiting for logs…' : 'No logs.'}
-                </span>
-              ) : (
-                logs.map(log => <TerminalLine key={log.id} log={log} />)
-              )}
-
-              {/* blinking cursor while running */}
-              {isRunning && (
-                <div className="flex items-center gap-1 pt-0.5">
-                  <span className="font-mono text-[12px] text-muted-foreground/30">$</span>
-                  <span className="inline-block h-3 w-1.5 bg-emerald-400/70 animate-pulse" />
-                </div>
-              )}
-
-              <div ref={bottomRef} />
-            </div>
+          {/* Node type icon */}
+          <div className={cn('h-7 w-7 rounded-lg flex items-center justify-center shrink-0', cfg.bgClass)}>
+            {isRunning
+              ? <ArrowsClockwise className={cn('h-3.5 w-3.5 animate-spin', cfg.textClass)} weight="bold" />
+              : <NodeIcon className={cn('h-3.5 w-3.5', cfg.textClass)} weight="duotone" />
+            }
           </div>
 
-          {/* error callout below terminal */}
-          {node.error_message && (
-            <div className="mt-3 flex items-start gap-2 rounded-lg border border-destructive/25 bg-destructive/8 px-3 py-2.5">
-              <XCircleIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" weight="fill" />
-              <p className="text-xs font-medium text-destructive break-all leading-snug">
-                {node.error_message}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+          {/* Name */}
+          <span className="flex-1 text-sm font-medium text-foreground truncate">{label}</span>
+
+          {/* Status pill */}
+          <span
+            className={cn(
+              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold border shrink-0',
+              cfg.bgClass, cfg.textClass, cfg.borderClass,
+            )}
+          >
+            {cfg.label}
+          </span>
+
+          {/* Duration */}
+          <span className="font-mono text-[11px] text-muted-foreground w-14 text-right shrink-0">
+            {isRunning
+              ? <span className="animate-pulse text-primary">…</span>
+              : formatDuration(node.started_at, node.finished_at)
+            }
+          </span>
+
+          {/* Caret */}
+          <CaretDown
+            className={cn(
+              'h-3.5 w-3.5 text-muted-foreground shrink-0 transition-transform duration-200',
+              isOpen && 'rotate-180',
+            )}
+            weight="bold"
+          />
+        </button>
+
+        {/* Expandable body */}
+        {isOpen && (
+          <div className="border-t border-border/50 pt-3">
+            <LogPanel logs={logs} isRunning={isRunning} />
+
+            {/* Error message */}
+            {node.error_message && (
+              <div className="mx-4 mb-4 flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/8 px-3 py-2.5">
+                <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" weight="fill" />
+                <p className="text-xs font-medium text-destructive break-all leading-snug">
+                  {node.error_message}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Summary stats strip ──────────────────────────────────────────────────────
+
+function StatChip({ label, value, className }: { label: string; value: string | number; className?: string }) {
+  return (
+    <div className={cn('flex flex-col items-center gap-0.5 px-4 first:pl-0 last:pr-0', className)}>
+      <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground/70">{label}</span>
+      <span className="text-sm font-semibold text-foreground tabular-nums">{value}</span>
     </div>
   );
 }
@@ -284,131 +344,139 @@ export function ExecutionDetail({
   initialNodeExecutions,
   initialLogs,
 }: ExecutionDetailProps) {
-  const [execution, setExecution]         = useState<ExecutionData>(initialExecution);
-  const [nodeExecutions, setNodeExecutions] = useState<NodeExecutionData[]>(initialNodeExecutions);
-  const [logs, setLogs]                   = useState<NodeExecutionLog[]>(initialLogs);
+  const { execution, nodeExecutions, logs } = useExecutionLiveData({
+    executionId: initialExecution.id,
+    initialExecution,
+    initialNodeExecutions,
+    initialLogs,
+  });
 
-  // Keep a ref so the realtime log handler always has the current set of IDs
-  // without needing to re-subscribe every time nodeExecutions changes.
-  const nodeExecIdSetRef = useRef<Set<string>>(new Set(initialNodeExecutions.map(n => n.id)));
-
-  // Sync the ref whenever nodeExecutions state changes
-  useEffect(() => {
-    nodeExecIdSetRef.current = new Set(nodeExecutions.map(n => n.id));
-  }, [nodeExecutions]);
-
-  useEffect(() => {
-    if (isTerminal(execution.status)) return;
-
-    const supabase = getSupabaseClient();
-
-    const channel = supabase
-      .channel(`execution-${execution.id}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'node_executions', filter: `execution_id=eq.${execution.id}` },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const n = payload.new as NodeExecutionData;
-            setNodeExecutions(prev => [...prev, n]);
-          } else if (payload.eventType === 'UPDATE') {
-            setNodeExecutions(prev =>
-              prev.map(n => n.id === (payload.new as NodeExecutionData).id
-                ? (payload.new as NodeExecutionData) : n),
-            );
-          }
-        },
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'executions', filter: `id=eq.${execution.id}` },
-        (payload) => {
-          setExecution(prev => ({ ...prev, ...(payload.new as Partial<ExecutionData>) }));
-        },
-      )
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'node_execution_logs' },
-        (payload) => {
-          const log = payload.new as NodeExecutionLog;
-          if (nodeExecIdSetRef.current.has(log.node_execution_id)) {
-            setLogs(prev => [...prev, log]);
-          }
-        },
-      )
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [execution.id, execution.status]);
-
-  // Group logs by node_execution_id
+  // Derived stats
   const logsByNodeExecId = logs.reduce<Record<string, NodeExecutionLog[]>>((acc, log) => {
     (acc[log.node_execution_id] ??= []).push(log);
     return acc;
   }, {});
 
-  const cfg        = STATUS_CONFIG[execution.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.pending;
-  const ExecIcon   = cfg.icon;
-  const isRunning  = execution.status === 'running';
+  const successCount = nodeExecutions.filter(n => n.status === 'success').length;
+  const failedCount  = nodeExecutions.filter(n => n.status === 'failed').length;
+  const total        = nodeExecutions.length;
+  const cfg          = getCfg(execution.status);
+  const ExecIcon     = cfg.icon;
+  const isRunning    = execution.status === 'running';
+  const workflowName = execution.workflows?.name ?? 'Workflow';
+  const shortId      = execution.id.split('-')[0];
 
   return (
-    <div className="space-y-6">
-      {/* ── Execution header card ── */}
-      <div className="rounded-xl border border-border bg-card p-6 flex flex-col md:flex-row justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-semibold mb-1">
-            Execution <span className="font-mono text-muted-foreground">{execution.id.split('-')[0]}…</span>
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {execution.workflows?.name ?? 'Workflow'}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 md:items-end">
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium border w-fit',
-              cfg.badgeClass,
+    <div className="space-y-5 max-w-3xl mx-auto">
+
+      {/* ── Header card ────────────────────────────────────────────────────── */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        {/* Accent top bar */}
+        <div className={cn('h-0.75', cfg.barClass)} />
+
+        <div className="p-5">
+          {/* Top row: identity + status */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Status icon circle */}
+              <div className={cn('h-11 w-11 rounded-xl flex items-center justify-center shrink-0', cfg.bgClass)}>
+                {isRunning
+                  ? <CircleNotch className={cn('h-5 w-5 animate-spin', cfg.textClass)} weight="bold" />
+                  : <ExecIcon className={cn('h-5 w-5', cfg.textClass)} weight="duotone" />
+                }
+              </div>
+
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold text-foreground truncate">{workflowName}</h2>
+                <p className="text-xs text-muted-foreground font-mono mt-0.5">#{shortId}…</p>
+              </div>
+            </div>
+
+            {/* Status badge */}
+            <span
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border shrink-0',
+                cfg.bgClass, cfg.textClass, cfg.borderClass,
+              )}
+            >
+              {cfg.label}
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-border mt-4 mb-4" />
+
+          {/* Stats strip */}
+          <div className="flex items-center divide-x divide-border">
+            <StatChip
+              label="Started"
+              value={formatDate(execution.created_at)}
+              className="pr-4"
+            />
+            <StatChip
+              label="Duration"
+              value={isRunning ? '…' : formatDuration(execution.created_at, execution.finished_at)}
+              className="px-4"
+            />
+            <StatChip
+              label="Steps"
+              value={total === 0 ? '—' : `${successCount} / ${total}`}
+              className="px-4"
+            />
+            {failedCount > 0 && (
+              <StatChip
+                label="Failed"
+                value={failedCount}
+                className="px-4 text-destructive"
+              />
             )}
-          >
-            {isRunning
-              ? <span className="h-3.5 w-3.5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-              : <ExecIcon className="h-4 w-4" weight="fill" />}
-            {cfg.label}
-          </span>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <ClockIcon className="h-4 w-4" />
-            <span>{new Date(execution.created_at).toLocaleString()}</span>
           </div>
         </div>
       </div>
 
-      {/* ── Top-level error ── */}
+      {/* ── Top-level error banner ──────────────────────────────────────────── */}
       {execution.error_message && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          <p className="font-semibold mb-1">Execution Error</p>
-          <p>{execution.error_message}</p>
+        <div className="flex items-start gap-3 rounded-xl border border-destructive/25 bg-destructive/8 px-4 py-3.5">
+          <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" weight="fill" />
+          <div>
+            <p className="text-sm font-semibold text-destructive">Execution failed</p>
+            <p className="text-xs text-destructive/80 mt-0.5">{execution.error_message}</p>
+          </div>
         </div>
       )}
 
-      {/* ── Steps ── */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-medium text-foreground">Steps</h3>
-        <div className="rounded-xl border border-border bg-card overflow-hidden">
-          {nodeExecutions.length === 0 ? (
-            <div className="px-6 py-8 text-center text-sm text-muted-foreground">
-              No steps executed yet.
+      {/* ── Steps timeline ──────────────────────────────────────────────────── */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-semibold text-foreground">Steps</h3>
+          {total > 0 && (
+            <span className="rounded-full bg-secondary border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              {total}
+            </span>
+          )}
+        </div>
+
+        {nodeExecutions.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card px-6 py-10 text-center">
+            <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-secondary mx-auto mb-3">
+              <Clock className="h-4 w-4 text-muted-foreground" weight="duotone" />
             </div>
-          ) : (
-            nodeExecutions.map((node, i) => (
-              <NodeAccordionItem
+            <p className="text-sm font-medium text-foreground mb-1">No steps yet</p>
+            <p className="text-xs text-muted-foreground">Steps will appear here as the execution runs.</p>
+          </div>
+        ) : (
+          <div className="pl-1">
+            {nodeExecutions.map((node, i) => (
+              <StepCard
                 key={node.id}
                 node={node}
                 logs={logsByNodeExecId[node.id] ?? []}
                 defaultOpen={i === 0}
+                isLast={i === nodeExecutions.length - 1}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

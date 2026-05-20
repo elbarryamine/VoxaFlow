@@ -10,7 +10,8 @@ import { TriggerExecutor }     from './logic/TriggerExecutor.ts';
 export function initExecutors() {
   // Actions
   ExecutorRegistry.register('api-request',   new ApiRequestExecutor());
-  ExecutorRegistry.register('send-email',    new SendEmailExecutor());
+  ExecutorRegistry.register('send-email',         new SendEmailExecutor());
+  ExecutorRegistry.register('integration-email', new SendEmailExecutor());
   ExecutorRegistry.register('slack',         new SlackExecutor());
   ExecutorRegistry.register('openai',        new OpenAIExecutor());
 

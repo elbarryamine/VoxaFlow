@@ -26,6 +26,18 @@ export const EmailIntegrationConfig = ({ data, onUpdate, inputVariables }: NodeC
       <SectionDivider label="Email Settings" />
 
       <div>
+        <FieldLabel htmlFor="email-from">From Address</FieldLabel>
+        <AutocompleteTextArea
+          id="email-from"
+          value={String(data.emailFrom ?? "")}
+          onChange={(value) => onUpdate("emailFrom", value)}
+          options={autocompleteOptions}
+          placeholder="noreply@yourdomain.com"
+          rows={1}
+        />
+      </div>
+
+      <div>
         <FieldLabel htmlFor="email-to">To</FieldLabel>
         <AutocompleteTextArea
           id="email-to"
