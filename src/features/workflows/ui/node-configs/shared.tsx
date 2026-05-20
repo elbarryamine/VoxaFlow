@@ -1,6 +1,10 @@
 "use client";
 
 import { CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/src/shared/utils/cn";
+
+const inputClass =
+  "w-full rounded-xl border border-border/50 bg-surface-variant/30 px-3 py-2.5 font-manrope text-[14px] text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50";
 
 interface FieldLabelProps {
   children: React.ReactNode;
@@ -12,7 +16,7 @@ export const FieldLabel = ({ children, htmlFor, hint }: FieldLabelProps) => (
   <div className="mb-1.5 flex items-baseline justify-between">
     <label
       htmlFor={htmlFor}
-      className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+      className="font-manrope text-[12px] font-bold uppercase tracking-wide text-on-surface-variant"
     >
       {children}
     </label>
@@ -42,7 +46,7 @@ export const TextInput = ({
     placeholder={placeholder}
     disabled={disabled}
     onChange={(e) => onChange(e.currentTarget.value)}
-    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+    className={inputClass}
   />
 );
 
@@ -67,7 +71,7 @@ export const TextAreaInput = ({
     placeholder={placeholder}
     rows={rows}
     onChange={(e) => onChange(e.currentTarget.value)}
-    className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-ring"
+    className={cn(inputClass, "resize-none")}
   />
 );
 
@@ -91,7 +95,7 @@ export const SelectInput = ({
       id={id}
       value={value}
       onChange={(e) => onChange(e.currentTarget.value)}
-      className="w-full appearance-none rounded-lg border border-border bg-background px-3 py-2 pr-9 text-sm text-foreground outline-none transition-colors focus:border-ring"
+      className={cn(inputClass, "appearance-none pr-9")}
     >
       {placeholder && (
         <option value="" disabled>
@@ -104,7 +108,7 @@ export const SelectInput = ({
         </option>
       ))}
     </select>
-    <CaretDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <CaretDown className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-on-surface-variant" />
   </div>
 );
 
@@ -114,10 +118,10 @@ interface SectionDividerProps {
 
 export const SectionDivider = ({ label }: SectionDividerProps) => (
   <div className="flex items-center gap-2 pt-2">
-    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
+    <span className="font-manrope text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80">
       {label}
     </span>
-    <div className="h-px flex-1 bg-border" />
+    <div className="h-px flex-1 bg-outline-variant/50" />
   </div>
 );
 
@@ -200,12 +204,12 @@ export function CredentialPicker({
         Credential
       </FieldLabel>
       {loading ? (
-        <div className="flex h-9 items-center gap-2 rounded-lg border border-border bg-background px-3 text-xs text-muted-foreground">
+        <div className={cn(inputClass, "flex h-10 items-center gap-2 text-[13px] text-on-surface-variant")}>
           <CircleNotch className="h-3.5 w-3.5 animate-spin" />
           Loading…
         </div>
       ) : credentials.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-border bg-muted/10 px-3 py-2.5 text-[11px] text-muted-foreground">
+        <div className="rounded-xl border border-dashed border-border/50 bg-surface-variant/20 px-3 py-2.5 font-manrope text-[12px] font-medium text-on-surface-variant">
           No {service} credentials found.{" "}
           <a
             href="/dashboard/credentials"
@@ -351,13 +355,13 @@ export const AutocompleteTextArea = ({
         onKeyDown={handleKeyDown}
         onClick={checkCursor}
         onKeyUp={checkCursor}
-        className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-ring"
+        className={cn(inputClass, "resize-none")}
       />
 
       {showSuggestions && filteredOptions.length > 0 && (
         <div
           ref={menuRef}
-          className="absolute left-0 right-0 z-50 mt-1 max-h-[200px] overflow-y-auto rounded-md border border-border bg-card shadow-lg"
+          className="absolute left-0 right-0 z-50 mt-1 max-h-[200px] overflow-y-auto rounded-xl border border-border/50 bg-card shadow-md"
         >
           <ul className="py-1">
             {filteredOptions.map((opt, i) => (
@@ -365,21 +369,22 @@ export const AutocompleteTextArea = ({
                 key={opt.value}
                 onClick={() => insertOption(opt)}
                 onMouseEnter={() => setSelectedIndex(i)}
-                className={`flex cursor-pointer flex-col px-3 py-1.5 transition-colors ${
-                  i === selectedIndex ? "bg-primary/10" : "hover:bg-muted/50"
-                }`}
+                className={cn(
+                  "flex cursor-pointer flex-col px-3 py-1.5 transition-colors",
+                  i === selectedIndex ? "bg-primary/10" : "hover:bg-surface-variant/50",
+                )}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="font-manrope text-[12px] font-bold text-on-surface">
                     {opt.label}
                   </span>
                   {opt.type && (
-                    <span className="rounded bg-muted px-1 py-0.5 font-mono text-[9px] font-medium uppercase text-muted-foreground">
+                    <span className="rounded-md bg-surface-variant/50 px-1 py-0.5 font-mono text-[9px] font-bold uppercase text-on-surface-variant">
                       {opt.type}
                     </span>
                   )}
                 </div>
-                <span className="font-mono text-[10px] text-muted-foreground/70">
+                <span className="font-mono text-[10px] text-on-surface-variant/70">
                   {`{{${opt.value}}}`}
                 </span>
               </li>

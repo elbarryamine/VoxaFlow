@@ -71,7 +71,8 @@ const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
           isPaletteOpen={isPaletteOpen}
         />
 
-        <div className="relative min-h-0 flex-1" ref={reactFlowWrapper}>
+        <div className="flex min-h-0 flex-1">
+          <div className="relative min-h-0 min-w-0 flex-1" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -115,13 +116,15 @@ const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
           {nodes.length === 0 && (
             <EmptyCanvasPlaceholder onClick={() => setIsPaletteOpen(true)} />
           )}
+          </div>
 
-          <div
-            className={`pointer-events-none absolute bottom-3 right-3 top-3 z-40 w-72 transform transition-transform duration-500 ease-in-out ${
-              isPaletteOpen ? "translate-x-0" : "translate-x-[150%]"
+          <aside
+            className={`flex shrink-0 flex-col overflow-hidden border-l border-border/50 bg-card transition-[width] duration-300 ease-in-out ${
+              isPaletteOpen && !selectedNode ? "w-72" : "w-0"
             }`}
+            aria-hidden={!isPaletteOpen || !!selectedNode}
           >
-            <div className="pointer-events-auto h-full w-full">
+            {isPaletteOpen && !selectedNode && (
               <NodePalette
                 onAdd={onAddNode}
                 onDragStart={onDragStart}
@@ -130,25 +133,26 @@ const CanvasInner = ({ initialWorkflow, onSave }: WorkflowCanvasProps) => {
                 sourceNodeId={sourceNodeIdForAdd}
                 targetNodeId={targetNodeIdForAdd}
               />
-            </div>
-          </div>
+            )}
+          </aside>
 
-          <div
-            className={`pointer-events-none absolute bottom-3 right-3 top-3 z-50 w-[480px] max-w-[calc(100%-1.5rem)] transform transition-transform duration-500 ease-in-out ${
-              selectedNode ? "translate-x-0" : "translate-x-[150%]"
+          <aside
+            className={`flex shrink-0 flex-col overflow-hidden border-l border-border/50 bg-card transition-[width] duration-300 ease-in-out ${
+              selectedNode ? "w-[480px]" : "w-0"
             }`}
+            aria-hidden={!selectedNode}
           >
-            <div className="pointer-events-auto h-full w-full">
+            {selectedNode && (
               <NodeConfigSidebar
-                key={selectedNode?.id ?? "none"}
+                key={selectedNode.id}
                 node={selectedNode}
                 nodes={nodes}
                 edges={edges}
                 onUpdateNode={onUpdateSelectedNode}
                 onClose={onPaneClick}
               />
-            </div>
-          </div>
+            )}
+          </aside>
         </div>
 
         <ConfirmationModal

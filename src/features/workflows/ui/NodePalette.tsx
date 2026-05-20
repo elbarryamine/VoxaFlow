@@ -84,7 +84,7 @@ export const NodePalette = ({
   });
 
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden border-l border-border/50 bg-card shadow-xl">
+    <div className="flex h-full w-72 min-w-72 flex-col overflow-hidden bg-card">
       <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/50 bg-surface-container-low px-4 py-3.5">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, BracketsCurly, TreeStructure } from "@phosphor-icons/react/dist/ssr";
+import { X, BracketsCurly, TreeStructure, Gear } from "@phosphor-icons/react/dist/ssr";
+import { cn } from "@/src/shared/utils/cn";
 import type { Node, Edge } from "@xyflow/react";
 
 import type {
@@ -294,27 +295,38 @@ export const NodeConfigSidebar = ({
     })
     .filter((group) => group.fields.length > 0);
 
-  return (
-    <aside className="h-full w-[480px] shrink-0">
-      <div className="flex h-full w-full shrink-0 flex-col rounded-xl border border-border bg-card shadow-2xl">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">
-              Configure {typeLabel}
-            </h3>
-            <p className="text-[11px] text-muted-foreground">
-              Node ID: {node.id}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+  const sectionLabelClass =
+    "font-manrope text-[11px] font-bold uppercase tracking-widest text-on-surface-variant/80";
 
-        <div className="flex-1 overflow-y-auto p-4">
+  return (
+    <div className="flex h-full w-[480px] min-w-[480px] flex-col overflow-hidden bg-card">
+      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border/50 bg-surface-container-low px-4 py-3.5">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <Gear
+              className="h-4 w-4 shrink-0 text-secondary"
+              weight="duotone"
+            />
+            <h3 className="truncate font-newsreader text-lg font-bold tracking-tight text-on-surface">
+              {typeLabel}
+            </h3>
+          </div>
+          <p className="mt-0.5 truncate font-manrope text-[12px] font-medium text-on-surface-variant">
+            <span className="font-mono text-[11px]">#{node.id.substring(0, 8)}</span>
+            {" · "}Configure node settings
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-on-surface-variant transition-colors hover:bg-surface-variant hover:text-on-surface"
+          aria-label="Close configuration panel"
+        >
+          <X className="h-4 w-4" weight="bold" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4">
           <div className="space-y-5">
             <div className="space-y-4">
               <div>
@@ -339,10 +351,8 @@ export const NodeConfigSidebar = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-                {typeLabel} Settings
-              </span>
-              <div className="h-px flex-1 bg-border" />
+              <span className={sectionLabelClass}>{typeLabel} settings</span>
+              <div className="h-px flex-1 bg-outline-variant/50" />
             </div>
 
             <ConfigComponent
@@ -354,16 +364,14 @@ export const NodeConfigSidebar = ({
             {isTrigger && (
               <>
                 <div className="flex items-center gap-2 pt-4">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-                    Test Mock Data
-                  </span>
-                  <div className="h-px flex-1 bg-border" />
+                  <span className={sectionLabelClass}>Test mock data</span>
+                  <div className="h-px flex-1 bg-outline-variant/50" />
                 </div>
                 <div className="space-y-2">
                   <FieldLabel
                     htmlFor="test-mock-data"
                     hint={
-                      <span className={`text-[10px] ${jsonError ? "text-red-500 font-semibold" : "text-muted-foreground"}`}>
+                      <span className={cn("text-[10px] font-bold", jsonError ? "text-error" : "text-on-surface-variant")}>
                         {jsonError ? "Invalid JSON" : "JSON payload for Test Run"}
                       </span>
                     }
@@ -378,7 +386,7 @@ export const NodeConfigSidebar = ({
                     rows={8}
                   />
                   {jsonError && (
-                    <p className="text-[10px] font-medium text-red-500">
+                    <p className="font-manrope text-[11px] font-bold text-error">
                       {jsonError}
                     </p>
                   )}
@@ -389,38 +397,37 @@ export const NodeConfigSidebar = ({
             {inputVariables.length > 0 && (
               <div className="mt-8 space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-                    Input Variables Tree
-                  </span>
-                  <div className="h-px flex-1 bg-border" />
+                  <span className={sectionLabelClass}>Input variables</span>
+                  <div className="h-px flex-1 bg-outline-variant/50" />
                 </div>
-                <div className="overflow-hidden rounded-xl border border-border bg-background/50">
-                  <div className="flex items-center gap-2 border-b border-border bg-muted/30 px-3 py-2">
-                    <TreeStructure className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs font-medium text-foreground">Available from Upstream</span>
+                <div className="overflow-hidden rounded-xl border border-border/50 bg-surface-container-lowest">
+                  <div className="flex items-center gap-2 border-b border-border/50 bg-surface-variant/30 px-3 py-2.5">
+                    <TreeStructure className="h-4 w-4 text-on-surface-variant" weight="duotone" />
+                    <span className="font-manrope text-[12px] font-bold text-on-surface">Available from upstream</span>
                   </div>
-                  <div className="space-y-4 p-3 max-h-[300px] overflow-y-auto">
+                  <div className="max-h-[300px] space-y-4 overflow-y-auto p-3">
                     {inputVariables.map((group) => (
                       <div key={group.nodeId} className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-semibold text-muted-foreground">
-                            {group.nodeLabel} <span className="opacity-50 font-mono">({group.nodeId})</span>
+                          <span className="font-manrope text-[11px] font-bold text-on-surface-variant">
+                            {group.nodeLabel}{" "}
+                            <span className="font-mono font-medium opacity-60">({group.nodeId})</span>
                           </span>
-                          <div className="h-px flex-1 bg-border/50" />
+                          <div className="h-px flex-1 bg-outline-variant/40" />
                         </div>
                         <ul className="space-y-2">
                           {group.fields.map((field) => (
                             <li key={field.name} className="group flex flex-col gap-0.5">
                               <div className="flex items-center justify-between">
-                                <code className="cursor-copy rounded bg-primary/10 px-1 py-0.5 text-xs font-semibold text-primary/90 transition-colors hover:bg-primary/20" title="Click to copy mapping">
+                                <code className="cursor-copy rounded-md bg-secondary-container/40 px-1.5 py-0.5 font-mono text-[11px] font-bold text-on-secondary-container transition-colors hover:bg-secondary-container/60" title="Click to copy mapping">
                                   {"{{"} {group.nodeId}.{field.name} {"}}"}
                                 </code>
-                                <span className="rounded bg-muted/50 px-1 font-mono text-[10px] text-muted-foreground">
+                                <span className="rounded-md bg-surface-variant/50 px-1.5 font-mono text-[10px] font-bold text-on-surface-variant">
                                   {field.type}
                                 </span>
                               </div>
                               {field.description && (
-                                <span className="pl-1 text-[10px] leading-snug text-muted-foreground/80">
+                                <span className="pl-1 font-manrope text-[10px] font-medium leading-snug text-on-surface-variant/80">
                                   {field.description}
                                 </span>
                               )}
@@ -437,28 +444,26 @@ export const NodeConfigSidebar = ({
             {outputFields && outputFields.length > 0 && (
               <div className="mt-8 space-y-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
-                    Output Schema
-                  </span>
-                  <div className="h-px flex-1 bg-border" />
+                  <span className={sectionLabelClass}>Output schema</span>
+                  <div className="h-px flex-1 bg-outline-variant/50" />
                 </div>
-                <div className="overflow-hidden rounded-xl border border-border bg-background/50">
-                  <div className="flex items-center gap-2 border-b border-border bg-muted/30 px-3 py-2">
-                    <BracketsCurly className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs font-medium text-foreground">Available Fields</span>
+                <div className="overflow-hidden rounded-xl border border-border/50 bg-surface-container-lowest">
+                  <div className="flex items-center gap-2 border-b border-border/50 bg-surface-variant/30 px-3 py-2.5">
+                    <BracketsCurly className="h-4 w-4 text-on-surface-variant" weight="duotone" />
+                    <span className="font-manrope text-[12px] font-bold text-on-surface">Available fields</span>
                   </div>
-                  <ul className="divide-y divide-border">
+                  <ul className="divide-y divide-border/40">
                     {outputFields.map((field) => (
-                      <li key={field.name} className="p-3 transition-colors hover:bg-muted/20">
-                        <div className="mb-1 flex items-center justify-between">
-                          <span className="font-mono text-xs font-semibold text-primary">
+                      <li key={field.name} className="p-3 transition-colors hover:bg-surface-variant/30">
+                        <div className="mb-1 flex items-center justify-between gap-2">
+                          <span className="font-mono text-[12px] font-bold text-on-surface">
                             {field.name}
                           </span>
-                          <span className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[10px] text-secondary-foreground">
+                          <span className="shrink-0 rounded-md bg-secondary-container/50 px-1.5 py-0.5 font-mono text-[10px] font-bold text-on-secondary-container">
                             {field.type}
                           </span>
                         </div>
-                        <p className="text-[11px] leading-snug text-muted-foreground">
+                        <p className="font-manrope text-[11px] font-medium leading-snug text-on-surface-variant">
                           {field.description}
                         </p>
                       </li>
@@ -469,7 +474,6 @@ export const NodeConfigSidebar = ({
             )}
           </div>
         </div>
-      </div>
-    </aside>
+    </div>
   );
 };
