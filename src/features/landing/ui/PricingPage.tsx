@@ -11,6 +11,7 @@ import {
 import { LandingCtaPanel } from "@/src/features/landing/ui/LandingCtaPanel";
 import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
 import { MarketingShell } from "@/src/features/landing/ui/MarketingShell";
+import { PricingFaqAccordion } from "@/src/features/landing/ui/PricingFaqAccordion";
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const PricingPage = () => (
@@ -135,20 +136,7 @@ export const PricingPage = () => (
               </h2>
             </LandingRevealItem>
 
-            <dl className="mt-10 divide-y divide-border/50 rounded-2xl border border-border/50 bg-card">
-              {PRICING_FAQ.map((item, index) => (
-                <LandingRevealItem key={item.question} delay={80 + index * 55}>
-                  <div className="px-5 py-6 sm:px-8 sm:py-7">
-                    <dt className="font-newsreader text-xl font-bold tracking-tight text-on-surface">
-                      {item.question}
-                    </dt>
-                    <dd className="mt-3 font-manrope text-[15px] font-medium leading-relaxed text-on-surface-variant">
-                      {item.answer}
-                    </dd>
-                  </div>
-                </LandingRevealItem>
-              ))}
-            </dl>
+            <PricingFaqAccordion items={PRICING_FAQ} />
           </LandingRevealGroup>
         </div>
       </section>
