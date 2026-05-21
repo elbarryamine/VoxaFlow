@@ -3,7 +3,5 @@ interface SettingsPanelProps {
 }
 
 export const SettingsPanel = ({ children }: SettingsPanelProps) => (
-  <div className="rounded-xl border border-border/50 bg-card shadow-sm">
-    <div className="space-y-4 p-4 font-manrope sm:p-5">{children}</div>
-  </div>
+    <div className="space-y-4 font-manrope mt-10">{children}</div>
 );

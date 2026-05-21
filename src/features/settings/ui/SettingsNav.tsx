@@ -3,9 +3,6 @@
 import type { SettingsNavItem, SettingsSectionId } from "../constants/SETTINGS_SECTIONS";
 import { cn } from "@/src/shared/utils/cn";
 
-const navBtnClass =
-  "flex w-full items-center gap-2.5 rounded-lg border px-2.5 py-2 font-manrope text-left transition-colors duration-300";
-
 interface SettingsNavProps {
   items: SettingsNavItem[];
   activeId: SettingsSectionId;
@@ -14,8 +11,9 @@ interface SettingsNavProps {
 
 export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => (
   <nav
-    className="flex gap-1 overflow-x-auto p-3 font-manrope md:flex-col md:gap-0.5 md:overflow-visible"
+    className="flex flex-wrap gap-1 border-b border-border/50 px-4 py-1 font-manrope sm:px-6 md:flex-col md:gap-0.5 md:border-b-0 md:p-3 md:py-3"
     aria-label="Settings sections"
+    role="tablist"
   >
     {items.map((item) => {
       const active = item.id === activeId;
@@ -25,19 +23,24 @@ export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => 
         <button
           key={item.id}
           type="button"
+          role="tab"
+          aria-selected={active}
           onClick={() => onSelect(item.id)}
-          aria-current={active ? "page" : undefined}
           className={cn(
-            navBtnClass,
-            "shrink-0 md:shrink",
+            "flex items-center gap-1.5 transition-colors duration-300",
+            "border-b-2 px-3 py-3 text-[13px] font-semibold md:w-full md:gap-2.5 md:rounded-lg md:border md:px-2.5 md:py-2 md:text-left md:text-[14px]",
             active
-              ? "border-primary/25 bg-primary text-on-primary"
-              : "border-transparent text-on-surface-variant hover:border-border/50 hover:bg-surface-variant/50 hover:text-on-surface",
+              ? "border-primary text-on-surface md:border-primary/25 md:bg-primary md:text-on-primary"
+              : "border-transparent text-on-surface-variant hover:text-on-surface md:hover:border-border/50 md:hover:bg-surface-variant/50",
           )}
         >
+          <Icon
+            className="h-4 w-4 shrink-0 md:hidden"
+            weight={active ? "duotone" : "regular"}
+          />
           <span
             className={cn(
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors",
+              "hidden h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors md:flex",
               active
                 ? "bg-on-primary/15 text-on-primary"
                 : "bg-surface-container-high text-on-surface-variant",
@@ -45,11 +48,7 @@ export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => 
           >
             <Icon className="h-4 w-4" weight={active ? "duotone" : "regular"} />
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-[14px] font-semibold leading-tight">
-              {item.label}
-            </span>
-          </span>
+          <span className="truncate leading-tight">{item.label}</span>
         </button>
       );
     })}

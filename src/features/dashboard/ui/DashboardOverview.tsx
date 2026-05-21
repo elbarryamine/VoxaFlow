@@ -30,6 +30,41 @@ export const DashboardOverview = ({
       <section>
         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="font-newsreader text-xl font-bold text-on-surface">
+            Your Workflows
+          </h2>
+          <Link
+            href="/dashboard/workflows"
+            className="font-manrope text-[14px] font-bold text-primary transition-colors hover:text-primary/80"
+          >
+            View all
+          </Link>
+        </div>
+        {recentWorkflows.length > 0 ? (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {recentWorkflows.map((workflow) => (
+              <WorkflowCard
+                key={workflow.id}
+                workflow={workflow}
+                variant="compact"
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            layout="section"
+            icon={GitBranch}
+            title="No workflows yet"
+            description="Create your first workflow to start automating."
+            action={
+              <TopBarLink href="/dashboard/workflows">Create a workflow</TopBarLink>
+            }
+          />
+        )}
+      </section>
+
+      <section>
+        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="font-newsreader text-xl font-bold text-on-surface">
             Recent Executions
           </h2>
           <Link
@@ -62,40 +97,7 @@ export const DashboardOverview = ({
         )}
       </section>
 
-      <section>
-        <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-newsreader text-xl font-bold text-on-surface">
-            Your Workflows
-          </h2>
-          <Link
-            href="/dashboard/workflows"
-            className="font-manrope text-[14px] font-bold text-primary transition-colors hover:text-primary/80"
-          >
-            View all
-          </Link>
-        </div>
-        {recentWorkflows.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-            {recentWorkflows.map((workflow) => (
-              <WorkflowCard
-                key={workflow.id}
-                workflow={workflow}
-                variant="compact"
-              />
-            ))}
-          </div>
-        ) : (
-          <EmptyState
-            layout="section"
-            icon={GitBranch}
-            title="No workflows yet"
-            description="Create your first workflow to start automating."
-            action={
-              <TopBarLink href="/dashboard/workflows">Create a workflow</TopBarLink>
-            }
-          />
-        )}
-      </section>
+      
     </PageLayout>
   );
 };

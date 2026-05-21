@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { FloppyDisk } from "@phosphor-icons/react/dist/ssr";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
-import { TopBarButton } from "@/src/shared/ui/TopBarButton";
 import {
   SETTINGS_SECTIONS,
   DEFAULT_SETTINGS_SECTION,
@@ -46,7 +44,7 @@ export const SettingsScreen = () => {
       contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="shrink-0 border-b border-border/50 bg-surface-container-low md:w-56 md:border-b-0 md:border-r">
+        <aside className="shrink-0 md:w-56 md:border-r md:border-border/50 md:bg-surface-container-low">
           <SettingsNav
             items={SETTINGS_SECTIONS}
             activeId={activeId}
