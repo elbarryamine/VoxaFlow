@@ -1,70 +1,202 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import type { Edge, Node } from "@xyflow/react";
 
 import { LANDING_FLOWS } from "@/src/features/landing/constants/LANDING_FLOWS";
 import type { WorkflowNodeData } from "@/src/features/workflows/types/Workflow.types";
 
-const CURSOR_STEP_MS = 1400;
-const FLOW_HOLD_MS = 900;
+export interface LandingCursorPosition {
+  x: number;
+  y: number;
+}
 
-export const useLandingFlowDemo = () => {
+interface UseLandingFlowDemoOptions {
+  containerRef: RefObject<HTMLDivElement | null>;
+  triggerRef: RefObject<HTMLButtonElement | null>;
+  optionRefs: RefObject<(HTMLLIElement | null)[]>;
+}
+
+/** Tight, even phases so the demo reads as one continuous loop. */
+type DemoPhase = "on-trigger" | "menu-open" | "on-option" | "applying";
+
+const PHASE_MS: Record<DemoPhase, number> = {
+  /** Dwell on the active flow before opening the picker again */
+  "on-trigger": 2600,
+  "menu-open": 520,
+  "on-option": 1100,
+  applying: 520,
+};
+
+const FLOW_COUNT = LANDING_FLOWS.length;
+
+const getRelativeCenter = (
+  element: HTMLElement,
+  container: HTMLElement,
+): LandingCursorPosition => ({
+  x:
+    element.getBoundingClientRect().left -
+    container.getBoundingClientRect().left +
+    element.getBoundingClientRect().width / 2 -
+    4,
+  y:
+    element.getBoundingClientRect().top -
+    container.getBoundingClientRect().top +
+    element.getBoundingClientRect().height / 2 -
+    2,
+});
+
+export const useLandingFlowDemo = ({
+  containerRef,
+  triggerRef,
+  optionRefs,
+}: UseLandingFlowDemoOptions) => {
   const [flowIndex, setFlowIndex] = useState(0);
-  const [cursorStep, setCursorStep] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const transitionLock = useRef(false);
+  const [phase, setPhase] = useState<DemoPhase>("on-trigger");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [highlightedOption, setHighlightedOption] = useState<number | null>(null);
+  const [isClicking, setIsClicking] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState<LandingCursorPosition | null>(
+    null,
+  );
+  const targetFlowRef = useRef(1);
+  const flowIndexRef = useRef(flowIndex);
+  flowIndexRef.current = flowIndex;
 
   const flow = LANDING_FLOWS[flowIndex]!;
-  const activeNodeId = flow.cursorPath[cursorStep] ?? null;
+  const isCanvasFading = phase === "applying";
 
   const nodes: Node<WorkflowNodeData>[] = useMemo(
-    () =>
-      flow.nodes.map((node) => ({
-        ...node,
-        selected: node.id === activeNodeId,
-      })),
-    [flow.nodes, activeNodeId],
+    () => flow.nodes.map((node) => ({ ...node, selected: false })),
+    [flow.nodes],
   );
 
   const edges: Edge[] = flow.edges;
 
-  const advance = useCallback(() => {
-    if (transitionLock.current) return;
+  const measureTrigger = useCallback(() => {
+    const container = containerRef.current;
+    const trigger = triggerRef.current;
+    if (!container || !trigger) return null;
+    return getRelativeCenter(trigger, container);
+  }, [containerRef, triggerRef]);
 
-    setCursorStep((step) => {
-      if (step < flow.cursorPath.length - 1) return step + 1;
+  const measureOption = useCallback(
+    (index: number) => {
+      const container = containerRef.current;
+      const option = optionRefs.current?.[index];
+      if (!container || !option) return null;
+      option.scrollIntoView({ block: "nearest", behavior: "instant" });
+      return getRelativeCenter(option, container);
+    },
+    [containerRef, optionRefs],
+  );
 
-      transitionLock.current = true;
-      setIsTransitioning(true);
-      window.setTimeout(() => {
-        setFlowIndex((index) => (index + 1) % LANDING_FLOWS.length);
-        setCursorStep(0);
-        setIsTransitioning(false);
-        transitionLock.current = false;
-      }, FLOW_HOLD_MS);
-
-      return step;
-    });
-  }, [flow.cursorPath.length]);
+  const pulseClick = useCallback(() => {
+    setIsClicking(true);
+    window.setTimeout(() => setIsClicking(false), 180);
+  }, []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    if (prefersReducedMotion) return;
 
-    const timer = window.setInterval(advance, CURSOR_STEP_MS);
-    return () => window.clearInterval(timer);
-  }, [advance, flowIndex]);
+    if (prefersReducedMotion) {
+      setCursorPosition(null);
+      setMenuOpen(false);
+      return;
+    }
+
+    let timeoutId: number;
+
+    switch (phase) {
+      case "on-trigger": {
+        targetFlowRef.current = (flowIndexRef.current + 1) % FLOW_COUNT;
+        setMenuOpen(false);
+        setHighlightedOption(null);
+        const triggerPos = measureTrigger();
+        if (triggerPos) setCursorPosition(triggerPos);
+        timeoutId = window.setTimeout(
+          () => setPhase("menu-open"),
+          PHASE_MS["on-trigger"],
+        );
+        break;
+      }
+
+      case "menu-open": {
+        setMenuOpen(true);
+        pulseClick();
+        const triggerPos = measureTrigger();
+        if (triggerPos) setCursorPosition(triggerPos);
+        timeoutId = window.setTimeout(
+          () => setPhase("on-option"),
+          PHASE_MS["menu-open"],
+        );
+        break;
+      }
+
+      case "on-option": {
+        const targetIndex = targetFlowRef.current;
+        setHighlightedOption(targetIndex);
+        const optionPos = measureOption(targetIndex);
+        if (optionPos) setCursorPosition(optionPos);
+        timeoutId = window.setTimeout(
+          () => setPhase("applying"),
+          PHASE_MS["on-option"],
+        );
+        break;
+      }
+
+      case "applying": {
+        pulseClick();
+        setFlowIndex(targetFlowRef.current);
+        setMenuOpen(false);
+        setHighlightedOption(null);
+        const triggerPos = measureTrigger();
+        if (triggerPos) setCursorPosition(triggerPos);
+        timeoutId = window.setTimeout(
+          () => setPhase("on-trigger"),
+          PHASE_MS.applying,
+        );
+        break;
+      }
+    }
+
+    return () => window.clearTimeout(timeoutId);
+  }, [measureOption, measureTrigger, phase, pulseClick]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (phase === "on-option") {
+        const optionPos = measureOption(targetFlowRef.current);
+        if (optionPos) setCursorPosition(optionPos);
+        return;
+      }
+      const triggerPos = measureTrigger();
+      if (triggerPos) setCursorPosition(triggerPos);
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [measureOption, measureTrigger, phase]);
 
   return {
     flow,
     flowIndex,
     nodes,
     edges,
-    activeNodeId,
-    isTransitioning,
-    flowCount: LANDING_FLOWS.length,
+    menuOpen,
+    highlightedOption,
+    cursorPosition,
+    isClicking,
+    isCanvasFading,
+    flowCount: FLOW_COUNT,
   };
 };

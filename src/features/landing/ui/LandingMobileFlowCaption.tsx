@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 
 import { LANDING_FLOWS } from "@/src/features/landing/constants/LANDING_FLOWS";
 
-const ROTATE_MS = 5600;
+/** Matches desktop demo: ~4.7s per flow × 7 */
+const ROTATE_MS = 4700;
 
 export const LandingMobileFlowCaption = () => {
   const [flowIndex, setFlowIndex] = useState(0);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -14,6 +14,7 @@ import { LANDING_FLOWS } from "@/src/features/landing/constants/LANDING_FLOWS";
 import { useLandingFlowDemo } from "@/src/features/landing/hooks/useLandingFlowDemo";
 import { LandingFlowCursor } from "@/src/features/landing/ui/LandingFlowCursor";
 import { LandingFlowNode } from "@/src/features/landing/ui/LandingFlowNode";
+import { LandingFlowPicker } from "@/src/features/landing/ui/LandingFlowPicker";
 
 const NODE_TYPES = {
   landingFlowNode: LandingFlowNode,
@@ -21,39 +22,63 @@ const NODE_TYPES = {
 
 const LandingFlowCanvasInner = () => {
   const { fitView } = useReactFlow();
+  const demoContainerRef = useRef<HTMLDivElement>(null);
+  const pickerTriggerRef = useRef<HTMLButtonElement>(null);
+  const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  const handleOptionRef = useCallback((index: number, element: HTMLLIElement | null) => {
+    optionRefs.current[index] = element;
+  }, []);
+
   const {
     flow,
     flowIndex,
     nodes,
     edges,
-    activeNodeId,
-    isTransitioning,
-  } = useLandingFlowDemo();
+    menuOpen,
+    highlightedOption,
+    cursorPosition,
+    isClicking,
+    isCanvasFading,
+  } = useLandingFlowDemo({
+    containerRef: demoContainerRef,
+    triggerRef: pickerTriggerRef,
+    optionRefs,
+  });
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      void fitView({ padding: 0.12, duration: 520 });
+      void fitView({ padding: 0.12, duration: 380 });
     }, 40);
     return () => window.clearTimeout(timer);
   }, [flowIndex, fitView]);
 
   return (
-    <>
-      <div className="relative flex w-full items-start justify-between border-b border-border/50 px-6 py-4">
+    <div ref={demoContainerRef} className="relative flex min-h-0 flex-1 flex-col">
+      <div className="relative flex w-full items-center justify-between gap-4 border-b border-border/50 px-6 py-4">
         <span className="font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant transition-opacity duration-500">
           {flow.figLabel}
           <span className="ml-2 text-on-surface-variant/50">
             {flowIndex + 1}/{LANDING_FLOWS.length}
           </span>
         </span>
+
+        <LandingFlowPicker
+          flowIndex={flowIndex}
+          menuOpen={menuOpen}
+          highlightedOption={highlightedOption}
+          triggerRef={pickerTriggerRef}
+          onOptionRef={handleOptionRef}
+        />
+
         <span className="rounded-full bg-success/15 px-2.5 py-1 font-manrope text-[10px] font-bold text-success">
           live
         </span>
       </div>
 
       <div
-        className={`landing-flow-stage relative min-h-0 flex-1 transition-opacity duration-500 ${
-          isTransitioning ? "opacity-40" : "opacity-100"
+        className={`landing-flow-stage relative min-h-0 flex-1 transition-opacity duration-450 ease-out ${
+          isCanvasFading ? "opacity-[0.88]" : "opacity-100"
         }`}
       >
         <ReactFlow
@@ -84,16 +109,18 @@ const LandingFlowCanvasInner = () => {
             color="var(--flow-pattern-dot)"
           />
         </ReactFlow>
-
-        <LandingFlowCursor
-          targetNodeId={activeNodeId}
-          visible={!isTransitioning}
-        />
       </div>
 
+      <LandingFlowCursor
+        position={cursorPosition}
+        isClicking={isClicking}
+        visible
+      />
+
       <ul
-        key={flow.id}
-        className="landing-flow-log relative shrink-0 space-y-2.5 border-t border-border/50 bg-surface-variant/25 p-5 font-manrope text-[11px] leading-relaxed text-on-surface-variant"
+        className={`relative shrink-0 space-y-2.5 border-t border-border/50 bg-surface-variant/25 p-5 font-manrope text-[11px] leading-relaxed text-on-surface-variant transition-opacity duration-450 ease-out ${
+          isCanvasFading ? "opacity-[0.88]" : "opacity-100"
+        }`}
       >
         {flow.logLines.map((line) => (
           <li key={`${flow.id}-${line.time}`}>
@@ -103,15 +130,11 @@ const LandingFlowCanvasInner = () => {
         ))}
       </ul>
 
-      <div
-        className="sr-only"
-        aria-live="polite"
-        aria-atomic
-      >
+      <div className="sr-only" aria-live="polite" aria-atomic>
         Showing workflow example {flowIndex + 1} of {LANDING_FLOWS.length}:{" "}
         {flow.figLabel}
       </div>
-    </>
+    </div>
   );
 };
 

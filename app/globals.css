@@ -630,6 +630,25 @@ body::-webkit-scrollbar-thumb:hover,
   animation: landing-cursor-pulse 1.4s ease-in-out infinite;
 }
 
+.landing-flow-cursor-ring--click {
+  animation: landing-cursor-click 0.22s ease-out;
+}
+
+@keyframes landing-cursor-click {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+}
+
 .landing-flow-log {
   animation: landing-flow-log-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

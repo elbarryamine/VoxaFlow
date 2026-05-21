@@ -10,11 +10,11 @@ export interface LandingFlowLogLine {
 export interface LandingFlowPreset {
   id: string;
   figLabel: string;
+  pickerLabel: string;
   mobileCaption: string;
   logLines: LandingFlowLogLine[];
   nodes: Node<WorkflowNodeData>[];
   edges: Edge[];
-  cursorPath: string[];
 }
 
 const EDGE_STYLE = { strokeDasharray: "6 4" } as const;
@@ -52,28 +52,28 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
   {
     id: "ecommerce",
     figLabel: "Fig. A — Order fulfillment",
+    pickerLabel: "Order fulfillment",
     mobileCaption: "Shopify Trigger → AI Custom Model → Slack",
     logLines: [
       { time: "00:01", message: "webhook.received order.created" },
       { time: "00:02", message: "ai.complete → route #orders" },
       { time: "00:04", message: "slack.posted → run.complete" },
     ],
-    cursorPath: ["shopify", "ai", "slack"],
     nodes: [
-      landingNode("shopify", { x: 24, y: 72 }, {
+      landingNode("shopify", { x: 40, y: 80 }, {
         type: "webhook-shopify",
         label: "Shopify Trigger",
         description: "Trigger from Shopify events",
         agentName: "order.created",
       }),
-      landingNode("ai", { x: 268, y: 72 }, {
+      landingNode("ai", { x: 340, y: 80 }, {
         type: "ai-custom-model",
         label: "AI Custom Model",
         description: "Run a custom AI reasoning step",
         modelName: "gpt-4o",
         outputFormat: "text",
       }),
-      landingNode("slack", { x: 512, y: 72 }, {
+      landingNode("slack", { x: 640, y: 80 }, {
         type: "integration-slack",
         label: "Slack",
         description: "Send a Slack notification",
@@ -88,27 +88,27 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
   {
     id: "leads",
     figLabel: "Fig. B — Lead routing",
+    pickerLabel: "Lead routing",
     mobileCaption: "Custom Webhook → OpenAI → Send Email",
     logLines: [
       { time: "00:01", message: "webhook.received /hooks/leads" },
       { time: "00:03", message: "openai.structured → lead score" },
       { time: "00:05", message: "email.sent → run.complete" },
     ],
-    cursorPath: ["webhook", "openai", "email"],
     nodes: [
-      landingNode("webhook", { x: 24, y: 88 }, {
+      landingNode("webhook", { x: 40, y: 96 }, {
         type: "webhook-custom",
         label: "Custom Webhook",
         description: "HTTP trigger for any payload",
         webhookPath: "/hooks/leads",
       }),
-      landingNode("openai", { x: 268, y: 88 }, {
+      landingNode("openai", { x: 340, y: 96 }, {
         type: "openai",
         label: "OpenAI",
         description: "Generate text or structured data",
         model: "gpt-4o",
       }),
-      landingNode("email", { x: 512, y: 88 }, {
+      landingNode("email", { x: 640, y: 96 }, {
         type: "send-email",
         label: "Send Email",
         description: "Send an email via Resend",
@@ -124,34 +124,34 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
   {
     id: "triage",
     figLabel: "Fig. C — Support triage",
+    pickerLabel: "Support triage",
     mobileCaption: "Shopify → AI branch → Slack / Delay",
     logLines: [
       { time: "00:01", message: "webhook.received refund.request" },
       { time: "00:02", message: "branch.matched → yes path" },
       { time: "00:04", message: "slack.alerted → run.complete" },
     ],
-    cursorPath: ["shopify-triage", "ai-branch", "slack-yes", "delay-no"],
     nodes: [
-      landingNode("shopify-triage", { x: 24, y: 100 }, {
+      landingNode("shopify-triage", { x: 40, y: 120 }, {
         type: "webhook-shopify",
         label: "Shopify Trigger",
         description: "Trigger from Shopify events",
         agentName: "refund.created",
       }),
-      landingNode("ai-branch", { x: 268, y: 100 }, {
+      landingNode("ai-branch", { x: 340, y: 120 }, {
         type: "ai-custom-model",
         label: "AI Custom Model",
         description: "Route by refund urgency",
         outputFormat: "branch",
         aiConditionPrompt: "Is this refund urgent?",
       }),
-      landingNode("slack-yes", { x: 512, y: 36 }, {
+      landingNode("slack-yes", { x: 640, y: 32 }, {
         type: "slack",
         label: "Slack",
         description: "Post a message to a channel",
         channel: "#support-urgent",
       }),
-      landingNode("delay-no", { x: 512, y: 196 }, {
+      landingNode("delay-no", { x: 640, y: 248 }, {
         type: "delay",
         label: "Delay",
         description: "Pause before follow-up",
@@ -163,6 +163,152 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
       landingEdge("shopify-triage", "ai-branch"),
       landingEdge("ai-branch", "slack-yes", "yes", "Yes"),
       landingEdge("ai-branch", "delay-no", "no", "No"),
+    ],
+  },
+  {
+    id: "inventory",
+    figLabel: "Fig. D — Low stock alert",
+    pickerLabel: "Low stock alert",
+    mobileCaption: "Shopify Trigger → OpenAI → Slack",
+    logLines: [
+      { time: "00:01", message: "inventory.updated variant.qty" },
+      { time: "00:02", message: "openai.summary → threshold breach" },
+      { time: "00:03", message: "slack.pinged #inventory" },
+    ],
+    nodes: [
+      landingNode("shopify-stock", { x: 40, y: 88 }, {
+        type: "webhook-shopify",
+        label: "Shopify Trigger",
+        description: "Trigger from Shopify events",
+        agentName: "inventory.updated",
+      }),
+      landingNode("openai-stock", { x: 340, y: 88 }, {
+        type: "openai",
+        label: "OpenAI",
+        description: "Summarize stock risk",
+        model: "gpt-4o-mini",
+      }),
+      landingNode("slack-stock", { x: 640, y: 88 }, {
+        type: "slack",
+        label: "Slack",
+        description: "Post a message to a channel",
+        channel: "#inventory",
+      }),
+    ],
+    edges: [
+      landingEdge("shopify-stock", "openai-stock"),
+      landingEdge("openai-stock", "slack-stock"),
+    ],
+  },
+  {
+    id: "abandoned-cart",
+    figLabel: "Fig. E — Abandoned cart",
+    pickerLabel: "Abandoned cart",
+    mobileCaption: "Custom Webhook → Delay → Send Email",
+    logLines: [
+      { time: "00:01", message: "cart.abandoned webhook.in" },
+      { time: "00:02", message: "delay.wait 2h elapsed" },
+      { time: "00:05", message: "email.recovery.sent" },
+    ],
+    nodes: [
+      landingNode("cart-webhook", { x: 40, y: 96 }, {
+        type: "webhook-custom",
+        label: "Custom Webhook",
+        description: "HTTP trigger for any payload",
+        webhookPath: "/hooks/cart",
+      }),
+      landingNode("cart-delay", { x: 340, y: 96 }, {
+        type: "delay",
+        label: "Delay",
+        description: "Pause before follow-up",
+        delayAmount: "2",
+        delayUnit: "hours",
+      }),
+      landingNode("cart-email", { x: 640, y: 96 }, {
+        type: "send-email",
+        label: "Send Email",
+        description: "Send an email via Resend",
+        to: "shopper@email.com",
+        subject: "Still interested?",
+      }),
+    ],
+    edges: [
+      landingEdge("cart-webhook", "cart-delay"),
+      landingEdge("cart-delay", "cart-email"),
+    ],
+  },
+  {
+    id: "sheet-sync",
+    figLabel: "Fig. F — Sheet sync",
+    pickerLabel: "Sheet sync",
+    mobileCaption: "Shopify Trigger → API Request → Spreadsheet",
+    logLines: [
+      { time: "00:01", message: "order.paid webhook.received" },
+      { time: "00:02", message: "api.enrich → customer LTV" },
+      { time: "00:04", message: "sheet.append row.ok" },
+    ],
+    nodes: [
+      landingNode("shopify-sheet", { x: 40, y: 80 }, {
+        type: "webhook-shopify",
+        label: "Shopify Trigger",
+        description: "Trigger from Shopify events",
+        agentName: "order.paid",
+      }),
+      landingNode("api-enrich", { x: 340, y: 80 }, {
+        type: "api-request",
+        label: "API Request",
+        description: "Make an HTTP request",
+        method: "GET",
+        url: "https://api.crm/enrich",
+      }),
+      landingNode("sheet-out", { x: 640, y: 80 }, {
+        type: "integration-spreadsheet",
+        label: "Spreadsheet",
+        description: "Write rows to a spreadsheet",
+        spreadsheetId: "orders-log",
+        spreadsheetTab: "Daily",
+      }),
+    ],
+    edges: [
+      landingEdge("shopify-sheet", "api-enrich"),
+      landingEdge("api-enrich", "sheet-out"),
+    ],
+  },
+  {
+    id: "post-purchase",
+    figLabel: "Fig. G — Post-purchase",
+    pickerLabel: "Post-purchase",
+    mobileCaption: "Lightfunnels → AI Custom Model → Email",
+    logLines: [
+      { time: "00:01", message: "funnel.purchase.completed" },
+      { time: "00:03", message: "ai.personalize → upsell copy" },
+      { time: "00:05", message: "email.followup.delivered" },
+    ],
+    nodes: [
+      landingNode("lf-trigger", { x: 40, y: 92 }, {
+        type: "webhook-lightfunnels",
+        label: "Lightfunnels Trigger",
+        description: "Trigger from Lightfunnels events",
+        agentName: "purchase.done",
+      }),
+      landingNode("ai-upsell", { x: 340, y: 92 }, {
+        type: "ai-custom-model",
+        label: "AI Custom Model",
+        description: "Personalize follow-up copy",
+        modelName: "gpt-4o",
+        outputFormat: "text",
+      }),
+      landingNode("email-upsell", { x: 640, y: 92 }, {
+        type: "integration-email",
+        label: "Email",
+        description: "Send an email update",
+        emailTo: "buyer@email.com",
+        emailSubject: "Thanks + what's next",
+      }),
+    ],
+    edges: [
+      landingEdge("lf-trigger", "ai-upsell"),
+      landingEdge("ai-upsell", "email-upsell"),
     ],
   },
 ];

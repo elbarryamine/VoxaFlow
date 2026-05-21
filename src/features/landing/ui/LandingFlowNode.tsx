@@ -9,9 +9,13 @@ import { cn } from "@/src/shared/utils/cn";
 
 const BORDER_MAP: Partial<Record<WorkflowNodeData["type"], string>> = {
   "webhook-shopify": "border-secondary/35",
+  "webhook-lightfunnels": "border-warning/40",
   "webhook-custom": "border-outline/45",
   "ai-custom-model": "border-primary/30",
   "integration-slack": "border-tertiary/30",
+  "integration-spreadsheet": "border-success/30",
+  "integration-email": "border-secondary/30",
+  "api-request": "border-outline/40",
   openai: "border-primary/28",
   "send-email": "border-secondary/28",
   slack: "border-tertiary/30",
@@ -26,11 +30,35 @@ type LandingFlowNodeType = Node<WorkflowNodeData, "landingFlowNode">;
 const getConfigSummary = (data: WorkflowNodeData): string | null => {
   switch (data.type) {
     case "webhook-shopify":
+    case "webhook-lightfunnels":
     case "webhook-custom": {
       const agent = data.agentName as string | undefined;
       const webhookPath = data.webhookPath as string | undefined;
       if (data.type === "webhook-custom" && webhookPath) return webhookPath;
       return agent ?? null;
+    }
+    case "integration-spreadsheet": {
+      const sheet = data.spreadsheetId as string | undefined;
+      const tab = data.spreadsheetTab as string | undefined;
+      return tab ? `${sheet ?? "Sheet"} · ${tab}` : (sheet ?? null);
+    }
+    case "integration-email": {
+      const emailTo = data.emailTo as string | undefined;
+      const emailSubject = data.emailSubject as string | undefined;
+      return emailTo
+        ? emailSubject
+          ? `${emailTo} — ${emailSubject}`
+          : emailTo
+        : null;
+    }
+    case "api-request": {
+      const method = data.method as string | undefined;
+      const url = data.url as string | undefined;
+      if (method && url) {
+        const short = url.length > 28 ? `${url.slice(0, 28)}…` : url;
+        return `${method} ${short}`;
+      }
+      return null;
     }
     case "ai-custom-model":
       return data.outputFormat === "branch"
