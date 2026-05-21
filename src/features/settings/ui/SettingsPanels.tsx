@@ -19,7 +19,7 @@ export const SettingsPanelContent = ({ sectionId }: { sectionId: SettingsSection
           <SettingsField label="Workspace name" htmlFor="workspace-name">
             <input
               id="workspace-name"
-              defaultValue="VoxaFlow Team"
+              defaultValue="Auren Team"
               className={settingsInputClass}
             />
           </SettingsField>

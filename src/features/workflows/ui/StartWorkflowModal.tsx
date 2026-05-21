@@ -23,7 +23,7 @@ export const StartWorkflowModal = ({ isOpen, onClose }: StartWorkflowModalProps)
         <Link
           href="/dashboard/workflows/new"
           onClick={onClose}
-          className="group flex flex-col items-center rounded-xl border border-border/50 bg-surface-container-lowest p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
+          className="group flex flex-col items-center rounded-xl border border-border/50 bg-card p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
         >
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-200 group-hover:scale-105">
             <FilePlus className="h-6 w-6" weight="duotone" />
@@ -39,7 +39,7 @@ export const StartWorkflowModal = ({ isOpen, onClose }: StartWorkflowModalProps)
         <Link
           href="/dashboard/workflows/templates"
           onClick={onClose}
-          className="group flex flex-col items-center rounded-xl border border-border/50 bg-surface-container-lowest p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
+          className="group flex flex-col items-center rounded-xl border border-border/50 bg-card p-6 text-center transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
         >
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-container/60 text-on-secondary-container transition-transform duration-200 group-hover:scale-105">
             <Copy className="h-6 w-6" weight="duotone" />

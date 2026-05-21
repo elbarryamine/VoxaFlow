@@ -19,7 +19,7 @@ const hankenGrotesk = Hanken_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "VoxaFlow — AI Workflow Executions",
+  title: "Auren — AI Workflow Executions",
   description: "Create and manage AI-driven automation workflows",
 };
 
@@ -40,7 +40,7 @@ export default function RootLayout({
             __html: `
               (function () {
                 try {
-                  var key = "voxaflow-theme";
+                  var key = "auren-theme";
                   var stored = localStorage.getItem(key);
                   var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
                   var theme = stored || (systemDark ? "dark" : "light");

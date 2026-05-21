@@ -69,7 +69,7 @@ export const TemplatesModal = ({
                   onSelect(template.id);
                   onClose();
                 }}
-                className="group flex items-center gap-3 rounded-xl border border-border/50 bg-surface-container-lowest p-3 text-left transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
+                className="group flex items-center gap-3 rounded-xl border border-border/50 bg-card p-3 text-left transition-all duration-200 hover:border-primary/25 hover:bg-surface-variant/50"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-on-secondary-container transition-transform duration-200 group-hover:scale-105">
                   <Icon className="h-4 w-4" weight="duotone" />

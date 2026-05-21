@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   }
 
   const userEmail = user.email ?? "";
-  const userName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? "VoxaFlow User";
+  const userName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? "Anonymous";
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-background">

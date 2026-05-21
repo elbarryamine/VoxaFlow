@@ -1,4 +1,4 @@
--- Voxa Flow — fresh initial schema (tables, RLS, grants, realtime)
+-- Auren — fresh initial schema (tables, RLS, grants, realtime)
 
 DROP TABLE IF EXISTS node_execution_logs CASCADE;
 DROP TABLE IF EXISTS node_executions CASCADE;

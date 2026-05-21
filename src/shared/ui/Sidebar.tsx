@@ -83,7 +83,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
                 <Lightning weight="duotone" className="h-5 w-5" />
               </div>
               <span className="truncate text-xl font-newsreader font-bold tracking-tight text-sidebar-title">
-                VoxaFlow
+                Auren
               </span>
             </div>
           )}
@@ -112,7 +112,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-0.5 px-2 py-2">
+      <nav className="flex-1 space-y-0.5 px-2 py-2 gap-2">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = isActive(href);
           return (
@@ -140,7 +140,7 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
                 <>
                   <span
                     className={cn(
-                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-md transition-colors duration-300",
+                      "flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors duration-300",
                       active
                         ? "bg-on-primary/15 text-on-primary"
                         : "bg-surface-container-high text-on-surface-variant group-hover:bg-secondary-container/50 group-hover:text-on-secondary-container",

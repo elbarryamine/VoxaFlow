@@ -115,9 +115,9 @@ export const NodePalette = ({
                       }}
                       onClick={() => categoryEnabled && onAdd(template)}
                       className={cn(
-                        "flex items-center gap-2.5 rounded-xl border p-2.5 transition-all duration-200",
+                        "flex items-center gap-2.5 rounded-lg border p-2.5 transition-all duration-200",
                         categoryEnabled
-                          ? "cursor-pointer border-border/50 bg-surface-container-lowest hover:border-primary/25 hover:bg-surface-variant/50"
+                          ? "cursor-pointer border-border/50 bg-card hover:border-primary/25 hover:bg-surface-variant/50"
                           : "cursor-not-allowed border-border/30 bg-surface-variant/20 opacity-50",
                       )}
                     >

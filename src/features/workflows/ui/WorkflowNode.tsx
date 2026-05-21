@@ -153,7 +153,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
 
   return (
     <div
-      className={`group relative min-w-[200px] max-w-[240px] rounded-xl border border-border/50 bg-card p-3 shadow-lg transition-all duration-300 ${
+      className={`group relative min-w-[200px] max-w-[240px] rounded-md border border-border/50 bg-card p-3 shadow-sm transition-all duration-300 ${
         selected
           ? `ring-2 ring-primary/25 ring-offset-2 ring-offset-surface ${colors.border}`
           : "border-border/50 hover:border-outline-variant"
@@ -186,7 +186,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
         </button>
       </div>
       <div
-        className={`pointer-events-none absolute inset-0 rounded-xl bg-linear-to-br opacity-40 ${NODE_BG_GRADIENT}`}
+        className={`pointer-events-none absolute inset-0 rounded-none bg-linear-to-br opacity-40 ${NODE_BG_GRADIENT}`}
       />
       {!isTrigger && (
         <>
@@ -238,7 +238,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
         </div>
 
         {configSummary && (
-          <div className="mt-1 truncate rounded-md bg-surface-container-low px-2 py-1 text-[11px] font-medium text-on-surface-variant shadow-sm ring-1 ring-border/50">
+          <div className="mt-1 truncate rounded-none bg-surface-container-low px-2 py-1 text-[11px] font-medium text-on-surface-variant shadow-sm ring-1 ring-border/50">
             {configSummary}
           </div>
         )}

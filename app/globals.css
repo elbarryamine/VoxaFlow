@@ -65,7 +65,12 @@
   --secondary-foreground: var(--on-secondary);
   --muted: var(--surface-container-low);
   --muted-foreground: var(--on-surface-variant);
-  --card: var(--surface-container-lowest);
+  /* Between lowest (canvas) and low — subtle lift, not stark white or gray */
+  --card: color-mix(
+    in srgb,
+    var(--surface-container-lowest) 82%,
+    var(--surface-container-low) 18%
+  );
   --card-foreground: var(--on-surface);
   --border: var(--outline-variant);
   --ring: var(--outline);
@@ -160,7 +165,12 @@
   --secondary-foreground: var(--on-secondary);
   --muted: var(--surface-container-low);
   --muted-foreground: var(--on-surface-variant);
-  --card: var(--surface-container-lowest);
+  /* Slightly above canvas — visible but not heavy */
+  --card: color-mix(
+    in srgb,
+    var(--surface-container-lowest) 62%,
+    var(--surface-container-low) 38%
+  );
   --card-foreground: var(--on-surface);
   --border: var(--outline-variant);
   --ring: var(--outline);

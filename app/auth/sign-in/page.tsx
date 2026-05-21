@@ -5,8 +5,8 @@ import { SignInForm } from "@/src/features/auth/ui/SignInForm";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 
 export const metadata: Metadata = {
-  title: "Sign in | VoxaFlow",
-  description: "Sign in to your VoxaFlow workspace",
+  title: "Sign in | Auren",
+  description: "Sign in to your Auren workspace",
 };
 
 export default async function SignInPage() {
@@ -22,14 +22,14 @@ export default async function SignInPage() {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4 py-10 font-manrope">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.12),transparent_45%)]" />
-      <section className="relative grid w-full max-w-5xl gap-6 rounded-[2rem] border border-border/50 bg-surface-container-lowest p-3 shadow-2xl md:grid-cols-[1.1fr_0.9fr] md:p-4">
-        <div className="rounded-3xl border border-border/50 bg-gradient-to-b from-surface-variant/40 to-surface-container-lowest p-6 shadow-sm md:p-8">
+      <section className="relative grid w-full max-w-5xl gap-6 rounded-4xl border border-border/50 bg-surface-container-lowest p-3 shadow-2xl md:grid-cols-[1.1fr_0.9fr] md:p-4">
+        <div className="rounded-4xl border border-border/50 bg-linear-to-b from-surface-variant/40 to-surface-container-lowest p-6 shadow-sm md:p-8">
           <div className="mb-8 flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-sm">
               <Lightning className="h-6 w-6 text-on-primary" weight="duotone" />
             </div>
             <div>
-              <p className="text-[13px] font-bold uppercase tracking-widest text-on-surface-variant">VoxaFlow</p>
+              <p className="text-[13px] font-bold uppercase tracking-widest text-on-surface-variant">Auren</p>
               <h1 className="font-newsreader text-2xl font-bold tracking-tight text-on-surface">Modern workflow automations, secured</h1>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default async function SignInPage() {
             <p className="text-[13px] font-bold uppercase tracking-widest text-on-surface-variant">Welcome back</p>
             <h2 className="font-newsreader text-3xl font-bold tracking-tight text-on-surface">Sign in to your workspace</h2>
             <p className="mt-2 text-[14px] font-medium text-on-surface-variant">
-              Use email/password or Google to access your VoxaFlow dashboard.
+              Use email/password or Google to access your Auren dashboard.
             </p>
           </div>
 

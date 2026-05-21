@@ -1,4 +1,4 @@
-# Voxa Flow — Agent Guide
+# Agent Guide
 
 **Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Supabase (Postgres + Realtime + Edge Functions) · Zustand · XYFlow · Phosphor Icons
 

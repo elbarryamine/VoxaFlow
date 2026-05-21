@@ -295,7 +295,7 @@ export function SignInForm() {
 
         <p className="text-center text-[13px] font-medium text-on-surface-variant">
           {mode === "sign-in"
-            ? "Use your VoxaFlow account credentials to access your dashboard."
+            ? "Use your Auren account credentials to access your dashboard."
             : "A confirmation email may be required before your first sign in."}
         </p>
       </form>
