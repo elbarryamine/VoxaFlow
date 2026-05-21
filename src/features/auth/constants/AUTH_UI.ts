@@ -14,56 +14,48 @@ export const AUTH_FEATURES: {
   step: string;
   title: string;
   description: string;
-  tag: string;
 }[] = [
   {
     icon: GitBranch,
     step: "01",
     title: "Visual workflow canvas",
     description: "Build automations from real events, with clear paths and live testing.",
-    tag: "Canvas",
   },
   {
     icon: Plugs,
     step: "02",
     title: "Integrations built in",
     description: "Connect Slack, email, your store, spreadsheets, and AI in one place.",
-    tag: "Connect",
   },
   {
     icon: Pulse,
     step: "03",
     title: "See what's happening live",
     description: "Follow every automation in real time with a clear step-by-step history.",
-    tag: "Runs",
   },
   {
     icon: SquaresFour,
     step: "04",
     title: "Start from templates",
     description: "Launch faster with ready-made templates you can customize and turn on.",
-    tag: "Templates",
   },
   {
     icon: Key,
     step: "05",
     title: "Saved connections",
     description: "Store passwords and app logins securely, kept private to your account.",
-    tag: "Keys",
   },
   {
     icon: Sparkle,
     step: "06",
     title: "Built-in AI steps",
     description: "Add AI steps you can word yourself — tuned for each automation.",
-    tag: "AI",
   },
   {
     icon: ShieldCheck,
     step: "07",
     title: "Secure by default",
     description: "Encrypted logins, secure sign-in, and a full history of what happened each time.",
-    tag: "Trust",
   },
 ];
 
