@@ -3,129 +3,32 @@
 import React from "react";
 import { Handle, Position, useReactFlow } from "@xyflow/react";
 import type { NodeProps, Node } from "@xyflow/react";
-import {
-  Robot,
-  GitFork,
-  FileXls,
-  Envelope,
-  ChatCircleText,
-  Globe,
-  ShoppingBag,
-  Link,
-  Lightning,
-  Trash,
-  Plus,
-  Gear,
-} from "@phosphor-icons/react/dist/ssr";
+import { Trash, Plus, Gear } from "@phosphor-icons/react/dist/ssr";
+import { NodeTypeIcon } from "./NodeTypeIcon";
 import type { WorkflowNodeData } from "../types/Workflow.types";
 
 type WorkflowNodeProps = NodeProps<Node<WorkflowNodeData>>;
 
-const ICON_MAP = {
-  "webhook-shopify": ShoppingBag,
-  "webhook-lightfunnels": Lightning,
-  "webhook-youcan": Globe,
-  "webhook-custom": Link,
-  "ai-custom-model": Robot,
-  "integration-spreadsheet": FileXls,
-  "integration-email": Envelope,
-  "integration-slack": ChatCircleText,
-  "integration-webhook": Globe,
-  "api-request": Globe,
-  // Executor-backed
-  openai: Robot,
-  slack: ChatCircleText,
-  "send-email": Envelope,
-  delay: GitFork,
+/** Per-type border accents (card background uses NODE_BG_GRADIENT). */
+const COLOR_MAP = {
+  "webhook-shopify": { border: "border-secondary/35" },
+  "webhook-lightfunnels": { border: "border-warning/40" },
+  "webhook-youcan": { border: "border-success/35" },
+  "webhook-custom": { border: "border-outline/45" },
+  "ai-custom-model": { border: "border-primary/30" },
+  "integration-spreadsheet": { border: "border-success/30" },
+  "integration-email": { border: "border-secondary/30" },
+  "integration-slack": { border: "border-tertiary/30" },
+  "integration-webhook": { border: "border-warning/30" },
+  "api-request": { border: "border-outline/40" },
+  openai: { border: "border-primary/28" },
+  slack: { border: "border-tertiary/30" },
+  "send-email": { border: "border-secondary/28" },
+  delay: { border: "border-outline-variant/55" },
 } as const;
 
-/** Per-type accents: solid icon chips (on-*) + tinted card wash for contrast in both themes. */
-const COLOR_MAP = {
-  "webhook-shopify": {
-    gradient: "from-secondary-container/55 to-secondary/8",
-    border: "border-secondary/35",
-    iconBg: "bg-secondary",
-    icon: "text-on-secondary",
-  },
-  "webhook-lightfunnels": {
-    gradient: "from-warning/25 to-warning/5",
-    border: "border-warning/40",
-    iconBg: "bg-warning",
-    icon: "text-white",
-  },
-  "webhook-youcan": {
-    gradient: "from-success/22 to-success/5",
-    border: "border-success/35",
-    iconBg: "bg-success",
-    icon: "text-white",
-  },
-  "webhook-custom": {
-    gradient: "from-surface-container-high/70 to-surface-container",
-    border: "border-outline/45",
-    iconBg: "bg-on-surface",
-    icon: "text-card",
-  },
-  "ai-custom-model": {
-    gradient: "from-primary-container/50 to-primary/8",
-    border: "border-primary/30",
-    iconBg: "bg-primary",
-    icon: "text-on-primary",
-  },
-  "integration-spreadsheet": {
-    gradient: "from-success/18 to-success/5",
-    border: "border-success/30",
-    iconBg: "bg-success",
-    icon: "text-white",
-  },
-  "integration-email": {
-    gradient: "from-secondary-container/60 to-secondary/8",
-    border: "border-secondary/30",
-    iconBg: "bg-secondary-container",
-    icon: "text-on-secondary-container",
-  },
-  "integration-slack": {
-    gradient: "from-tertiary-container/55 to-tertiary/8",
-    border: "border-tertiary/30",
-    iconBg: "bg-tertiary",
-    icon: "text-on-tertiary",
-  },
-  "integration-webhook": {
-    gradient: "from-warning/15 to-surface-container-low",
-    border: "border-warning/30",
-    iconBg: "bg-warning",
-    icon: "text-white",
-  },
-  "api-request": {
-    gradient: "from-surface-container to-surface-container-high",
-    border: "border-outline/40",
-    iconBg: "bg-inverse-surface",
-    icon: "text-inverse-on-surface",
-  },
-  openai: {
-    gradient: "from-primary-container/45 to-primary/6",
-    border: "border-primary/28",
-    iconBg: "bg-primary",
-    icon: "text-on-primary",
-  },
-  slack: {
-    gradient: "from-tertiary-container/55 to-tertiary/8",
-    border: "border-tertiary/30",
-    iconBg: "bg-tertiary",
-    icon: "text-on-tertiary",
-  },
-  "send-email": {
-    gradient: "from-secondary-container/50 to-secondary/6",
-    border: "border-secondary/28",
-    iconBg: "bg-secondary",
-    icon: "text-on-secondary",
-  },
-  delay: {
-    gradient: "from-surface-variant/35 to-outline-variant/15",
-    border: "border-outline-variant/55",
-    iconBg: "bg-outline",
-    icon: "text-card",
-  },
-} as const;
+const NODE_BG_GRADIENT =
+  "from-surface-container-highest to-surface-container-lowest";
 
 const nodeActionBtnClass =
   "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-on-surface-variant transition-colors duration-300 hover:bg-surface-variant hover:text-on-surface";
@@ -198,7 +101,6 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
   const { setNodes, setEdges } = useReactFlow();
   const [isHandleHovered, setIsHandleHovered] = React.useState(false);
   const nodeType = data.type;
-  const Icon = ICON_MAP[nodeType] ?? Globe;
   const colors = COLOR_MAP[nodeType] ?? COLOR_MAP["integration-webhook"];
   const isTrigger =
     nodeType === "webhook-shopify" ||
@@ -284,7 +186,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
         </button>
       </div>
       <div
-        className={`pointer-events-none absolute inset-0 rounded-xl bg-linear-to-br opacity-40 ${colors.gradient}`}
+        className={`pointer-events-none absolute inset-0 rounded-xl bg-linear-to-br opacity-40 ${NODE_BG_GRADIENT}`}
       />
       {!isTrigger && (
         <>
@@ -322,11 +224,7 @@ export const WorkflowNode = ({ id, data, selected }: WorkflowNodeProps) => {
 
       <div className="relative z-10 flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <div
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm ${colors.iconBg} ${colors.icon} ring-1 ring-black/8 dark:ring-white/12`}
-          >
-            <Icon className="h-4 w-4" weight="duotone" />
-          </div>
+          <NodeTypeIcon type={nodeType} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-bold tracking-tight text-on-surface">
               {data.label}

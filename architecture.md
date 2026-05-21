@@ -43,9 +43,9 @@ app/
 src/
 ├── features/
 │   ├── workflows/                      # Workflow-specific logic
-│   │   ├── ui/                         # WorkflowCanvas, WorkflowNode, etc.
+│   │   ├── ui/                         # WorkflowCanvas, WorkflowNode, NodePalette, NodeTypeIcon
 │   │   ├── types/                      # Workflow & Node TypeScript definitions
-│   │   ├── constants/                  # Node templates & mock data
+│   │   ├── constants/                  # Node templates, NODE_TYPE_ICONS (brand SVG paths)
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms

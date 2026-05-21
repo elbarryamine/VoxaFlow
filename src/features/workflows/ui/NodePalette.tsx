@@ -1,38 +1,15 @@
 "use client";
 
-import {
-  Robot,
-  FileXls,
-  Envelope,
-  ChatCircleText,
-  Globe,
-  ShoppingBag,
-  Link,
-  Lightning,
-  DotsSixVertical,
-  X,
-  SquaresFour,
-} from "@phosphor-icons/react/dist/ssr";
+import { DotsSixVertical, X, SquaresFour } from "@phosphor-icons/react/dist/ssr";
 import { NODE_TEMPLATES } from "../constants/NODE_TEMPLATES";
 import type { NodeTemplate } from "../constants/NODE_TEMPLATES";
+import { NodeTypeIcon } from "./NodeTypeIcon";
 import { cn } from "@/src/shared/utils/cn";
 
 const CATEGORY_LABELS = {
   trigger: "Triggers",
   "intelligent-action": "Intelligent Actions",
   "normal-action": "Normal Actions",
-} as const;
-
-const TYPE_ICONS = {
-  "webhook-shopify": ShoppingBag,
-  "webhook-lightfunnels": Lightning,
-  "webhook-youcan": Globe,
-  "webhook-custom": Link,
-  "ai-custom-model": Robot,
-  "integration-spreadsheet": FileXls,
-  "integration-email": Envelope,
-  "integration-slack": ChatCircleText,
-  "integration-webhook": Globe,
 } as const;
 
 interface NodePaletteProps {
@@ -126,10 +103,6 @@ export const NodePalette = ({
               </p>
               <div className="space-y-1.5">
                 {templates.map((template) => {
-                  const Icon =
-                    TYPE_ICONS[template.type as keyof typeof TYPE_ICONS] ??
-                    Globe;
-
                   return (
                     <div
                       key={`${template.type}-${template.label}`}
@@ -154,9 +127,7 @@ export const NodePalette = ({
                           weight="bold"
                         />
                       )}
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-on-secondary-container">
-                        <Icon className="h-4 w-4" weight="duotone" />
-                      </div>
+                      <NodeTypeIcon type={template.type} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-manrope text-[13px] font-bold text-on-surface">
                           {template.label}
