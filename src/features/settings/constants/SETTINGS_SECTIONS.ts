@@ -56,3 +56,28 @@ export const SETTINGS_SECTIONS: SettingsNavItem[] = [
 ];
 
 export const DEFAULT_SETTINGS_SECTION: SettingsSectionId = "workspace";
+
+/** Plan & billing tab — linked from dashboard usage, etc. */
+export const SETTINGS_PLAN_SECTION: SettingsSectionId = "billing";
+
+const SETTINGS_TAB_PARAM = "tab";
+
+export function isSettingsSectionId(
+  value: string | null | undefined,
+): value is SettingsSectionId {
+  return SETTINGS_SECTIONS.some((section) => section.id === value);
+}
+
+export function parseSettingsTab(
+  tab: string | null | undefined,
+): SettingsSectionId {
+  return isSettingsSectionId(tab) ? tab : DEFAULT_SETTINGS_SECTION;
+}
+
+export function settingsSectionHref(sectionId: SettingsSectionId): string {
+  return `/dashboard/settings?${SETTINGS_TAB_PARAM}=${sectionId}`;
+}
+
+export function settingsPlanHref(): string {
+  return settingsSectionHref(SETTINGS_PLAN_SECTION);
+}

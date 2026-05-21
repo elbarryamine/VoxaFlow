@@ -13,6 +13,20 @@ export interface StatusBreakdown {
   waiting: number;
 }
 
+import type { PlanId } from "@/src/shared/constants/plans";
+
+export interface PlanUsage {
+  planId: PlanId;
+  planName: string;
+  planPrice: string;
+  planPeriod: string;
+  monthlyRuns: number;
+  monthlyRunsLimit: number;
+  activeWorkflows: number;
+  activeWorkflowsLimit: number | null;
+  maxSeats: number;
+}
+
 export interface DashboardMetrics {
   totalExecutions: number;
   activeWorkflows: number;

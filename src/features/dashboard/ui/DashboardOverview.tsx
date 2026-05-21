@@ -5,6 +5,7 @@ import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { EmptyState } from "@/src/shared/ui/EmptyState";
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 import { DashboardKpiSection } from "@/src/features/dashboard/ui/DashboardKpiSection";
+import { DashboardUsageSection } from "@/src/features/dashboard/ui/DashboardUsageSection";
 import { ExecutionCard } from "@/src/features/executions/ui/ExecutionCard";
 import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
 import type { DashboardData } from "@/src/features/dashboard/utils/loadDashboardData";
@@ -15,6 +16,7 @@ export const DashboardOverview = ({
   executions,
   workflows,
   metrics,
+  usage,
 }: DashboardOverviewProps) => {
   const recentExecutions = executions.slice(0, 4);
   const recentWorkflows = workflows.slice(0, 4);
@@ -25,6 +27,7 @@ export const DashboardOverview = ({
       description="Overview of your workflow automations"
       contentClassName="space-y-8"
     >
+      <DashboardUsageSection usage={usage} />
       <DashboardKpiSection metrics={metrics} />
 
       <section>

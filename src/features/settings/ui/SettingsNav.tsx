@@ -1,15 +1,20 @@
 "use client";
 
-import type { SettingsNavItem, SettingsSectionId } from "../constants/SETTINGS_SECTIONS";
+import Link from "next/link";
+
+import {
+  settingsSectionHref,
+  type SettingsNavItem,
+  type SettingsSectionId,
+} from "../constants/SETTINGS_SECTIONS";
 import { cn } from "@/src/shared/utils/cn";
 
 interface SettingsNavProps {
   items: SettingsNavItem[];
   activeId: SettingsSectionId;
-  onSelect: (id: SettingsSectionId) => void;
 }
 
-export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => (
+export const SettingsNav = ({ items, activeId }: SettingsNavProps) => (
   <nav
     className="flex flex-wrap gap-1 border-b border-border/50 px-4 py-1 font-manrope sm:px-6 md:flex-col md:gap-0.5 md:border-b-0 md:p-3 md:py-3"
     aria-label="Settings sections"
@@ -20,12 +25,15 @@ export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => 
       const Icon = item.icon;
 
       return (
-        <button
+        <Link
           key={item.id}
-          type="button"
+          id={`settings-tab-${item.id}`}
+          href={settingsSectionHref(item.id)}
+          replace
+          scroll={false}
           role="tab"
           aria-selected={active}
-          onClick={() => onSelect(item.id)}
+          aria-controls={`settings-panel-${item.id}`}
           className={cn(
             "flex items-center gap-1.5 transition-colors duration-300",
             "border-b-2 px-3 py-3 text-[13px] font-semibold md:w-full md:gap-2.5 md:rounded-lg md:border md:px-2.5 md:py-2 md:text-left md:text-[14px]",
@@ -49,7 +57,7 @@ export const SettingsNav = ({ items, activeId, onSelect }: SettingsNavProps) => 
             <Icon className="h-4 w-4" weight={active ? "duotone" : "regular"} />
           </span>
           <span className="truncate leading-tight">{item.label}</span>
-        </button>
+        </Link>
       );
     })}
   </nav>

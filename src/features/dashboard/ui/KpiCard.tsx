@@ -7,8 +7,8 @@ interface KpiCardProps {
   value: string;
   hint?: string;
   hintTone?: HintTone;
-  icon?: React.ReactNode;
   children?: React.ReactNode;
+  slotClassName?: string;
   className?: string;
 }
 
@@ -23,35 +23,36 @@ export const KpiCard = ({
   value,
   hint,
   hintTone = "neutral",
-  icon,
   children,
+  slotClassName,
   className,
 }: KpiCardProps) => (
   <div
     className={cn(
-      "flex flex-col rounded-2xl border border-border/50 bg-card p-5 shadow-sm transition-all duration-300 hover:border-outline-variant hover:shadow-md sm:p-6",
+      "flex flex-col rounded-2xl border border-border/50 bg-card p-4 shadow-sm transition-all duration-300 hover:border-outline-variant hover:shadow-md",
       className,
     )}
   >
     <div className="flex items-start justify-between gap-3">
-      <p className="font-manrope text-[13px] font-bold uppercase tracking-wide text-on-surface-variant">
+      <p className="font-manrope text-[12px] font-bold uppercase tracking-wide text-on-surface-variant">
         {label}
       </p>
-      {icon}
     </div>
-    <p className="mt-2 font-newsreader text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">
+    <p className="mt-1 font-newsreader text-2xl font-bold tracking-tight text-on-surface sm:text-3xl">
       {value}
     </p>
     {hint && (
       <p
         className={cn(
-          "mt-1 font-manrope text-[12px] font-semibold",
+          "mt-0.5 font-manrope text-[11px] font-semibold",
           hintToneClass[hintTone],
         )}
       >
         {hint}
       </p>
     )}
-    {children && <div className="mt-4 flex-1">{children}</div>}
+    {children && (
+      <div className={cn("mt-3 min-h-0 flex-1", slotClassName)}>{children}</div>
+    )}
   </div>
 );

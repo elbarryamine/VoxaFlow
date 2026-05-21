@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     redirect("/auth/sign-in");
   }
 
-  const data = await loadDashboardData(user.id);
+  const data = await loadDashboardData(user);
 
   return <DashboardOverview {...data} />;
 }

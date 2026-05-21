@@ -50,7 +50,7 @@ src/
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms
-│   ├── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
+│   ├── dashboard/                      # DashboardOverview, usage + KPI (recharts), loadDashboardData (server)
 │   ├── auth/                           # SignInScreen, SignInHero, SignInFeatureShowcase, SignInForm; AUTH_UI
 │   ├── landing/                        # Marketing: home, pricing, privacy, terms; LANDING_COPY, LEGAL_COPY, …
 │   │   ├── constants/                  # LANDING_COPY, PRICING_COPY, LEGAL_COPY, LANDING_FLOWS
@@ -58,7 +58,7 @@ src/
 │   │   └── ui/                         # MarketingShell, LandingFooter, PricingPage, LandingWorkflowCanvas, …
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
-│   ├── constants/                      # BRAND — logo asset paths
+│   ├── constants/                      # BRAND, plans (pricing limits)
 │   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, AurenLogo, EmptyState
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper
 │   └── theme/                          # ThemeProvider, favicon swap (theme-aware tab icon)

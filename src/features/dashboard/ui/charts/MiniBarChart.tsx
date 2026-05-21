@@ -1,52 +1,98 @@
+"use client";
+
+import { useId, useMemo } from "react";
+import {
+  Area,
+  AreaChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import type { DayBucket } from "@/src/features/dashboard/types/Dashboard.types";
 import { cn } from "@/src/shared/utils/cn";
 
-export interface MiniBarChartItem {
-  label: string;
-  value: number;
-}
+import { KpiChartFrame } from "./KpiChartFrame";
+import {
+  KPI_AREA_CHART_MARGIN,
+  KPI_AREA_GRADIENT,
+  KPI_COLORS,
+  KPI_STROKE_WIDTH,
+  kpiAxisTickStyle,
+  kpiTooltipCursor,
+  kpiTooltipLabelStyle,
+  kpiTooltipStyle,
+} from "./kpi-chart-theme";
 
 interface MiniBarChartProps {
-  data: MiniBarChartItem[];
-  barClassName?: string;
-  highlightLast?: boolean;
+  days: DayBucket[];
   className?: string;
 }
 
-export const MiniBarChart = ({
-  data,
-  barClassName = "bg-primary/70",
-  highlightLast = true,
-  className,
-}: MiniBarChartProps) => {
-  const max = Math.max(1, ...data.map((d) => d.value));
+interface ChartRow {
+  label: string;
+  total: number;
+}
+
+export const MiniBarChart = ({ days, className }: MiniBarChartProps) => {
+  const uid = useId().replace(/:/g, "");
+  const areaGradId = `${uid}-runs`;
+
+  const data: ChartRow[] = days.map((day) => ({
+    label: day.label,
+    total: day.count,
+  }));
+
+  const yMax = useMemo(
+    () => Math.max(1, ...data.map((row) => row.total)),
+    [data],
+  );
 
   return (
-    <div className={cn("flex h-16 items-end justify-between gap-1.5", className)}>
-      {data.map((item, index) => {
-        const heightPct = item.value === 0 ? 4 : Math.max(12, (item.value / max) * 100);
-        const isLast = index === data.length - 1;
-
-        return (
-          <div
-            key={`${item.label}-${index}`}
-            className="flex min-w-0 flex-1 flex-col items-center gap-1"
-          >
-            <div
-              className={cn(
-                "w-full min-h-[3px] rounded-t-sm transition-all duration-300",
-                barClassName,
-                highlightLast && isLast && "bg-primary",
-                item.value === 0 && "bg-surface-variant/60",
-              )}
-              style={{ height: `${heightPct}%` }}
-              title={`${item.label}: ${item.value}`}
-            />
-            <span className="truncate font-manrope text-[9px] font-bold uppercase tracking-wide text-on-surface-variant/80">
-              {item.label}
-            </span>
-          </div>
-        );
-      })}
-    </div>
+    <KpiChartFrame className={cn("w-full", className)}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={KPI_AREA_CHART_MARGIN}>
+          <defs>
+            <linearGradient id={areaGradId} x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor={KPI_COLORS.primary}
+                stopOpacity={KPI_AREA_GRADIENT.topOpacity}
+              />
+              <stop
+                offset="100%"
+                stopColor={KPI_COLORS.primary}
+                stopOpacity={KPI_AREA_GRADIENT.bottomOpacity}
+              />
+            </linearGradient>
+          </defs>
+          <YAxis hide domain={[0, yMax]} />
+          <XAxis
+            dataKey="label"
+            axisLine={false}
+            tickLine={false}
+            tick={kpiAxisTickStyle}
+            interval={0}
+            tickMargin={2}
+          />
+          <Tooltip
+            cursor={kpiTooltipCursor}
+            contentStyle={kpiTooltipStyle}
+            labelStyle={kpiTooltipLabelStyle}
+            formatter={(value) => [value ?? 0, "Runs"]}
+            labelFormatter={(label) => label}
+          />
+          <Area
+            type="monotone"
+            dataKey="total"
+            baseValue={0}
+            stroke={KPI_COLORS.primary}
+            strokeWidth={KPI_STROKE_WIDTH}
+            fill={`url(#${areaGradId})`}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </KpiChartFrame>
   );
 };
