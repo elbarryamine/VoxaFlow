@@ -9,7 +9,7 @@ app/
 ├── auth/                               # Supabase Authentication routes
 │   ├── callback/route.ts               # OAuth callback handler
 │   ├── confirm/route.ts                # Email verification handler
-│   └── sign-in/page.tsx                # Sign-in screen
+│   └── sign-in/page.tsx                # Thin entry → SignInScreen
 ├── dashboard/                          # Protected dashboard area
 │   ├── layout.tsx                      # Dashboard shell (Sidebar + Main)
 │   ├── page.tsx                        # Overview with stats and recent activity
@@ -50,11 +50,13 @@ src/
 │   ├── executions/                     # Run history UI, hooks (live data), types
 │   ├── credentials/                    # Credential management UI and forms
 │   ├── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
+│   ├── auth/                           # SignInScreen, SignInHero, SignInFeatureShowcase, SignInForm; AUTH_UI
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
-│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, EmptyState
+│   ├── constants/                      # BRAND — logo asset paths
+│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, AurenLogo, EmptyState
 │   ├── utils/                          # Supabase clients, realtime auth, cn helper
-│   └── theme/                          # ThemeProvider & Dark mode logic
+│   └── theme/                          # ThemeProvider, favicon swap (theme-aware tab icon)
 └── server/                             # Server-side specific logic
     └── modules/auth/                   # Auth helpers
 ```

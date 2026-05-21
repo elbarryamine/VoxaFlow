@@ -10,11 +10,12 @@ import {
   Pulse,
   GitBranch,
   Gear,
-  Lightning,
   Key,
   SignOut,
   SidebarSimple,
 } from "@phosphor-icons/react/dist/ssr";
+import { APP_NAME } from "@/src/shared/constants/BRAND";
+import { AurenLogo } from "@/src/shared/ui/AurenLogo";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview", icon: SquaresFour },
@@ -76,16 +77,23 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
     >
       {/* Header */}
       <div className="flex flex-col p-4 transition-all duration-300">
-        <div className={cn("flex items-center", isCollapsed ? "justify-center" : "justify-between px-1")}>
+        <div
+          className={cn(
+            "flex items-center",
+            isCollapsed ? "justify-center" : "justify-between px-1",
+          )}
+        >
           {!isCollapsed && (
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                <Lightning weight="duotone" className="h-5 w-5" />
-              </div>
-              <span className="truncate text-xl font-newsreader font-bold tracking-tight text-sidebar-title">
-                Auren
+            <Link
+              href="/dashboard"
+              className="flex min-w-0 items-end gap-3"
+              aria-label={`${APP_NAME} home`}
+            >
+              <AurenLogo size="md" />
+              <span className="truncate font-newsreader text-xl font-bold leading-none tracking-tight text-sidebar-title">
+                {APP_NAME}
               </span>
-            </div>
+            </Link>
           )}
           <button
             type="button"
@@ -104,9 +112,9 @@ export const Sidebar = ({ userName, userEmail }: SidebarProps) => {
         
         {isCollapsed && (
           <div className="mt-6 flex justify-center border-b border-sidebar-border/50 pb-5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md">
-              <Lightning weight="duotone" className="h-5 w-5" />
-            </div>
+            <Link href="/dashboard" aria-label={`${APP_NAME} home`}>
+              <AurenLogo size="sm" />
+            </Link>
           </div>
         )}
       </div>

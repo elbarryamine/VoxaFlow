@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { applyFavicon } from "./favicon";
 
 type Theme = "light" | "dark";
 
@@ -24,26 +25,29 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const getSystemTheme = (): Theme =>
   window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
+const readStoredTheme = (): Theme => {
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
+  return stored ?? getSystemTheme();
+};
+
 const applyTheme = (theme: Theme) => {
   const root = document.documentElement;
   root.setAttribute("data-theme", theme);
   root.classList.toggle("dark", theme === "dark");
   root.style.colorScheme = theme;
+  applyFavicon(theme);
 };
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
+    return readStoredTheme();
+  });
 
   useEffect(() => {
-    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY) as
-      | Theme
-      | null;
-    const initialTheme = storedTheme ?? getSystemTheme();
-    const timer = requestAnimationFrame(() => {
-      setThemeState(initialTheme);
-      applyTheme(initialTheme);
-    });
-    return () => cancelAnimationFrame(timer);
+    const initialTheme = readStoredTheme();
+    setThemeState(initialTheme);
+    applyTheme(initialTheme);
   }, []);
 
   const setTheme = useCallback((nextTheme: Theme) => {

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Match ThemeProvider: class + data-theme, not prefers-color-scheme */
+@custom-variant dark (&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   /* Warm neutral canvas */
   --background: #fcf9f5;
@@ -306,6 +309,269 @@ html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover,
 *::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
+}
+
+/* Auth sign-in showcase animations */
+@keyframes auth-hero-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes auth-slide-enter-next {
+  from {
+    opacity: 0;
+    transform: translate3d(32px, 10px, 0) scale(0.97);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes auth-slide-enter-prev {
+  from {
+    opacity: 0;
+    transform: translate3d(-32px, 10px, 0) scale(0.97);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes auth-desc-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-icon-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) rotate(-8deg);
+  }
+  65% {
+    transform: scale(1.05) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes auth-icon-orbit {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: rotate(6deg) scale(1.06);
+    opacity: 0.95;
+  }
+}
+
+@keyframes auth-icon-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes auth-tag-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes auth-border-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes auth-shine-sweep {
+  0%,
+  12% {
+    transform: translateX(-120%) skewX(-12deg);
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  45%,
+  100% {
+    transform: translateX(280%) skewX(-12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes auth-progress-scale {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes auth-ambient-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6px, -10px) scale(1.04);
+  }
+  66% {
+    transform: translate(-4px, 6px) scale(0.98);
+  }
+}
+
+@keyframes auth-chip-icon-spin {
+  from {
+    transform: rotate(-25deg) scale(0.9);
+  }
+  to {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.auth-hero-fade-in {
+  animation: auth-hero-fade-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-slide-enter-next {
+  animation: auth-slide-enter-next 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-slide-enter-prev {
+  animation: auth-slide-enter-prev 0.62s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-desc-reveal {
+  animation: auth-desc-reveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+.auth-icon-pop {
+  animation: auth-icon-pop 0.58s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.auth-icon-orbit {
+  animation: auth-icon-orbit 3.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+.auth-icon-glow {
+  animation: auth-icon-glow 2.8s ease-in-out infinite;
+}
+
+.auth-tag-pop {
+  animation: auth-tag-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.06s both;
+}
+
+.auth-showcase-border {
+  background: linear-gradient(
+    115deg,
+    var(--secondary),
+    color-mix(in srgb, var(--secondary-container) 80%, white),
+    color-mix(in srgb, var(--secondary) 60%, var(--primary)),
+    var(--outline-variant),
+    var(--secondary)
+  );
+  background-size: 320% 320%;
+  animation: auth-border-shift 7s ease-in-out infinite;
+}
+
+.auth-shine-bar {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.auth-shine-bar::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  width: 45%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    color-mix(in srgb, var(--on-surface) 6%, transparent) 45%,
+    color-mix(in srgb, var(--secondary-container) 35%, transparent) 50%,
+    color-mix(in srgb, var(--on-surface) 6%, transparent) 55%,
+    transparent 100%
+  );
+  animation: auth-shine-sweep 7s ease-in-out infinite;
+}
+
+.auth-progress-fill {
+  transform: scaleX(0);
+  animation: auth-progress-scale var(--auth-duration, 5s) linear forwards;
+}
+
+.auth-ambient-drift {
+  animation: auth-ambient-drift 9s ease-in-out infinite;
+}
+
+.auth-ambient-drift-delayed {
+  animation: auth-ambient-drift 7s ease-in-out 1.2s infinite reverse;
+}
+
+.auth-chip-icon-spin {
+  animation: auth-chip-icon-spin 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-hero-fade-in,
+  .auth-slide-enter-next,
+  .auth-slide-enter-prev,
+  .auth-desc-reveal,
+  .auth-icon-pop,
+  .auth-icon-orbit,
+  .auth-icon-glow,
+  .auth-tag-pop,
+  .auth-showcase-border,
+  .auth-shine-bar::after,
+  .auth-progress-fill,
+  .auth-ambient-drift,
+  .auth-ambient-drift-delayed,
+  .auth-chip-icon-spin {
+    animation: none !important;
+  }
 }
 
 /* React Flow overrides */
