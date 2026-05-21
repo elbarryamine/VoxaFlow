@@ -1,4 +1,4 @@
-import { Sidebar } from "@/src/shared/ui/Sidebar";
+import { DashboardShell } from "@/src/shared/ui/DashboardShell";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
 
@@ -20,11 +20,8 @@ export default async function DashboardLayout({
   const userName = user.user_metadata?.full_name ?? user.user_metadata?.name ?? "Anonymous";
 
   return (
-    <div className="relative flex h-screen overflow-hidden bg-background">
-      <Sidebar userName={userName} userEmail={userEmail} />
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        {children}
-      </main>
-    </div>
+    <DashboardShell userName={userName} userEmail={userEmail}>
+      {children}
+    </DashboardShell>
   );
 }

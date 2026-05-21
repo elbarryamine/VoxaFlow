@@ -11,7 +11,7 @@ app/
 │   ├── confirm/route.ts                # Email verification handler
 │   └── sign-in/page.tsx                # Thin entry → SignInScreen
 ├── dashboard/                          # Protected dashboard area
-│   ├── layout.tsx                      # Dashboard shell (Sidebar + Main)
+│   ├── layout.tsx                      # Dashboard shell (DashboardShell: floating Sidebar on mobile + Main)
 │   ├── page.tsx                        # Overview with stats and recent activity
 │   ├── workflows/                      # Workflow management
 │   │   ├── page.tsx                    # Workflows list
@@ -64,7 +64,7 @@ src/
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
 │   ├── constants/                      # BRAND, plans (pricing limits)
-│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, AurenLogo, EmptyState, CardCollectionToolbar
+│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, SidebarMobileContext, DashboardShell, AurenLogo, EmptyState, CardCollectionToolbar
 │   ├── types/                          # CardCollectionView (grid | list)
 │   ├── utils/                          # Supabase clients, realtime auth, cn, matchesSearchQuery
 │   └── theme/                          # ThemeProvider, favicon swap (theme-aware tab icon)

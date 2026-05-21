@@ -2,7 +2,10 @@
 
 import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { LANDING_CTA } from "@/src/features/landing/constants/LANDING_COPY";
-import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
+import {
+  LandingRevealGroup,
+  LandingRevealItem,
+} from "@/src/features/landing/ui/LandingReveal";
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const LandingCtaPanel = () => (
@@ -41,7 +44,7 @@ export const LandingCtaPanel = () => (
         >
           <TopBarLink
             href="/auth/sign-in"
-            className="justify-center gap-2 px-8 py-3.5 transition-transform duration-300 hover:scale-[1.02] lg:min-w-[14rem]"
+            className="justify-center gap-2 px-8 py-3.5 transition-transform duration-300 hover:scale-[1.02] lg:min-w-56"
           >
             {LANDING_CTA.action}
             <ArrowRight className="h-5 w-5" weight="bold" aria-hidden />

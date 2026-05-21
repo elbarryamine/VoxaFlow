@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Bell, ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
+import { SidebarMobileMenuButton } from "@/src/shared/ui/SidebarMobileContext";
 import { cn } from "@/src/shared/utils/cn";
 
 interface TopBarProps {
@@ -26,6 +27,7 @@ export const TopBar = ({
   return (
     <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-border/50 bg-surface-container-low px-6 transition-colors duration-300">
       <div className="flex min-w-0 items-center gap-3">
+        <SidebarMobileMenuButton />
         {backHref && (
           <Link
             href={backHref}

@@ -26,7 +26,7 @@ export const LandingFlowCursor = ({
       }}
       aria-hidden
     >
-      <div className="relative size-6 origin-top-left rotate-[22deg]">
+      <div className="relative size-6 origin-top-left rotate-22">
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <span
             className={cn(
