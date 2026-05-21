@@ -4,19 +4,34 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { TopBarButton } from "@/src/shared/ui/TopBarButton";
-import { Play, FloppyDisk, CircleNotch, CheckCircle, XCircle } from "@phosphor-icons/react/dist/ssr";
+import {
+  Play,
+  FloppyDisk,
+  CircleNotch,
+  CheckCircle,
+  XCircle,
+} from "@phosphor-icons/react/dist/ssr";
 
 import { WorkflowCanvas } from "@/src/features/workflows/ui/WorkflowCanvas";
-import type { Workflow, WorkflowDefinition } from "@/src/features/workflows/types/Workflow.types";
+import type {
+  Workflow,
+  WorkflowDefinition,
+} from "@/src/features/workflows/types/Workflow.types";
 
-export default function EditWorkflowPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditWorkflowPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = use(params);
   const router = useRouter();
 
   const [workflow, setWorkflow] = useState<Workflow | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
   const [testing, setTesting] = useState(false);
 
   const handleTestRun = async () => {
@@ -34,7 +49,10 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
         }
       } else {
         const errorData = await res.json().catch(() => ({}));
-        alert(errorData.error || "Failed to trigger test run. Please configure a trigger with valid mock data first.");
+        alert(
+          errorData.error ||
+            "Failed to trigger test run. Please configure a trigger with valid mock data first.",
+        );
       }
     } catch (err) {
       console.error("Failed to execute test run:", err);
@@ -76,27 +94,27 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
   const onActualSave = async (definition: WorkflowDefinition) => {
     if (!workflow) return;
     setSaving(true);
-    setSaveStatus('idle');
+    setSaveStatus("idle");
     try {
       const res = await fetch(`/api/workflows/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           name: workflow.name,
-          definition 
+          definition,
         }),
       });
       if (res.ok) {
-        setSaveStatus('success');
-        setTimeout(() => setSaveStatus('idle'), 3000);
+        setSaveStatus("success");
+        setTimeout(() => setSaveStatus("idle"), 3000);
       } else {
-        setSaveStatus('error');
+        setSaveStatus("error");
         const errorData = await res.json();
         console.error("Save failed:", errorData);
       }
     } catch (err) {
       console.error("Failed to save workflow:", err);
-      setSaveStatus('error');
+      setSaveStatus("error");
     } finally {
       setSaving(false);
     }
@@ -120,34 +138,42 @@ export default function EditWorkflowPage({ params }: { params: Promise<{ id: str
   return (
     <PageLayout
       title={workflow.name}
-      description={workflow.description || "Build and configure your workflow"}
+      description="Build and configure your workflow"
       backHref="/dashboard/workflows"
       onTitleChange={handleTitleChange}
       actions={
         <div className="flex items-center gap-3">
-          {saveStatus === 'success' && (
+          {saveStatus === "success" && (
             <span className="flex items-center gap-1 text-xs font-medium text-success">
               <CheckCircle weight="fill" className="h-4 w-4" />
               Saved
             </span>
           )}
-          {saveStatus === 'error' && (
+          {saveStatus === "error" && (
             <span className="flex items-center gap-1 text-xs font-medium text-destructive">
               <XCircle weight="fill" className="h-4 w-4" />
               Failed to save
             </span>
           )}
-          
+
           <TopBarButton
             variant="secondary"
             onClick={handleTestRun}
             disabled={testing || saving}
           >
-            {testing ? <CircleNotch className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+            {testing ? (
+              <CircleNotch className="h-4 w-4 animate-spin" />
+            ) : (
+              <Play className="h-4 w-4" />
+            )}
             Test Run
           </TopBarButton>
           <TopBarButton onClick={handleSave} disabled={saving}>
-            {saving ? <CircleNotch className="h-4 w-4 animate-spin" /> : <FloppyDisk className="h-4 w-4" />}
+            {saving ? (
+              <CircleNotch className="h-4 w-4 animate-spin" />
+            ) : (
+              <FloppyDisk className="h-4 w-4" />
+            )}
             Save
           </TopBarButton>
         </div>

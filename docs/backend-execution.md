@@ -112,7 +112,6 @@ CREATE TABLE workflows (
   id            UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   name          TEXT NOT NULL,
-  description   TEXT,
   definition    JSONB NOT NULL DEFAULT '{"nodes":[],"edges":[]}'::jsonb,
   is_active     BOOLEAN NOT NULL DEFAULT true,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),

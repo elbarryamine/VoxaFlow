@@ -44,11 +44,13 @@ app/
 src/
 ├── features/
 │   ├── workflows/                      # Workflow-specific logic
-│   │   ├── ui/                         # WorkflowCanvas, WorkflowNode, NodePalette, NodeTypeIcon
+│   │   ├── ui/                         # WorkflowCanvas, WorkflowCard, WorkflowsList, …
+│   │   ├── utils/                      # filterWorkflowBySearch
 │   │   ├── types/                      # Workflow & Node TypeScript definitions
 │   │   ├── constants/                  # Node templates, NODE_TYPE_ICONS (brand SVG paths)
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
+│   │   ├── utils/                      # filterExecutionBySearch
 │   ├── credentials/                    # CredentialCard, CredentialsList; CREDENTIAL_SERVICES; Credential.types
 │   │   ├── constants/                  # CREDENTIAL_SERVICES — per-service icons, fields, rail colors
 │   │   ├── types/                      # Credential, CredentialService
@@ -62,8 +64,9 @@ src/
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
 │   ├── constants/                      # BRAND, plans (pricing limits)
-│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, AurenLogo, EmptyState
-│   ├── utils/                          # Supabase clients, realtime auth, cn helper
+│   ├── ui/                             # PageLayout, TopBar, TopBarButton, ModalShell, Sidebar, AurenLogo, EmptyState, CardCollectionToolbar
+│   ├── types/                          # CardCollectionView (grid | list)
+│   ├── utils/                          # Supabase clients, realtime auth, cn, matchesSearchQuery
 │   └── theme/                          # ThemeProvider, favicon swap (theme-aware tab icon)
 └── server/                             # Server-side specific logic
     └── modules/auth/                   # Auth helpers

@@ -11,7 +11,11 @@ import {
   settingsInputClass,
 } from "@/src/features/settings/ui/SettingsField";
 
-export const SettingsPanelContent = ({ sectionId }: { sectionId: SettingsSectionId }) => {
+export const SettingsPanelContent = ({
+  sectionId,
+}: {
+  sectionId: SettingsSectionId;
+}) => {
   switch (sectionId) {
     case "workspace":
       return (
@@ -68,9 +72,11 @@ export const SettingsPanelContent = ({ sectionId }: { sectionId: SettingsSection
     case "appearance":
       return (
         <SettingsPanel>
-          <div className="flex items-center justify-between gap-4 rounded-lg bg-surface-variant/25 px-3 py-2.5">
+          <div className="flex items-center justify-between gap-4 rounded-lg bg-surface-variant/25">
             <div>
-              <p className="text-[14px] font-bold text-on-surface">Color mode</p>
+              <p className="text-[14px] font-bold text-on-surface">
+                Color mode
+              </p>
               <p className="mt-0.5 text-[12px] font-medium text-on-surface-variant">
                 Switch between light and dark
               </p>
@@ -92,7 +98,11 @@ export const SettingsPanelContent = ({ sectionId }: { sectionId: SettingsSection
                 $299/month · 3 seats
               </p>
             </div>
-            <TopBarButton type="button" variant="secondary" className="shrink-0">
+            <TopBarButton
+              type="button"
+              variant="secondary"
+              className="shrink-0"
+            >
               Manage billing
             </TopBarButton>
           </div>

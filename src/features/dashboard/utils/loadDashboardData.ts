@@ -1,6 +1,9 @@
 import type { User } from "@supabase/supabase-js";
 
-import { buildPlanUsage, getMonthStartIso } from "@/src/features/dashboard/utils/buildPlanUsage";
+import {
+  buildPlanUsage,
+  getMonthStartIso,
+} from "@/src/features/dashboard/utils/buildPlanUsage";
 import { getUserPlanId } from "@/src/features/dashboard/utils/getUserPlanId";
 import type { PlanUsage } from "@/src/features/dashboard/types/Dashboard.types";
 import { createSupabaseServerClient } from "@/src/shared/utils/supabase-server";
@@ -18,7 +21,6 @@ interface DbWorkflowRow {
   id: string;
   user_id: string;
   name: string;
-  description: string | null;
   definition: Workflow["definition"];
   is_active: boolean;
   created_at: string;
@@ -35,7 +37,6 @@ function mapDbWorkflow(
     id: row.id,
     user_id: row.user_id,
     name: row.name,
-    description: row.description,
     definition: row.definition ?? { nodes: [], edges: [] },
     is_active: row.is_active,
     created_at: row.created_at,
@@ -58,24 +59,25 @@ export async function loadDashboardData(user: User): Promise<DashboardData> {
   const planId = getUserPlanId(user);
   const monthStart = getMonthStartIso();
 
-  const [executionsResult, workflowsResult, monthlyRunsResult] = await Promise.all([
-    supabase
-      .from("executions")
-      .select("*, workflows(name)")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(50),
-    supabase
-      .from("workflows")
-      .select("*, executions(count)")
-      .eq("user_id", userId)
-      .order("updated_at", { ascending: false }),
-    supabase
-      .from("executions")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .gte("created_at", monthStart),
-  ]);
+  const [executionsResult, workflowsResult, monthlyRunsResult] =
+    await Promise.all([
+      supabase
+        .from("executions")
+        .select("*, workflows(name)")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(50),
+      supabase
+        .from("workflows")
+        .select("*, executions(count)")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false }),
+      supabase
+        .from("executions")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .gte("created_at", monthStart),
+    ]);
 
   const dbExecutions = (executionsResult.data ?? []) as DbExecutionRow[];
   const executions = dbExecutions.map(mapDbExecution);

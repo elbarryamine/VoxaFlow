@@ -9,7 +9,6 @@ export interface Workflow {
   id: string;
   user_id: string;
   name: string;
-  description?: string | null;
   definition: WorkflowDefinition;
   is_active: boolean;
   created_at: string;
@@ -69,4 +68,10 @@ export type WorkflowNodeData = {
   [key: string]: unknown;
 };
 
-export type WorkflowNodeDataValue = string | number | boolean | unknown[] | Record<string, unknown> | undefined;
+export type WorkflowNodeDataValue =
+  | string
+  | number
+  | boolean
+  | unknown[]
+  | Record<string, unknown>
+  | undefined;

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { PageLayout } from "@/src/shared/ui/PageLayout";
 import { EmptyState } from "@/src/shared/ui/EmptyState";
 import { TopBarButton } from "@/src/shared/ui/TopBarButton";
-import { WorkflowCard } from "@/src/features/workflows/ui/WorkflowCard";
+import { WorkflowsList } from "@/src/features/workflows/ui/WorkflowsList";
 import { StartWorkflowModal } from "@/src/features/workflows/ui/StartWorkflowModal";
 import { CircleNotch, GitBranch, Plus } from "@phosphor-icons/react/dist/ssr";
 import type { Workflow } from "@/src/features/workflows/types/Workflow.types";
@@ -68,11 +68,7 @@ export default function WorkflowsPage() {
             }
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {workflows.map((wf) => (
-              <WorkflowCard key={wf.id} workflow={wf} />
-            ))}
-          </div>
+          <WorkflowsList workflows={workflows} />
         )}
       </PageLayout>
 

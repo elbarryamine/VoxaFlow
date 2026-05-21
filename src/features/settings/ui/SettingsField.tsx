@@ -38,7 +38,7 @@ export const SettingsToggleRow = ({
   description,
   defaultChecked,
 }: SettingsToggleRowProps) => (
-  <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg px-1 py-1 transition-colors hover:bg-surface-variant/30">
+  <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg transition-colors hover:bg-surface-variant/30">
     <div className="min-w-0">
       <p className="text-[14px] font-bold text-on-surface">{title}</p>
       <p className="mt-0.5 text-[12px] font-medium leading-snug text-on-surface-variant">
@@ -63,7 +63,7 @@ interface SettingsStatRowProps {
 }
 
 export const SettingsStatRow = ({ label, value }: SettingsStatRowProps) => (
-  <div className="flex items-center justify-between rounded-lg bg-surface-variant/25 px-3 py-2.5 text-[13px]">
+  <div className="flex items-center justify-between rounded-lg bg-surface-variant/25 text-[13px]">
     <span className="font-medium text-on-surface-variant">{label}</span>
     <span className="font-bold text-on-surface">{value}</span>
   </div>

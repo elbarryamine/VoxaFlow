@@ -42,10 +42,6 @@ export const WorkflowCard = ({
   const runsCount = workflow.runsCount ?? 0;
   const lastRun = workflow.lastRun ?? "—";
   const shortId = workflow.id.substring(0, 8).toUpperCase();
-  const subtitle =
-    workflow.description?.trim() ||
-    workflow.profileName?.trim() ||
-    "No description";
 
   return (
     <Link
@@ -125,16 +121,11 @@ export const WorkflowCard = ({
             {runsCount.toLocaleString()} runs · {lastRun} · #{shortId}
           </p>
         ) : (
-          <>
-            <p className="mb-2 line-clamp-2 font-manrope text-[12px] font-medium text-on-surface-variant">
-              {subtitle}
-            </p>
-            <div className="mt-auto grid grid-cols-3 divide-x divide-border/40 rounded-xl bg-surface-variant/25 font-manrope">
-              <MetricCell label="Runs" value={runsCount.toLocaleString()} />
-              <MetricCell label="Last run" value={lastRun} />
-              <MetricCell label="ID" value={`#${shortId}`} mono />
-            </div>
-          </>
+          <div className="mt-auto grid grid-cols-3 divide-x divide-border/40 rounded-xl bg-surface-variant/25 font-manrope">
+            <MetricCell label="Runs" value={runsCount.toLocaleString()} />
+            <MetricCell label="Last run" value={lastRun} />
+            <MetricCell label="ID" value={`#${shortId}`} mono />
+          </div>
         )}
       </div>
     </Link>
