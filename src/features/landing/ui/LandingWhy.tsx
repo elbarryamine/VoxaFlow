@@ -98,7 +98,7 @@ export const LandingWhy = () => (
 
         <LandingStepGrid
           itemCount={LANDING_WHY.pillars.length}
-          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"
+          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3"
         >
           {LANDING_WHY.pillars.map(({ title, description, tag }, index) => (
             <LandingWhyPillarCard
@@ -134,9 +134,7 @@ const LandingWhyPillarCard = ({
   const isCycleActive = useLandingStepCycleIndex(index);
 
   return (
-    <li
-      className="min-h-0 sm:last:col-span-2 sm:last:flex sm:last:justify-center sm:last:[&>div]:w-full sm:last:[&>div]:max-w-[calc((100%-0.75rem)/2)]"
-    >
+    <li className="min-h-0">
       <LandingRevealItem delay={100 + index * 55} className="h-full">
         <div
           className={cn(
