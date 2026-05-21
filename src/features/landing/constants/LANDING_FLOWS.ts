@@ -55,9 +55,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Order fulfillment",
     mobileCaption: "Shopify Trigger → AI Custom Model → Slack",
     logLines: [
-      { time: "00:01", message: "webhook.received order.created" },
-      { time: "00:02", message: "ai.complete → route #orders" },
-      { time: "00:04", message: "slack.posted → run.complete" },
+      { time: "00:01", message: "New order received" },
+      { time: "00:02", message: "AI routed to #orders" },
+      { time: "00:04", message: "Slack sent · finished" },
     ],
     nodes: [
       landingNode("shopify", { x: 40, y: 80 }, {
@@ -91,9 +91,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Lead routing",
     mobileCaption: "Custom Webhook → OpenAI → Send Email",
     logLines: [
-      { time: "00:01", message: "webhook.received /hooks/leads" },
-      { time: "00:03", message: "openai.structured → lead score" },
-      { time: "00:05", message: "email.sent → run.complete" },
+      { time: "00:01", message: "New lead received" },
+      { time: "00:03", message: "AI scored the lead" },
+      { time: "00:05", message: "Email sent · finished" },
     ],
     nodes: [
       landingNode("webhook", { x: 40, y: 96 }, {
@@ -127,9 +127,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Support triage",
     mobileCaption: "Shopify → AI branch → Slack / Delay",
     logLines: [
-      { time: "00:01", message: "webhook.received refund.request" },
-      { time: "00:02", message: "branch.matched → yes path" },
-      { time: "00:04", message: "slack.alerted → run.complete" },
+      { time: "00:01", message: "Refund request received" },
+      { time: "00:02", message: "Routed to urgent path" },
+      { time: "00:04", message: "Slack alerted · finished" },
     ],
     nodes: [
       landingNode("shopify-triage", { x: 40, y: 120 }, {
@@ -171,9 +171,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Low stock alert",
     mobileCaption: "Shopify Trigger → OpenAI → Slack",
     logLines: [
-      { time: "00:01", message: "inventory.updated variant.qty" },
-      { time: "00:02", message: "openai.summary → threshold breach" },
-      { time: "00:03", message: "slack.pinged #inventory" },
+      { time: "00:01", message: "Stock level updated" },
+      { time: "00:02", message: "Low stock flagged" },
+      { time: "00:03", message: "Slack sent to #inventory" },
     ],
     nodes: [
       landingNode("shopify-stock", { x: 40, y: 88 }, {
@@ -206,9 +206,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Abandoned cart",
     mobileCaption: "Custom Webhook → Delay → Send Email",
     logLines: [
-      { time: "00:01", message: "cart.abandoned webhook.in" },
-      { time: "00:02", message: "delay.wait 2h elapsed" },
-      { time: "00:05", message: "email.recovery.sent" },
+      { time: "00:01", message: "Cart abandoned" },
+      { time: "00:02", message: "Waited 2 hours" },
+      { time: "00:05", message: "Recovery email sent" },
     ],
     nodes: [
       landingNode("cart-webhook", { x: 40, y: 96 }, {
@@ -243,9 +243,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Sheet sync",
     mobileCaption: "Shopify Trigger → API Request → Spreadsheet",
     logLines: [
-      { time: "00:01", message: "order.paid webhook.received" },
-      { time: "00:02", message: "api.enrich → customer LTV" },
-      { time: "00:04", message: "sheet.append row.ok" },
+      { time: "00:01", message: "Order paid" },
+      { time: "00:02", message: "Customer details added" },
+      { time: "00:04", message: "Row added to sheet" },
     ],
     nodes: [
       landingNode("shopify-sheet", { x: 40, y: 80 }, {
@@ -280,9 +280,9 @@ export const LANDING_FLOWS: LandingFlowPreset[] = [
     pickerLabel: "Post-purchase",
     mobileCaption: "Lightfunnels → AI Custom Model → Email",
     logLines: [
-      { time: "00:01", message: "funnel.purchase.completed" },
-      { time: "00:03", message: "ai.personalize → upsell copy" },
-      { time: "00:05", message: "email.followup.delivered" },
+      { time: "00:01", message: "Purchase completed" },
+      { time: "00:03", message: "AI wrote follow-up" },
+      { time: "00:05", message: "Email delivered" },
     ],
     nodes: [
       landingNode("lf-trigger", { x: 40, y: 92 }, {
