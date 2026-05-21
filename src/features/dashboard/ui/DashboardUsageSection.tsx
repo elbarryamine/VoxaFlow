@@ -35,7 +35,7 @@ export const DashboardUsageSection = ({ usage }: DashboardUsageSectionProps) => 
 
   return (
     <section className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-newsreader text-lg font-bold text-on-surface">
             Plan usage

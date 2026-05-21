@@ -61,23 +61,23 @@ export const ExecutionCard = ({
         config.railClass,
         "border-l-[3px]",
         isCompact
-          ? "rounded-xl p-3.5 hover:shadow-md"
-          : "rounded-2xl p-6 hover:shadow-xl",
+          ? "rounded-xl p-3 hover:shadow-md"
+          : "rounded-xl p-3.5 hover:shadow-lg sm:p-4",
       )}
     >
       {isCompact ? (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div
             className={cn(
-              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors",
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
               config.iconClass,
             )}
           >
-            <GitBranch weight="duotone" className="h-4 w-4" />
+            <GitBranch weight="duotone" className="h-3.5 w-3.5" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <h4 className="truncate font-newsreader text-[15px] font-bold text-on-surface transition-colors group-hover:text-primary">
+              <h4 className="truncate font-newsreader text-[14px] font-bold text-on-surface transition-colors group-hover:text-primary">
                 {execution.workflowName}
               </h4>
               <span
@@ -89,7 +89,7 @@ export const ExecutionCard = ({
                 {config.label}
               </span>
             </div>
-            <p className="mt-0.5 truncate font-manrope text-[12px] font-medium text-on-surface-variant">
+            <p className="mt-0.5 truncate font-manrope text-[11px] font-medium text-on-surface-variant">
               {execution.trigger} · {startedAt} · {execution.duration} · #
               {shortId}
             </p>
@@ -97,18 +97,18 @@ export const ExecutionCard = ({
         </div>
       ) : (
         <>
-          <div className="mb-4 flex items-start justify-between">
+          <div className="mb-2 flex items-start justify-between gap-2">
             <div
               className={cn(
-                "rounded-xl p-2.5 transition-colors",
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
                 config.iconClass,
               )}
             >
-              <GitBranch weight="duotone" className="h-6 w-6" />
+              <GitBranch weight="duotone" className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
             <span
               className={cn(
-                "rounded-full px-3 py-1 font-manrope text-[12px] font-bold uppercase tracking-tight",
+                "rounded-full px-2 py-0.5 font-manrope text-[10px] font-bold uppercase tracking-wide sm:text-[11px]",
                 config.pillClass,
               )}
             >
@@ -116,31 +116,43 @@ export const ExecutionCard = ({
             </span>
           </div>
 
-          <h4 className="mb-1 font-newsreader text-2xl font-bold text-on-surface transition-colors group-hover:text-primary">
+          <h4 className="mb-0.5 line-clamp-2 font-newsreader text-lg font-bold leading-snug text-on-surface transition-colors group-hover:text-primary sm:text-xl">
             {execution.workflowName}
           </h4>
-          <p className="mb-6 font-manrope text-[14px] font-medium text-on-surface-variant">
+          <p className="mb-3 font-manrope text-[12px] font-medium text-on-surface-variant">
             {execution.trigger}
           </p>
 
-          <div className="space-y-3 font-manrope">
-            <div className="flex items-center justify-between border-b border-border/40 pb-2 text-[14px] font-bold">
-              <span className="text-on-surface-variant/70">Execution ID</span>
-              <span className="font-mono text-[13px] text-on-surface">
-                #{shortId}
-              </span>
-            </div>
-            <div className="flex items-center justify-between border-b border-border/40 pb-2 text-[14px] font-bold">
-              <span className="text-on-surface-variant/70">Started At</span>
-              <span className="text-on-surface">{startedAt}</span>
-            </div>
-            <div className="flex items-center justify-between text-[14px] font-bold">
-              <span className="text-on-surface-variant/70">Duration</span>
-              <span className="text-on-surface">{execution.duration}</span>
-            </div>
+          <div className="space-y-1.5 font-manrope">
+            <DetailRow label="Execution ID" value={`#${shortId}`} mono />
+            <DetailRow label="Started At" value={startedAt} />
+            <DetailRow label="Duration" value={execution.duration} last />
           </div>
         </>
       )}
     </Link>
   );
 };
+
+interface DetailRowProps {
+  label: string;
+  value: string;
+  mono?: boolean;
+  last?: boolean;
+}
+
+const DetailRow = ({ label, value, mono, last }: DetailRowProps) => (
+  <div
+    className={cn(
+      "flex items-center justify-between pb-1.5 text-[12px] font-bold sm:text-[13px]",
+      !last && "border-b border-border/40",
+    )}
+  >
+    <span className="text-on-surface-variant/70">{label}</span>
+    <span
+      className={cn("text-on-surface", mono && "font-mono text-[11px] sm:text-[12px]")}
+    >
+      {value}
+    </span>
+  </div>
+);

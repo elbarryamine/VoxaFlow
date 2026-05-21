@@ -49,7 +49,10 @@ src/
 │   │   ├── constants/                  # Node templates, NODE_TYPE_ICONS (brand SVG paths)
 │   │   └── hooks/                      # Modular hooks (State, Palette, Events, etc.)
 │   ├── executions/                     # Run history UI, hooks (live data), types
-│   ├── credentials/                    # Credential management UI and forms
+│   ├── credentials/                    # CredentialCard, CredentialsList; CREDENTIAL_SERVICES; Credential.types
+│   │   ├── constants/                  # CREDENTIAL_SERVICES — per-service icons, fields, rail colors
+│   │   ├── types/                      # Credential, CredentialService
+│   │   └── ui/                         # CredentialCard, CredentialsList (grouped by service)
 │   ├── dashboard/                      # DashboardOverview, usage + KPI (recharts), loadDashboardData (server)
 │   ├── auth/                           # SignInScreen, SignInHero, SignInFeatureShowcase, SignInForm; AUTH_UI
 │   ├── landing/                        # Marketing: home, pricing, privacy, terms; LANDING_COPY, LEGAL_COPY, …

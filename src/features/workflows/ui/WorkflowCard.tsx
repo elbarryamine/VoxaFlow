@@ -55,26 +55,26 @@ export const WorkflowCard = ({
         config.railClass,
         "border-l-[3px]",
         isCompact
-          ? "gap-3 rounded-xl p-3.5 hover:shadow-md"
-          : "gap-4 rounded-2xl p-5 hover:shadow-xl sm:gap-5 sm:p-6",
+          ? "gap-2.5 rounded-xl p-3 hover:shadow-md"
+          : "gap-3 rounded-xl p-3 hover:shadow-lg sm:gap-3.5 sm:p-3.5",
       )}
     >
       <div
         className={cn(
           "flex shrink-0 flex-col items-center",
-          isCompact ? "w-11 gap-1.5" : "w-14 gap-2.5 sm:w-16",
+          isCompact ? "w-10 gap-1" : "w-11 gap-1.5 sm:w-12",
         )}
       >
         <div
           className={cn(
             "flex items-center justify-center rounded-xl transition-colors duration-300",
-            isCompact ? "h-9 w-9" : "h-12 w-12 sm:h-14 sm:w-14",
+            isCompact ? "h-8 w-8" : "h-9 w-9 sm:h-10 sm:w-10",
             config.iconClass,
           )}
         >
           <GitBranch
             weight="duotone"
-            className={isCompact ? "h-4 w-4" : "h-6 w-6 sm:h-7 sm:w-7"}
+            className={isCompact ? "h-4 w-4" : "h-5 w-5 sm:h-6 sm:w-6"}
           />
         </div>
         <span
@@ -92,7 +92,7 @@ export const WorkflowCard = ({
         <div
           className={cn(
             "flex items-start justify-between gap-2",
-            isCompact ? "mb-1" : "mb-2",
+            isCompact ? "mb-0.5" : "mb-1",
           )}
         >
           <h3
@@ -100,7 +100,7 @@ export const WorkflowCard = ({
               "font-newsreader font-bold tracking-tight text-on-surface transition-colors duration-300 group-hover:text-primary",
               isCompact
                 ? "line-clamp-1 text-[15px]"
-                : "line-clamp-2 text-xl leading-snug sm:text-2xl",
+                : "line-clamp-2 text-lg leading-snug sm:text-xl",
             )}
           >
             {workflow.name}
@@ -126,7 +126,7 @@ export const WorkflowCard = ({
           </p>
         ) : (
           <>
-            <p className="mb-4 line-clamp-2 font-manrope text-[13px] font-medium text-on-surface-variant sm:text-[14px]">
+            <p className="mb-2 line-clamp-2 font-manrope text-[12px] font-medium text-on-surface-variant">
               {subtitle}
             </p>
             <div className="mt-auto grid grid-cols-3 divide-x divide-border/40 rounded-xl bg-surface-variant/25 font-manrope">
@@ -148,14 +148,14 @@ interface MetricCellProps {
 }
 
 const MetricCell = ({ label, value, mono }: MetricCellProps) => (
-  <div className="px-2 py-2.5 text-center sm:px-3 sm:py-3">
-    <p className="text-[10px] font-bold uppercase tracking-wide text-on-surface-variant/70 sm:text-[11px]">
+  <div className="px-1.5 py-1.5 text-center sm:px-2 sm:py-2">
+    <p className="text-[10px] font-bold uppercase tracking-wide text-on-surface-variant/70">
       {label}
     </p>
     <p
       className={cn(
-        "mt-0.5 truncate text-[13px] font-bold text-on-surface sm:text-[14px]",
-        mono && "font-mono text-[12px] sm:text-[13px]",
+        "mt-0.5 truncate text-[12px] font-bold text-on-surface sm:text-[13px]",
+        mono && "font-mono text-[11px] sm:text-[12px]",
       )}
       title={value}
     >

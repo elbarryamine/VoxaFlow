@@ -16,7 +16,7 @@ interface SettingsNavProps {
 
 export const SettingsNav = ({ items, activeId }: SettingsNavProps) => (
   <nav
-    className="flex flex-wrap gap-1 border-b border-border/50 px-4 py-1 font-manrope sm:px-6 md:flex-col md:gap-0.5 md:border-b-0 md:p-3 md:py-3"
+    className="flex w-full flex-wrap gap-1 border-b border-border/50 px-4 py-5 font-manrope sm:px-5 md:flex-col md:gap-0.5 md:border-b-0 md:px-4 md:py-3"
     aria-label="Settings sections"
     role="tablist"
   >
@@ -36,7 +36,7 @@ export const SettingsNav = ({ items, activeId }: SettingsNavProps) => (
           aria-controls={`settings-panel-${item.id}`}
           className={cn(
             "flex items-center gap-1.5 transition-colors duration-300",
-            "border-b-2 px-3 py-3 text-[13px] font-semibold md:w-full md:gap-2.5 md:rounded-lg md:border md:px-2.5 md:py-2 md:text-left md:text-[14px]",
+            "border-b-2 px-3 py-3 text-[13px] font-semibold md:w-full md:gap-2.5 md:rounded-lg md:border md:px-3 md:py-2.5 md:text-left md:text-[14px]",
             active
               ? "border-primary text-on-surface md:border-primary/25 md:bg-primary md:text-on-primary"
               : "border-transparent text-on-surface-variant hover:text-on-surface md:hover:border-border/50 md:hover:bg-surface-variant/50",

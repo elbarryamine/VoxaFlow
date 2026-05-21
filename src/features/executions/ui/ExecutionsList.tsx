@@ -32,7 +32,7 @@ export const ExecutionsList = ({ initialExecutions, userId }: ExecutionsListProp
   }
 
   return (
-    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
       {executions.map(execution => (
         <ExecutionCard key={execution.id} execution={execution} />
       ))}

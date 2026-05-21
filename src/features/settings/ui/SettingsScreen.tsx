@@ -33,7 +33,7 @@ export const SettingsScreen = () => {
       contentClassName="flex min-h-0 flex-1 flex-col overflow-hidden"
     >
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <aside className="shrink-0 md:w-56 md:border-r md:border-border/50 md:bg-surface-container-low">
+        <aside className="shrink-0 md:w-64 md:border-r md:border-border/50 md:bg-surface-container-low">
           <SettingsNav items={SETTINGS_SECTIONS} activeId={activeId} />
         </aside>
 
