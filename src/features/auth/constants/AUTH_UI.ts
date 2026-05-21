@@ -70,6 +70,10 @@ export const AUTH_FEATURES: {
 export const authInputClass =
   "w-full rounded-xl border border-border/50 bg-surface-variant/30 px-4 py-3 font-manrope text-[14px] text-on-surface outline-none transition-all placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/20";
 
+/** Off-screen fields that absorb Chrome’s generic login autofill. */
+export const authAutofillTrapClass =
+  "pointer-events-none absolute -left-[9999px] top-0 h-px w-px overflow-hidden opacity-0";
+
 export const authModeSwitchWrapClass =
   "grid grid-cols-2 gap-1 rounded-xl border border-border/50 bg-surface-container-high p-1";
 

@@ -2,8 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Eye, EyeSlash } from "@phosphor-icons/react/dist/ssr";
 import {
+  AUTH_AUTOCOMPLETE,
+  AUTH_FIELD_NAME,
+} from "@/src/features/auth/constants/AUTH_AUTOCOMPLETE";
+import {
+  authAutofillTrapClass,
   authInputClass,
   authModeSwitchActiveClass,
   authModeSwitchIdleClass,
@@ -36,13 +41,29 @@ const GoogleIcon = () => (
   </svg>
 );
 
+const AuthAutofillTrap = () => (
+  <div className={authAutofillTrapClass} aria-hidden="true">
+    <input type="text" name="username" autoComplete="username" tabIndex={-1} defaultValue="" />
+    <input
+      type="password"
+      name="password"
+      autoComplete="current-password"
+      tabIndex={-1}
+      defaultValue=""
+    />
+  </div>
+);
+
 interface AuthFieldProps {
   id: string;
+  name: string;
   label: string;
   type: string;
   value: string;
   onChange: (value: string) => void;
-  autoComplete?: string;
+  autoComplete: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  readOnlyUntilFocus?: boolean;
   minLength?: number;
   placeholder: string;
   hasError?: boolean;
@@ -50,38 +71,129 @@ interface AuthFieldProps {
 
 const AuthField = ({
   id,
+  name,
   label,
   type,
   value,
   onChange,
   autoComplete,
+  inputMode,
+  readOnlyUntilFocus = false,
   minLength,
   placeholder,
   hasError,
-}: AuthFieldProps) => (
-  <div className="space-y-1.5">
-    <label
-      htmlFor={id}
-      className="block font-manrope text-[11px] font-bold uppercase tracking-wide text-on-surface-variant"
-    >
-      {label}
-    </label>
-    <input
-      id={id}
-      type={type}
-      required
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      autoComplete={autoComplete}
-      minLength={minLength}
-      placeholder={placeholder}
-      className={cn(
-        authInputClass,
-        hasError && "border-error focus:border-error focus:ring-error/20",
-      )}
-    />
-  </div>
-);
+}: AuthFieldProps) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const isReadOnly = readOnlyUntilFocus && !isFocused;
+
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={id}
+        className="block font-manrope text-[11px] font-bold uppercase tracking-wide text-on-surface-variant"
+      >
+        {label}
+      </label>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        required
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onFocus={() => setIsFocused(true)}
+        autoComplete={autoComplete}
+        inputMode={inputMode}
+        readOnly={isReadOnly}
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={inputMode === "email" ? false : undefined}
+        minLength={minLength}
+        placeholder={placeholder}
+        className={cn(
+          authInputClass,
+          isReadOnly && "cursor-text",
+          hasError && "border-error focus:border-error focus:ring-error/20",
+        )}
+      />
+    </div>
+  );
+};
+
+interface AuthPasswordFieldProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  autoComplete: string;
+  readOnlyUntilFocus?: boolean;
+  minLength?: number;
+  placeholder: string;
+  hasError?: boolean;
+}
+
+const AuthPasswordField = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  autoComplete,
+  readOnlyUntilFocus = false,
+  minLength,
+  placeholder,
+  hasError,
+}: AuthPasswordFieldProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const isReadOnly = readOnlyUntilFocus && !isFocused;
+
+  return (
+    <div className="space-y-1.5">
+      <label
+        htmlFor={id}
+        className="block font-manrope text-[11px] font-bold uppercase tracking-wide text-on-surface-variant"
+      >
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          name={name}
+          type={isVisible ? "text" : "password"}
+          required
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          onFocus={() => setIsFocused(true)}
+          readOnly={isReadOnly}
+          autoComplete={isVisible ? "off" : autoComplete}
+          minLength={minLength}
+          placeholder={placeholder}
+          className={cn(
+            authInputClass,
+            "pr-11",
+            isReadOnly && "cursor-text",
+            hasError && "border-error focus:border-error focus:ring-error/20",
+          )}
+        />
+        <button
+          type="button"
+          onClick={() => setIsVisible((visible) => !visible)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-on-surface"
+          aria-label={isVisible ? "Hide password" : "Show password"}
+          aria-pressed={isVisible}
+        >
+          {isVisible ? (
+            <EyeSlash className="h-4 w-4" weight="bold" aria-hidden />
+          ) : (
+            <Eye className="h-4 w-4" weight="bold" aria-hidden />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+};
 
 interface AuthAlertProps {
   tone: "error" | "success";
@@ -268,48 +380,81 @@ export const SignInForm = () => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        key={mode}
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        autoComplete="off"
+        name={mode === "sign-in" ? "auren-sign-in" : "auren-sign-up"}
+        data-1p-ignore
+        data-bwignore
+        data-lpignore="true"
+      >
+        <AuthAutofillTrap />
+
         {mode === "sign-up" && (
           <AuthField
             id="full-name"
+            name={AUTH_FIELD_NAME.signUp.fullName}
             label="Full name"
             type="text"
             value={fullName}
             onChange={setFullName}
+            autoComplete={AUTH_AUTOCOMPLETE.signUp.fullName}
             placeholder="Jane Doe"
           />
         )}
 
         <AuthField
-          id="email"
+          id={mode === "sign-in" ? "auren-sign-in-email" : "auren-sign-up-email"}
+          name={
+            mode === "sign-in"
+              ? AUTH_FIELD_NAME.signIn.email
+              : AUTH_FIELD_NAME.signUp.email
+          }
           label="Email"
-          type="email"
+          type="text"
+          inputMode="email"
+          readOnlyUntilFocus={mode === "sign-in"}
           value={email}
           onChange={setEmail}
-          autoComplete="email"
+          autoComplete={
+            mode === "sign-in"
+              ? AUTH_AUTOCOMPLETE.signIn.email
+              : AUTH_AUTOCOMPLETE.signUp.email
+          }
           placeholder="you@example.com"
         />
 
-        <AuthField
-          id="password"
+        <AuthPasswordField
+          id={mode === "sign-in" ? "auren-sign-in-password" : "auren-sign-up-password"}
+          name={
+            mode === "sign-in"
+              ? AUTH_FIELD_NAME.signIn.password
+              : AUTH_FIELD_NAME.signUp.password
+          }
           label="Password"
-          type="password"
+          readOnlyUntilFocus={mode === "sign-in"}
           value={password}
           onChange={setPassword}
-          autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
+          autoComplete={
+            mode === "sign-in"
+              ? AUTH_AUTOCOMPLETE.signIn.password
+              : AUTH_AUTOCOMPLETE.signUp.password
+          }
           minLength={8}
           placeholder={mode === "sign-in" ? "Enter your password" : "At least 8 characters"}
         />
 
         {mode === "sign-up" && (
           <>
-            <AuthField
-              id="confirm-password"
+            <AuthPasswordField
+              id="auren-sign-up-confirm-password"
+              name={AUTH_FIELD_NAME.signUp.confirmPassword}
               label="Confirm password"
-              type="password"
               value={confirmPassword}
               onChange={setConfirmPassword}
-              autoComplete="new-password"
+              autoComplete={AUTH_AUTOCOMPLETE.signUp.confirmPassword}
               minLength={8}
               placeholder="Repeat your password"
               hasError={passwordMismatch}
