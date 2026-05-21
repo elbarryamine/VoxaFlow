@@ -32,7 +32,7 @@ export function useExecutionsListLive({ initialExecutions, userId }: UseExecutio
     const supabase = getSupabaseClient();
     const { data } = await supabase
       .from('executions')
-      .select('*, workflows(name)')
+      .select('*, workflows(name), node_executions(node_id, node_type, status, created_at)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(50);
@@ -69,7 +69,7 @@ export function useExecutionsListLive({ initialExecutions, userId }: UseExecutio
           const row = payload.new as { id: string };
           const { data } = await supabase
             .from('executions')
-            .select('*, workflows(name)')
+            .select('*, workflows(name), node_executions(node_id, node_type, status, created_at)')
             .eq('id', row.id)
             .single();
           if (!data) return;

@@ -13,4 +13,5 @@ export const filterExecutionBySearch = (
     execution.duration,
     execution.id,
     execution.workflowId,
+    ...execution.nodePath.map((step) => step.label),
   );

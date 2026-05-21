@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { GitBranch } from "@phosphor-icons/react/dist/ssr";
-import type { Execution } from "../types/Execution.types";
+import {
+  Pulse,
+  GitBranch,
+  ArrowSquareOut,
+  CaretRight,
+} from "@phosphor-icons/react/dist/ssr";
+import type {
+  Execution,
+  ExecutionNodeStep,
+} from "../types/Execution.types";
 import { cn } from "@/src/shared/utils/cn";
 
 type ExecutionCardVariant = "default" | "compact";
@@ -12,147 +20,283 @@ interface ExecutionCardProps {
   variant?: ExecutionCardVariant;
 }
 
-const STATUS_CONFIG = {
+const STATUS_TAG = {
   success: {
     label: "Success",
-    railClass: "border-success/40",
-    iconClass:
-      "bg-success/10 text-success group-hover:bg-success group-hover:text-white",
-    pillClass: "bg-success/15 text-success",
+    className: "bg-success/10 text-success",
   },
   failed: {
     label: "Failed",
-    railClass: "border-error/40",
-    iconClass:
-      "bg-error/10 text-error group-hover:bg-error group-hover:text-on-error",
-    pillClass: "bg-error/15 text-error",
+    className: "bg-error/10 text-error",
   },
   running: {
     label: "Running",
-    railClass: "border-primary/40",
-    iconClass: "bg-primary/10 text-primary",
-    pillClass: "bg-primary/10 text-primary",
+    className: "bg-primary/10 text-primary",
   },
   waiting: {
     label: "Waiting",
-    railClass: "border-outline-variant/40",
-    iconClass: "bg-surface-variant/50 text-on-surface-variant",
-    pillClass: "bg-surface-variant/50 text-on-surface-variant",
+    className: "bg-surface-variant/60 text-on-surface-variant",
   },
 } as const;
+
+const STEP_DOT = {
+  success: "border-success bg-success",
+  failed: "border-error bg-error ring-2 ring-error/25",
+  running: "border-primary bg-primary animate-pulse",
+  pending: "border-outline-variant/60 bg-surface-variant",
+  skipped: "border-outline-variant/40 bg-transparent",
+} as const;
+
+const cardShell =
+  "group relative flex flex-col overflow-hidden rounded-lg border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-outline-variant hover:shadow-md";
+
+const statusTagClass =
+  "inline-flex shrink-0 items-center rounded-full px-1.5 py-0.5 font-manrope text-[10px] font-bold uppercase tracking-wide sm:text-[11px]";
+
+const sectionLabelClass =
+  "font-manrope text-[9px] font-bold uppercase tracking-widest text-on-surface-variant/70 sm:text-[10px]";
 
 export const ExecutionCard = ({
   execution,
   variant = "default",
 }: ExecutionCardProps) => {
-  const config = STATUS_CONFIG[execution.status];
+  const status = STATUS_TAG[execution.status];
   const isCompact = variant === "compact";
   const shortId = execution.id.substring(0, 8).toUpperCase();
   const startedAt = new Date(execution.startedAt).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
   });
+  const workflowHref = `/dashboard/workflows/${execution.workflowId}`;
+  const executionHref = `/dashboard/executions/${execution.id}`;
 
-  return (
-    <Link
-      href={`/dashboard/executions/${execution.id}`}
-      className={cn(
-        "group block cursor-pointer border border-border/50 bg-card shadow-sm transition-all duration-300 hover:border-outline-variant",
-        config.railClass,
-        "border-l-[3px]",
-        isCompact
-          ? "rounded-xl p-3 hover:shadow-md"
-          : "rounded-xl p-3.5 hover:shadow-lg sm:p-4",
-      )}
-    >
-      {isCompact ? (
-        <div className="flex items-center gap-2.5">
-          <div
-            className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors",
-              config.iconClass,
-            )}
-          >
-            <GitBranch weight="duotone" className="h-3.5 w-3.5" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between gap-2">
-              <h4 className="truncate font-newsreader text-[14px] font-bold text-on-surface transition-colors group-hover:text-primary">
-                {execution.workflowName}
-              </h4>
-              <span
-                className={cn(
-                  "shrink-0 rounded-full px-2 py-0.5 font-manrope text-[10px] font-bold uppercase tracking-wide",
-                  config.pillClass,
-                )}
-              >
-                {config.label}
+  if (isCompact) {
+    return (
+      <article className={cardShell}>
+        <Link href={executionHref} className="flex flex-col gap-2 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <Pulse
+                weight="duotone"
+                className="h-4 w-4 shrink-0 text-secondary"
+              />
+              <span className="truncate font-mono text-[11px] font-bold text-on-surface-variant">
+                #{shortId}
+              </span>
+              <span className={cn(statusTagClass, status.className)}>
+                {status.label}
               </span>
             </div>
-            <p className="mt-0.5 truncate font-manrope text-[11px] font-medium text-on-surface-variant">
-              {execution.trigger} · {startedAt} · {execution.duration} · #
-              {shortId}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="mb-2 flex items-start justify-between gap-2">
-            <div
-              className={cn(
-                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors",
-                config.iconClass,
-              )}
-            >
-              <GitBranch weight="duotone" className="h-4 w-4 sm:h-5 sm:w-5" />
-            </div>
-            <span
-              className={cn(
-                "rounded-full px-2 py-0.5 font-manrope text-[10px] font-bold uppercase tracking-wide sm:text-[11px]",
-                config.pillClass,
-              )}
-            >
-              {config.label}
+            <span className="shrink-0 font-manrope text-[11px] font-semibold text-on-surface-variant">
+              {execution.duration}
             </span>
           </div>
 
-          <h4 className="mb-0.5 line-clamp-2 font-newsreader text-lg font-bold leading-snug text-on-surface transition-colors group-hover:text-primary sm:text-xl">
-            {execution.workflowName}
-          </h4>
-          <p className="mb-3 font-manrope text-[12px] font-medium text-on-surface-variant">
-            {execution.trigger}
-          </p>
+          <WorkflowRelation
+            workflowName={execution.workflowName}
+            workflowHref={workflowHref}
+            compact
+          />
 
-          <div className="space-y-1.5 font-manrope">
-            <DetailRow label="Execution ID" value={`#${shortId}`} mono />
-            <DetailRow label="Started At" value={startedAt} />
-            <DetailRow label="Duration" value={execution.duration} last />
+          <NodePathStrip
+            nodePath={execution.nodePath}
+            failedNodeId={execution.failedNodeId}
+            compact
+          />
+        </Link>
+      </article>
+    );
+  }
+
+  return (
+    <article className={cardShell}>
+      <Link href={executionHref} className="flex flex-col">
+        <header className="flex items-start justify-between gap-3 border-b border-border/40 px-3.5 py-3 sm:px-4">
+          <div className="flex min-w-0 items-start gap-2.5">
+            <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-secondary">
+              <Pulse weight="duotone" className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <p className={sectionLabelClass}>Execution run</p>
+              <p className="mt-0.5 font-mono text-[13px] font-bold text-on-surface sm:text-sm">
+                #{shortId}
+              </p>
+              <p className="mt-0.5 font-manrope text-[11px] font-medium text-on-surface-variant sm:text-[12px]">
+                {execution.trigger} · Started {startedAt} · {execution.duration}
+              </p>
+            </div>
           </div>
-        </>
-      )}
-    </Link>
+          <span className={cn(statusTagClass, status.className)}>
+            {status.label}
+          </span>
+        </header>
+
+        <div className="border-b border-border/40 bg-surface-variant/20 px-3.5 py-2.5 sm:px-4">
+          <WorkflowRelation
+            workflowName={execution.workflowName}
+            workflowHref={workflowHref}
+          />
+        </div>
+
+        <div className="px-3.5 py-3 sm:px-4 sm:py-3.5">
+          <p className={cn(sectionLabelClass, "mb-2")}>Path executed</p>
+          <NodePathStrip
+            nodePath={execution.nodePath}
+            failedNodeId={execution.failedNodeId}
+          />
+        </div>
+      </Link>
+    </article>
   );
 };
 
-interface DetailRowProps {
-  label: string;
-  value: string;
-  mono?: boolean;
-  last?: boolean;
+interface WorkflowRelationProps {
+  workflowName: string;
+  workflowHref: string;
+  compact?: boolean;
 }
 
-const DetailRow = ({ label, value, mono, last }: DetailRowProps) => (
-  <div
-    className={cn(
-      "flex items-center justify-between pb-1.5 text-[12px] font-bold sm:text-[13px]",
-      !last && "border-b border-border/40",
-    )}
-  >
-    <span className="text-on-surface-variant/70">{label}</span>
-    <span
-      className={cn("text-on-surface", mono && "font-mono text-[11px] sm:text-[12px]")}
+const WorkflowRelation = ({
+  workflowName,
+  workflowHref,
+  compact = false,
+}: WorkflowRelationProps) => {
+  const inspectLink = (
+    <Link
+      href={workflowHref}
+      onClick={(e) => e.stopPropagation()}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 rounded-md border border-border/50 bg-card px-2 py-1 font-manrope font-bold text-on-surface-variant transition-colors hover:border-outline-variant hover:bg-surface-variant/50 hover:text-on-surface",
+        compact ? "text-[10px]" : "text-[11px]",
+      )}
     >
-      {value}
-    </span>
-  </div>
+      {compact ? "Inspect" : "Inspect workflow"}
+      <ArrowSquareOut className="h-3 w-3" weight="bold" />
+    </Link>
+  );
+
+  if (compact) {
+    return (
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 items-center gap-1.5">
+          <GitBranch
+            weight="duotone"
+            className="h-3.5 w-3.5 shrink-0 text-on-surface-variant"
+          />
+          <Link
+            href={workflowHref}
+            onClick={(e) => e.stopPropagation()}
+            className="truncate font-newsreader text-[13px] font-bold text-on-surface transition-colors hover:text-primary"
+          >
+            {workflowName}
+          </Link>
+        </div>
+        {inspectLink}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
+        <p className={sectionLabelClass}>Parent workflow</p>
+        <Link
+          href={workflowHref}
+          onClick={(e) => e.stopPropagation()}
+          className="mt-1 inline-flex max-w-full items-center gap-2 transition-colors hover:text-primary"
+        >
+          <GitBranch
+            weight="duotone"
+            className="h-4 w-4 shrink-0 text-on-surface-variant"
+          />
+          <span className="truncate font-newsreader text-[14px] font-bold text-on-surface sm:text-[15px]">
+            {workflowName}
+          </span>
+        </Link>
+      </div>
+      {inspectLink}
+    </div>
+  );
+};
+
+interface NodePathStripProps {
+  nodePath: ExecutionNodeStep[];
+  failedNodeId: string | null;
+  compact?: boolean;
+}
+
+const NodePathStrip = ({
+  nodePath,
+  failedNodeId,
+  compact = false,
+}: NodePathStripProps) => {
+  if (nodePath.length === 0) {
+    return (
+      <p className="font-manrope text-[11px] font-medium italic text-on-surface-variant/80">
+        Run path will appear once nodes start executing.
+      </p>
+    );
+  }
+
+  const visibleSteps = compact ? nodePath.slice(0, 4) : nodePath;
+  const hiddenCount = compact ? Math.max(0, nodePath.length - 4) : 0;
+
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-1 overflow-x-auto pb-0.5",
+        compact ? "min-w-0" : "flex-wrap gap-y-2",
+      )}
+    >
+      {visibleSteps.map((step, index) => (
+        <div key={step.nodeId} className="flex shrink-0 items-center gap-1">
+          <StepChip
+            step={step}
+            isFailed={step.nodeId === failedNodeId}
+            compact={compact}
+          />
+          {index < visibleSteps.length - 1 && (
+            <CaretRight
+              className="h-3 w-3 shrink-0 text-on-surface-variant/40"
+              weight="bold"
+              aria-hidden
+            />
+          )}
+        </div>
+      ))}
+      {hiddenCount > 0 && (
+        <span className="shrink-0 rounded-full bg-surface-variant/60 px-1.5 py-0.5 font-manrope text-[10px] font-bold text-on-surface-variant">
+          +{hiddenCount}
+        </span>
+      )}
+    </div>
+  );
+};
+
+interface StepChipProps {
+  step: ExecutionNodeStep;
+  isFailed: boolean;
+  compact?: boolean;
+}
+
+const StepChip = ({ step, isFailed, compact = false }: StepChipProps) => (
+  <span
+    className={cn(
+      "inline-flex max-w-[140px] items-center gap-1.5 rounded-md border px-1.5 py-1 font-manrope font-semibold sm:max-w-[160px]",
+      isFailed
+        ? "border-error/30 bg-error/5 text-error"
+        : "border-border/50 bg-surface-variant/30 text-on-surface",
+      compact ? "text-[10px]" : "text-[11px]",
+    )}
+    title={step.label}
+  >
+    <span
+      className={cn(
+        "h-2 w-2 shrink-0 rounded-full border",
+        STEP_DOT[step.status],
+      )}
+      aria-hidden
+    />
+    <span className="truncate">{step.label}</span>
+  </span>
 );

@@ -13,7 +13,7 @@ export default async function ExecutionsPage() {
 
   const { data: dbExecutions } = await supabase
     .from('executions')
-    .select('*, workflows(name)')
+    .select('*, workflows(name), node_executions(node_id, node_type, status, created_at)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(50);
