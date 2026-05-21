@@ -61,10 +61,11 @@ export const LandingFlowPicker = ({
         onClick={onTriggerClick}
         className={cn(
           "flex items-center gap-2 rounded-xl border border-border/50 bg-surface-container-low px-3 py-2 font-manrope text-[12px] font-semibold text-on-surface shadow-sm transition-all duration-300 hover:border-secondary/35 hover:bg-secondary-container/15",
-          menuOpen && "border-secondary/40 bg-secondary-container/25 ring-2 ring-primary/15",
+          menuOpen &&
+            "border-secondary/40 bg-secondary-container/25 ring-2 ring-primary/15",
         )}
       >
-        <span className="max-w-[9.5rem] truncate sm:max-w-[11rem]">
+        <span className="max-w-38 truncate sm:max-w-44">
           {activeFlow.pickerLabel}
         </span>
         <CaretDown
@@ -81,7 +82,7 @@ export const LandingFlowPicker = ({
         role="listbox"
         aria-label="Example workflows"
         className={cn(
-          "absolute top-[calc(100%+6px)] right-0 z-20 max-h-52 min-w-[13rem] overflow-x-hidden overflow-y-auto rounded-xl border border-border/50 bg-card py-1 shadow-lg transition-[opacity,transform,pointer-events] duration-300 origin-top-right",
+          "absolute top-[calc(100%+6px)] right-0 z-20 max-h-52 min-w-52 overflow-x-hidden overflow-y-auto rounded-xl border border-border/50 bg-card py-1 shadow-lg transition-[opacity,transform,pointer-events] duration-300 origin-top-right",
           menuOpen
             ? "pointer-events-auto scale-100 opacity-100"
             : "pointer-events-none scale-95 opacity-0",
@@ -108,13 +109,20 @@ export const LandingFlowPicker = ({
               className={cn(
                 "flex cursor-pointer items-center justify-between gap-3 px-3 py-2.5 font-manrope text-[12px] font-semibold transition-colors duration-200",
                 isHighlighted && "bg-secondary-container/50 text-on-surface",
-                !isHighlighted && isActive && "bg-secondary-container/25 text-secondary",
-                !isHighlighted && !isActive && "text-on-surface-variant hover:bg-surface-variant/40",
+                !isHighlighted &&
+                  isActive &&
+                  "bg-secondary-container/25 text-secondary",
+                !isHighlighted &&
+                  !isActive &&
+                  "text-on-surface-variant hover:bg-surface-variant/40",
               )}
             >
               <span className="truncate">{preset.pickerLabel}</span>
               {isActive && (
-                <Check className="h-3.5 w-3.5 shrink-0 text-secondary" weight="bold" />
+                <Check
+                  className="h-3.5 w-3.5 shrink-0 text-secondary"
+                  weight="bold"
+                />
               )}
             </li>
           );

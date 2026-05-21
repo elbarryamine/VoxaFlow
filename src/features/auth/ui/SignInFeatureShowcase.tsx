@@ -18,10 +18,37 @@ const getFeaturePosition = (index: number) => {
   };
 };
 
-export const SignInFeatureShowcase = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+interface SignInFeatureShowcaseProps {
+  activeIndex?: number;
+  onActiveIndexChange?: (index: number) => void;
+  autoRotate?: boolean;
+  className?: string;
+}
+
+export const SignInFeatureShowcase = ({
+  activeIndex: controlledIndex,
+  onActiveIndexChange,
+  autoRotate = true,
+  className,
+}: SignInFeatureShowcaseProps = {}) => {
+  const [internalIndex, setInternalIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  const isControlled =
+    controlledIndex !== undefined && onActiveIndexChange !== undefined;
+  const activeIndex = isControlled ? controlledIndex : internalIndex;
+
+  const selectIndex = useCallback(
+    (index: number) => {
+      if (isControlled) {
+        onActiveIndexChange(index);
+        return;
+      }
+      setInternalIndex(index);
+    },
+    [isControlled, onActiveIndexChange],
+  );
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -31,26 +58,33 @@ export const SignInFeatureShowcase = () => {
     return () => media.removeEventListener("change", update);
   }, []);
 
-  const selectIndex = useCallback((index: number) => {
-    setActiveIndex(index);
-  }, []);
-
   useEffect(() => {
-    if (prefersReducedMotion || isPaused) return;
+    if (!autoRotate || prefersReducedMotion || isPaused) return;
 
     const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % FEATURE_COUNT);
+      if (isControlled) {
+        onActiveIndexChange?.((activeIndex + 1) % FEATURE_COUNT);
+        return;
+      }
+      setInternalIndex((current) => (current + 1) % FEATURE_COUNT);
     }, ROTATE_MS);
 
     return () => window.clearInterval(timer);
-  }, [isPaused, prefersReducedMotion]);
+  }, [
+    activeIndex,
+    autoRotate,
+    isControlled,
+    isPaused,
+    onActiveIndexChange,
+    prefersReducedMotion,
+  ]);
 
   const active = AUTH_FEATURES[activeIndex];
   const ActiveIcon = active.icon;
 
   return (
     <div
-      className="relative mx-auto w-full max-w-[360px]"
+      className={cn("relative mx-auto w-full max-w-[360px]", className)}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}

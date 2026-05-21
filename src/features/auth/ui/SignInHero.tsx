@@ -4,7 +4,7 @@ import { SignInFeatureShowcase } from "@/src/features/auth/ui/SignInFeatureShowc
 import { AurenLogo } from "@/src/shared/ui/AurenLogo";
 
 export const SignInHero = () => (
-  <section className="relative flex min-h-[420px] flex-col justify-start overflow-hidden border-b border-border/50 bg-surface-container-low px-6 py-10 lg:min-h-screen lg:w-[min(48%,560px)] lg:shrink-0 lg:border-r lg:border-b-0 lg:px-10 lg:py-12">
+  <section className="relative flex min-h-[420px] flex-col justify-start overflow-hidden border-b border-border/50 bg-surface-container-low px-6 py-10 lg:min-h-screen lg:w-[48%] lg:max-w-[560px] lg:shrink-0 lg:border-r lg:border-b-0 lg:px-10 lg:py-12">
     <div
       className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,color-mix(in_srgb,var(--secondary)_14%,transparent),transparent_55%)]"
       aria-hidden

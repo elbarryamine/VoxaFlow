@@ -5,8 +5,11 @@ import { LandingWorkflowCanvas } from "@/src/features/landing/ui/LandingWorkflow
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const LandingHero = () => (
-  <section id="hero" className="relative scroll-mt-20 border-b border-border/50">
-    <div className="mx-auto grid w-full max-w-[90rem] lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)] lg:items-stretch">
+  <section
+    id="hero"
+    className="relative scroll-mt-20 border-b border-border/50"
+  >
+    <div className="mx-auto grid w-full max-w-360 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)] lg:items-stretch">
       <div className="relative px-5 pb-16 pt-14 sm:px-8 sm:pb-20 sm:pt-20 lg:px-10 lg:pb-24 lg:pt-24">
         <p className="landing-reveal font-manrope text-[11px] font-bold uppercase tracking-[0.28em] text-secondary">
           {LANDING_HERO.kicker}
@@ -15,7 +18,9 @@ export const LandingHero = () => (
         <h1 className="landing-reveal landing-reveal-1 mt-8 font-newsreader text-[clamp(2.5rem,6.5vw,5rem)] font-bold leading-[0.92] tracking-tight text-on-surface">
           {LANDING_HERO.headlineLead}
           <br />
-          <span className="text-secondary">{LANDING_HERO.headlineAccent}</span>{" "}
+          <span className="text-secondary">
+            {LANDING_HERO.headlineAccent}
+          </span>{" "}
           {LANDING_HERO.headlineTail}
         </h1>
 
@@ -24,7 +29,10 @@ export const LandingHero = () => (
         </p>
 
         <div className="landing-reveal landing-reveal-3 mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
-          <TopBarLink href="/auth/sign-in" className="gap-2 px-6 py-3 font-newsreader text-lg">
+          <TopBarLink
+            href="/auth/sign-in"
+            className="gap-2 px-6 py-3 font-newsreader text-lg"
+          >
             {LANDING_HERO.cta}
             <ArrowRight className="h-5 w-5" weight="bold" aria-hidden />
           </TopBarLink>
@@ -43,7 +51,10 @@ export const LandingHero = () => (
     </div>
 
     <div className="landing-blueprint-mobile relative mx-5 mb-8 overflow-hidden rounded-2xl border border-border/50 bg-surface-container-lowest px-4 py-5 shadow-sm lg:hidden">
-      <div className="landing-canvas-dots pointer-events-none absolute inset-0 opacity-70" aria-hidden />
+      <div
+        className="landing-canvas-dots pointer-events-none absolute inset-0 opacity-70"
+        aria-hidden
+      />
       <p className="relative font-manrope text-[10px] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
         Canvas preview
       </p>

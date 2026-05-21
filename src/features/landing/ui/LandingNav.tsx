@@ -11,7 +11,7 @@ import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const LandingNav = () => (
   <header className="sticky top-0 z-50 border-b border-border/50 bg-background/85 backdrop-blur-md">
-    <div className="mx-auto flex h-[4.25rem] max-w-[90rem] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
+    <div className="mx-auto flex h-17 max-w-360 items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
       <LandingSectionLink
         sectionId="hero"
         className="group flex min-w-0 items-end gap-2.5"
