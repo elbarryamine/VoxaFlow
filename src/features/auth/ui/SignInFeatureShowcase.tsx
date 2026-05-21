@@ -114,7 +114,7 @@ export const SignInFeatureShowcase = () => {
             </span>
           </div>
 
-          <div className="relative mt-5 min-h-29 overflow-hidden sm:min-h-30">
+          <div className="relative mt-5 min-h-29 sm:min-h-30">
             <div
               key={`body-${activeIndex}`}
               className={cn(
@@ -122,17 +122,17 @@ export const SignInFeatureShowcase = () => {
                 !prefersReducedMotion && slideClass,
               )}
             >
-              <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+              <div className="relative flex h-16 w-16 shrink-0 items-center justify-center">
                 <span
                   className={cn(
-                    "absolute inset-0 rounded-2xl border-2 border-secondary/35",
+                    "absolute inset-1 rounded-2xl border-2 border-secondary/35",
                     !prefersReducedMotion && "auth-icon-orbit",
                   )}
                   aria-hidden
                 />
                 <span
                   className={cn(
-                    "absolute inset-1 rounded-xl bg-secondary/10",
+                    "absolute inset-2 rounded-xl bg-secondary/10",
                     !prefersReducedMotion && "auth-icon-glow",
                   )}
                   aria-hidden
@@ -147,7 +147,7 @@ export const SignInFeatureShowcase = () => {
                 </div>
               </div>
 
-              <div className="min-w-0 flex-1 pt-0.5">
+              <div className="min-w-0 flex-1 overflow-hidden pt-0.5">
                 <h3 className="font-newsreader text-xl font-bold tracking-tight text-on-surface sm:text-2xl">
                   {active.title}
                 </h3>

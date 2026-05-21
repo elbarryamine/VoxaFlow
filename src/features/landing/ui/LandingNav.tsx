@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
+import { LANDING_NAV } from "@/src/features/landing/constants/LANDING_COPY";
 import { APP_NAME } from "@/src/shared/constants/BRAND";
 import { ThemeToggle } from "@/src/shared/theme/ThemeToggle";
 import { AurenLogo } from "@/src/shared/ui/AurenLogo";
+import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const LandingNav = () => (
-  <header className="sticky top-0 z-50 border-b-2 border-primary bg-background/90 backdrop-blur-sm">
+  <header className="sticky top-0 z-50 border-b border-border/50 bg-background/85 backdrop-blur-md">
     <div className="mx-auto flex h-[4.25rem] max-w-[90rem] items-center justify-between gap-6 px-5 sm:px-8 lg:px-12">
       <Link
         href="/"
@@ -21,30 +23,36 @@ export const LandingNav = () => (
       </Link>
 
       <nav
-        className="hidden items-center gap-10 font-manrope text-[13px] font-bold uppercase tracking-[0.18em] text-on-surface-variant md:flex"
-        aria-label="Primary"
+        className="hidden items-center gap-8 font-manrope text-[14px] font-semibold text-on-surface-variant lg:gap-10 md:flex"
+        aria-label="Page sections"
       >
-        <a href="#index" className="landing-nav-link transition-colors hover:text-on-surface">
-          Index
-        </a>
-        <a href="#manifesto" className="landing-nav-link transition-colors hover:text-on-surface">
-          Manifesto
-        </a>
+        {LANDING_NAV.map(({ label, href }) => (
+          <Link
+            key={href}
+            href={href}
+            className="landing-nav-link transition-colors hover:text-on-surface"
+          >
+            {label}
+          </Link>
+        ))}
       </nav>
 
-      <div className="flex items-center gap-3 sm:gap-4">
-        <ThemeToggle className="rounded-none border-2 border-primary/15 bg-transparent" />
-        <Link
+      <div className="flex items-center gap-2 sm:gap-3">
+        <ThemeToggle className="border border-border/50 bg-card shadow-sm" />
+        <TopBarLink
           href="/auth/sign-in"
-          className="landing-nav-cta group inline-flex items-center gap-1.5 border-2 border-primary bg-primary px-4 py-2 font-manrope text-[12px] font-bold uppercase tracking-[0.14em] text-on-primary transition-colors hover:bg-transparent hover:text-on-surface sm:px-5"
+          variant="secondary"
+          className="hidden px-4 py-2 text-[12px] uppercase tracking-[0.12em] sm:inline-flex"
+        >
+          Sign in
+        </TopBarLink>
+        <TopBarLink
+          href="/auth/sign-in"
+          className="gap-1.5 px-4 py-2 text-[12px] uppercase tracking-[0.12em] sm:px-5"
         >
           Enter
-          <ArrowUpRight
-            className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            weight="bold"
-            aria-hidden
-          />
-        </Link>
+          <ArrowUpRight className="h-4 w-4" weight="bold" aria-hidden />
+        </TopBarLink>
       </div>
     </div>
   </header>

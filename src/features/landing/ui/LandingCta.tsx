@@ -1,22 +1,26 @@
-import Link from "next/link";
+"use client";
+
+import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { LANDING_CTA } from "@/src/features/landing/constants/LANDING_COPY";
+import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
+import { TopBarLink } from "@/src/shared/ui/TopBarButton";
 
 export const LandingCta = () => (
-  <section className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
-    <div className="mx-auto flex max-w-[90rem] flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-      <h2 className="max-w-2xl font-newsreader text-[clamp(2rem,5vw,3.75rem)] font-bold leading-[1.05] tracking-tight text-on-surface">
-        {LANDING_CTA.line}
-      </h2>
-      <Link
-        href="/auth/sign-in"
-        className="group inline-flex shrink-0 items-center gap-4 border-2 border-primary bg-secondary px-8 py-4 font-manrope text-[13px] font-bold uppercase tracking-[0.2em] text-on-secondary transition-colors hover:bg-primary hover:text-on-primary"
-      >
-        {LANDING_CTA.action}
-        <span
-          className="inline-block h-2 w-2 bg-on-secondary transition-colors group-hover:bg-on-primary"
-          aria-hidden
-        />
-      </Link>
-    </div>
+  <section id="get-started" className="scroll-mt-20 px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+    <LandingRevealGroup className="mx-auto max-w-360">
+      <div className="flex flex-col gap-8 rounded-4xl border border-border/50 bg-surface-container-low p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:p-12">
+        <LandingRevealItem>
+          <h2 className="max-w-2xl font-newsreader text-[clamp(2rem,5vw,3.75rem)] font-bold leading-[1.05] tracking-tight text-on-surface">
+            {LANDING_CTA.line}
+          </h2>
+        </LandingRevealItem>
+        <LandingRevealItem delay={120}>
+          <TopBarLink href="/auth/sign-in" className="shrink-0 gap-2 px-8 py-3.5 transition-transform duration-300 hover:scale-[1.02]">
+            {LANDING_CTA.action}
+            <ArrowRight className="h-5 w-5" weight="bold" aria-hidden />
+          </TopBarLink>
+        </LandingRevealItem>
+      </div>
+    </LandingRevealGroup>
   </section>
 );

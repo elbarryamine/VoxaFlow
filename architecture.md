@@ -52,7 +52,10 @@ src/
 │   ├── credentials/                    # Credential management UI and forms
 │   ├── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
 │   ├── auth/                           # SignInScreen, SignInHero, SignInFeatureShowcase, SignInForm; AUTH_UI
-│   ├── landing/                        # LandingPage, blueprint hero, index, tape marquee; LANDING_COPY
+│   ├── landing/                        # Marketing: home, pricing, privacy, terms; LANDING_COPY, LEGAL_COPY, …
+│   │   ├── constants/                  # LANDING_COPY, PRICING_COPY, LEGAL_COPY, LANDING_FLOWS
+│   │   ├── hooks/                      # useLandingFlowDemo — flow rotation + cursor path
+│   │   └── ui/                         # MarketingShell, LandingFooter, PricingPage, LandingWorkflowCanvas, …
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
 │   ├── constants/                      # BRAND — logo asset paths
