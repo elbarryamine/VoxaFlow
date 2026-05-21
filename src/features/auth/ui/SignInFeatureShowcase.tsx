@@ -80,7 +80,7 @@ export const SignInFeatureShowcase = () => {
 
         <div
           className="pointer-events-none absolute -top-10 h-32 w-32 rounded-full bg-secondary/20 blur-3xl transition-transform duration-900 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ transform: `translateX(${activeIndex * 72}px)` }}
+          style={{ transform: `translateX(${activeIndex * 52}px)` }}
           aria-hidden
         />
 
@@ -88,16 +88,22 @@ export const SignInFeatureShowcase = () => {
           <div
             key={`header-${activeIndex}`}
             className={cn(
-              "flex items-start justify-between gap-4",
+              "flex items-center justify-between gap-4",
               !prefersReducedMotion && slideClass,
             )}
           >
-            <span
-              className="font-newsreader text-5xl font-bold leading-none text-primary/15 sm:text-6xl"
-              aria-hidden
-            >
-              {active.step}
-            </span>
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex h-9 min-w-9 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 font-manrope text-sm font-bold tabular-nums text-primary"
+                aria-hidden
+              >
+                {String(activeIndex + 1).padStart(2, "0")}
+              </span>
+              <span className="font-manrope text-xs font-semibold text-on-surface-variant">
+                <span className="text-on-surface">Step {activeIndex + 1}</span>
+                <span className="text-on-surface-variant/60"> of {FEATURE_COUNT}</span>
+              </span>
+            </div>
             <span
               className={cn(
                 "rounded-full border border-secondary/30 bg-secondary-container/40 px-3 py-1 font-manrope text-[11px] font-bold uppercase tracking-widest text-on-secondary-container",
@@ -158,26 +164,28 @@ export const SignInFeatureShowcase = () => {
           </div>
 
           <div
-            className="mt-6 flex gap-2"
+            className="mt-6 grid grid-cols-3 gap-x-2 gap-y-3 sm:grid-cols-4 lg:grid-cols-7"
             role="tablist"
             aria-label="Feature highlights"
           >
             {AUTH_FEATURES.map((feature, index) => {
               const isActive = index === activeIndex;
+              const TabIcon = feature.icon;
               return (
                 <button
                   key={feature.step}
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  aria-label={feature.title}
+                  aria-label={`${feature.title}, step ${index + 1} of ${FEATURE_COUNT}`}
+                  title={feature.title}
                   onClick={() => selectIndex(index)}
                   className={cn(
-                    "group flex flex-1 flex-col gap-2 rounded-xl px-1 py-1 text-left transition-transform duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                    isActive && "scale-[1.02]",
+                    "group flex flex-col items-center gap-2 rounded-xl px-1 py-1.5 transition-transform duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    isActive && "scale-[1.04]",
                   )}
                 >
-                  <span className="relative h-1 overflow-hidden rounded-full bg-surface-variant">
+                  <span className="relative h-1 w-full overflow-hidden rounded-full bg-surface-variant">
                     <span
                       key={isActive ? `progress-${activeIndex}-${isPaused}` : `idle-${index}`}
                       className={cn(
@@ -196,13 +204,13 @@ export const SignInFeatureShowcase = () => {
                   </span>
                   <span
                     className={cn(
-                      "font-manrope text-[11px] font-bold uppercase tracking-wide transition-colors duration-300",
+                      "flex h-8 w-8 items-center justify-center rounded-lg border transition-all duration-300",
                       isActive
-                        ? "text-on-surface"
-                        : "text-on-surface-variant group-hover:text-on-surface",
+                        ? "border-secondary/45 bg-secondary-container/50 text-on-secondary-container shadow-sm"
+                        : "border-transparent bg-surface-container-high/80 text-on-surface-variant group-hover:border-border/50 group-hover:text-on-surface",
                     )}
                   >
-                    {feature.tag}
+                    <TabIcon className="h-4 w-4" weight={isActive ? "duotone" : "bold"} aria-hidden />
                   </span>
                 </button>
               );
@@ -210,33 +218,6 @@ export const SignInFeatureShowcase = () => {
           </div>
         </div>
       </div>
-
-      <ul className="mt-4 flex flex-wrap gap-2" aria-hidden>
-        {AUTH_FEATURES.map((feature, index) => {
-          const Icon = feature.icon;
-          const isActive = index === activeIndex;
-          return (
-            <li
-              key={feature.step}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-manrope text-[11px] font-bold transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                isActive
-                  ? "scale-105 border-secondary/50 bg-secondary-container/55 text-on-secondary-container shadow-sm"
-                  : "scale-100 border-border/40 bg-surface-container-high/80 text-on-surface-variant opacity-55",
-              )}
-            >
-              <Icon
-                className={cn(
-                  "h-3.5 w-3.5 transition-transform duration-500",
-                  isActive && !prefersReducedMotion && "auth-chip-icon-spin",
-                )}
-                weight="bold"
-              />
-              {feature.tag}
-            </li>
-          );
-        })}
-      </ul>
     </div>
   );
 };

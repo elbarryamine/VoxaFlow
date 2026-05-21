@@ -33,6 +33,7 @@ app/
 │   ├── credentials/                    # GET (list), POST (create)
 │   ├── credentials/[id]/               # DELETE
 │   └── executions/                     # Run management & logs
+├── page.tsx                            # Public landing (logged-in → dashboard)
 ├── layout.tsx                          # Root layout with providers
 └── globals.css                         # Global styles & Tailwind config
 ```
@@ -51,6 +52,7 @@ src/
 │   ├── credentials/                    # Credential management UI and forms
 │   ├── dashboard/                      # DashboardOverview, KPI charts (SVG), loadDashboardData (server)
 │   ├── auth/                           # SignInScreen, SignInHero, SignInFeatureShowcase, SignInForm; AUTH_UI
+│   ├── landing/                        # LandingPage, blueprint hero, index, tape marquee; LANDING_COPY
 │   └── settings/                       # SettingsScreen, internal nav + panel layout
 ├── shared/                             # Cross-cutting concerns
 │   ├── constants/                      # BRAND — logo asset paths

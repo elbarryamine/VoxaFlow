@@ -1,5 +1,13 @@
 import type { Icon } from "@phosphor-icons/react";
-import { GitBranch, Plugs, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
+import {
+  GitBranch,
+  Key,
+  Plugs,
+  Pulse,
+  ShieldCheck,
+  Sparkle,
+  SquaresFour,
+} from "@phosphor-icons/react/dist/ssr";
 
 export const AUTH_FEATURES: {
   icon: Icon;
@@ -23,10 +31,38 @@ export const AUTH_FEATURES: {
     tag: "Connect",
   },
   {
-    icon: ShieldCheck,
+    icon: Pulse,
     step: "03",
+    title: "Live execution monitoring",
+    description: "Follow every run in real time with step-by-step logs and status updates.",
+    tag: "Runs",
+  },
+  {
+    icon: SquaresFour,
+    step: "04",
+    title: "Start from templates",
+    description: "Launch faster with pre-built workflow templates you can customize and deploy.",
+    tag: "Templates",
+  },
+  {
+    icon: Key,
+    step: "05",
+    title: "Credential vault",
+    description: "Store API keys and OAuth tokens securely, scoped to your workspace.",
+    tag: "Vault",
+  },
+  {
+    icon: Sparkle,
+    step: "06",
+    title: "AI-native actions",
+    description: "Drop in OpenAI and custom model steps with prompts tuned per workflow.",
+    tag: "AI",
+  },
+  {
+    icon: ShieldCheck,
+    step: "07",
     title: "Secure by default",
-    description: "Credentials stay encrypted and every execution is traceable.",
+    description: "Encrypted secrets, authenticated access, and a full audit trail for every execution.",
     tag: "Trust",
   },
 ];
