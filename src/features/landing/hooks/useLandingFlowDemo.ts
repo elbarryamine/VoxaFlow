@@ -23,6 +23,8 @@ interface UseLandingFlowDemoOptions {
   triggerRef: RefObject<HTMLButtonElement | null>;
   optionRefs: RefObject<(HTMLLIElement | null)[]>;
   isActive: boolean;
+  /** Paused while the user is interacting with the flow picker */
+  isPaused: boolean;
 }
 
 /** Tight, even phases so the demo reads as one continuous loop. */
@@ -73,6 +75,7 @@ export const useLandingFlowDemo = ({
   triggerRef,
   optionRefs,
   isActive,
+  isPaused,
 }: UseLandingFlowDemoOptions) => {
   const [flowIndex, setFlowIndex] = useState(0);
   const [phase, setPhase] = useState<DemoPhase>("on-trigger");
@@ -119,15 +122,36 @@ export const useLandingFlowDemo = ({
     window.setTimeout(() => setIsClicking(false), 180);
   }, []);
 
+  const selectFlow = useCallback((index: number) => {
+    const safeIndex = ((index % FLOW_COUNT) + FLOW_COUNT) % FLOW_COUNT;
+    setFlowIndex(safeIndex);
+    flowIndexRef.current = safeIndex;
+    targetFlowRef.current = (safeIndex + 1) % FLOW_COUNT;
+    setHighlightedOption(null);
+    setMenuOpen(false);
+    setPhase("on-trigger");
+  }, []);
+
+  useEffect(() => {
+    if (!isPaused) return;
+    setCursorPosition(null);
+    setIsClicking(false);
+    setMenuOpen(false);
+    setHighlightedOption(null);
+    setPhase("on-trigger");
+  }, [isPaused]);
+
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (!isActive || prefersReducedMotion) {
-      setCursorPosition(null);
-      setMenuOpen(false);
-      setHighlightedOption(null);
+    if (!isActive || isPaused || prefersReducedMotion) {
+      if (!isActive || prefersReducedMotion) {
+        setCursorPosition(null);
+        setMenuOpen(false);
+        setHighlightedOption(null);
+      }
       return;
     }
 
@@ -187,9 +211,11 @@ export const useLandingFlowDemo = ({
     }
 
     return () => window.clearTimeout(timeoutId);
-  }, [isActive, measureOption, measureTrigger, phase, pulseClick]);
+  }, [isActive, isPaused, measureOption, measureTrigger, phase, pulseClick]);
 
   useEffect(() => {
+    if (isPaused) return;
+
     const onResize = () => {
       if (phase === "on-option") {
         const optionPos = measureOption(targetFlowRef.current);
@@ -202,18 +228,19 @@ export const useLandingFlowDemo = ({
 
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [measureOption, measureTrigger, phase]);
+  }, [isPaused, measureOption, measureTrigger, phase]);
 
   return {
     flow,
     flowIndex,
     nodes,
     edges,
-    menuOpen,
+    automationMenuOpen: menuOpen,
     highlightedOption,
     cursorPosition,
     isClicking,
     isCanvasFading,
     flowCount: FLOW_COUNT,
+    selectFlow,
   };
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, type FocusEvent } from "react";
 import { CaretDown, Check } from "@phosphor-icons/react";
 import { LANDING_FLOWS } from "@/src/features/landing/constants/LANDING_FLOWS";
 import { cn } from "@/src/shared/utils/cn";
@@ -10,6 +11,10 @@ interface LandingFlowPickerProps {
   highlightedOption: number | null;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
   onOptionRef: (index: number, element: HTMLLIElement | null) => void;
+  onTriggerClick: () => void;
+  onSelectFlow: (index: number) => void;
+  onDismiss: () => void;
+  listenForOutsideDismiss?: boolean;
 }
 
 export const LandingFlowPicker = ({
@@ -18,20 +23,44 @@ export const LandingFlowPicker = ({
   highlightedOption,
   triggerRef,
   onOptionRef,
+  onTriggerClick,
+  onSelectFlow,
+  onDismiss,
+  listenForOutsideDismiss = false,
 }: LandingFlowPickerProps) => {
+  const rootRef = useRef<HTMLDivElement>(null);
   const activeFlow = LANDING_FLOWS[flowIndex]!;
 
+  useEffect(() => {
+    if (!menuOpen || !listenForOutsideDismiss) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Node && rootRef.current?.contains(target)) return;
+      onDismiss();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [listenForOutsideDismiss, menuOpen, onDismiss]);
+
+  const handleBlur = (event: FocusEvent<HTMLDivElement>) => {
+    const next = event.relatedTarget;
+    if (next && rootRef.current?.contains(next)) return;
+    onDismiss();
+  };
+
   return (
-    <div className="relative">
+    <div ref={rootRef} className="relative shrink-0" onBlur={handleBlur}>
       <button
         ref={triggerRef}
         type="button"
-        tabIndex={-1}
         aria-haspopup="listbox"
         aria-expanded={menuOpen}
         aria-label="Example workflow"
+        onClick={onTriggerClick}
         className={cn(
-          "flex items-center gap-2 rounded-xl border border-border/50 bg-surface-container-low px-3 py-2 font-manrope text-[12px] font-semibold text-on-surface shadow-sm transition-all duration-300",
+          "flex items-center gap-2 rounded-xl border border-border/50 bg-surface-container-low px-3 py-2 font-manrope text-[12px] font-semibold text-on-surface shadow-sm transition-all duration-300 hover:border-secondary/35 hover:bg-secondary-container/15",
           menuOpen && "border-secondary/40 bg-secondary-container/25 ring-2 ring-primary/15",
         )}
       >
@@ -52,9 +81,9 @@ export const LandingFlowPicker = ({
         role="listbox"
         aria-label="Example workflows"
         className={cn(
-          "absolute top-[calc(100%+6px)] right-0 z-20 max-h-52 min-w-[13rem] overflow-x-hidden overflow-y-auto rounded-xl border border-border/50 bg-card py-1 shadow-lg transition-[opacity,transform] duration-300 origin-top-right",
+          "absolute top-[calc(100%+6px)] right-0 z-20 max-h-52 min-w-[13rem] overflow-x-hidden overflow-y-auto rounded-xl border border-border/50 bg-card py-1 shadow-lg transition-[opacity,transform,pointer-events] duration-300 origin-top-right",
           menuOpen
-            ? "pointer-events-none scale-100 opacity-100"
+            ? "pointer-events-auto scale-100 opacity-100"
             : "pointer-events-none scale-95 opacity-0",
         )}
       >
@@ -68,11 +97,19 @@ export const LandingFlowPicker = ({
               ref={(element) => onOptionRef(index, element)}
               role="option"
               aria-selected={isActive}
+              tabIndex={menuOpen ? 0 : -1}
+              onClick={() => onSelectFlow(index)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onSelectFlow(index);
+                }
+              }}
               className={cn(
-                "flex items-center justify-between gap-3 px-3 py-2.5 font-manrope text-[12px] font-semibold transition-colors duration-200",
+                "flex cursor-pointer items-center justify-between gap-3 px-3 py-2.5 font-manrope text-[12px] font-semibold transition-colors duration-200",
                 isHighlighted && "bg-secondary-container/50 text-on-surface",
-                !isHighlighted && isActive && "text-secondary",
-                !isHighlighted && !isActive && "text-on-surface-variant",
+                !isHighlighted && isActive && "bg-secondary-container/25 text-secondary",
+                !isHighlighted && !isActive && "text-on-surface-variant hover:bg-surface-variant/40",
               )}
             >
               <span className="truncate">{preset.pickerLabel}</span>

@@ -26,6 +26,8 @@ const LandingFlowCanvasInner = () => {
   const pickerTriggerRef = useRef<HTMLButtonElement>(null);
   const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [demoActive, setDemoActive] = useState(false);
+  const [isUserControlling, setIsUserControlling] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   useEffect(() => {
     const root = demoContainerRef.current;
@@ -49,17 +51,37 @@ const LandingFlowCanvasInner = () => {
     flowIndex,
     nodes,
     edges,
-    menuOpen,
+    automationMenuOpen,
     highlightedOption,
     cursorPosition,
     isClicking,
     isCanvasFading,
+    selectFlow,
   } = useLandingFlowDemo({
     containerRef: demoContainerRef,
     triggerRef: pickerTriggerRef,
     optionRefs,
     isActive: demoActive,
+    isPaused: isUserControlling,
   });
+
+  const menuOpen = isUserControlling ? userMenuOpen : automationMenuOpen;
+  const demoHighlightedOption = isUserControlling ? null : highlightedOption;
+
+  const handleTriggerClick = () => {
+    setIsUserControlling(true);
+    setUserMenuOpen((open) => !open);
+  };
+
+  const handleSelectFlow = (index: number) => {
+    selectFlow(index);
+    setUserMenuOpen(false);
+  };
+
+  const handlePickerDismiss = () => {
+    setUserMenuOpen(false);
+    setIsUserControlling(false);
+  };
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -70,25 +92,31 @@ const LandingFlowCanvasInner = () => {
 
   return (
     <div ref={demoContainerRef} className="relative flex min-h-0 flex-1 flex-col">
-      <div className="relative flex w-full items-center justify-between gap-4 border-b border-border/50 px-6 py-4">
-        <span className="font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant transition-opacity duration-500">
+      <div className="relative flex w-full items-center gap-4 border-b border-border/50 px-6 py-4">
+        <span className="min-w-0 font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant transition-opacity duration-500">
           {flow.figLabel}
           <span className="ml-2 text-on-surface-variant/50">
             {flowIndex + 1}/{LANDING_FLOWS.length}
           </span>
         </span>
 
-        <LandingFlowPicker
-          flowIndex={flowIndex}
-          menuOpen={menuOpen}
-          highlightedOption={highlightedOption}
-          triggerRef={pickerTriggerRef}
-          onOptionRef={handleOptionRef}
-        />
+        <div className="ml-auto flex shrink-0 items-center gap-3">
+          <LandingFlowPicker
+            flowIndex={flowIndex}
+            menuOpen={menuOpen}
+            highlightedOption={demoHighlightedOption}
+            triggerRef={pickerTriggerRef}
+            onOptionRef={handleOptionRef}
+            onTriggerClick={handleTriggerClick}
+            onSelectFlow={handleSelectFlow}
+            onDismiss={handlePickerDismiss}
+            listenForOutsideDismiss={isUserControlling}
+          />
 
-        <span className="rounded-full bg-success/15 px-2.5 py-1 font-manrope text-[10px] font-bold text-success">
-          live
-        </span>
+          <span className="rounded-full bg-success/15 px-2.5 py-1 font-manrope text-[10px] font-bold text-success">
+            live
+          </span>
+        </div>
       </div>
 
       <div
@@ -127,7 +155,7 @@ const LandingFlowCanvasInner = () => {
       <LandingFlowCursor
         position={cursorPosition}
         isClicking={isClicking}
-        visible
+        visible={!isUserControlling}
       />
 
       <ul

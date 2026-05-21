@@ -27,12 +27,11 @@ export const LandingIndex = () => (
           itemCount={AUTH_FEATURES.length}
           className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2"
         >
-          {AUTH_FEATURES.map(({ icon: Icon, step, title, description, tag }, index) => (
+          {AUTH_FEATURES.map(({ step, title, description, tag }, index) => (
             <LandingFeatureCard
               key={step}
               index={index}
               step={step}
-              icon={Icon}
               title={title}
               description={description}
               tag={tag}
@@ -47,7 +46,6 @@ export const LandingIndex = () => (
 interface LandingFeatureCardProps {
   index: number;
   step: string;
-  icon: (typeof AUTH_FEATURES)[number]["icon"];
   title: string;
   description: string;
   tag: string;
@@ -56,7 +54,6 @@ interface LandingFeatureCardProps {
 const LandingFeatureCard = ({
   index,
   step,
-  icon: Icon,
   title,
   description,
   tag,
@@ -81,14 +78,9 @@ const LandingFeatureCard = ({
             </p>
           </div>
 
-          <div className="mt-3 flex items-center gap-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/70 text-on-secondary-container">
-              <Icon className="h-3.5 w-3.5" weight="duotone" aria-hidden />
-            </span>
-            <h3 className="font-newsreader text-lg font-bold leading-snug tracking-tight text-on-surface">
-              {title}
-            </h3>
-          </div>
+          <h3 className="mt-3 font-newsreader text-lg font-bold leading-snug tracking-tight text-on-surface">
+            {title}
+          </h3>
 
           <p className="mt-2 flex-1 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant">
             {description}
