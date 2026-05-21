@@ -22,6 +22,7 @@ interface UseLandingFlowDemoOptions {
   containerRef: RefObject<HTMLDivElement | null>;
   triggerRef: RefObject<HTMLButtonElement | null>;
   optionRefs: RefObject<(HTMLLIElement | null)[]>;
+  isActive: boolean;
 }
 
 /** Tight, even phases so the demo reads as one continuous loop. */
@@ -53,10 +54,25 @@ const getRelativeCenter = (
     2,
 });
 
+const scrollOptionIntoMenu = (option: HTMLLIElement) => {
+  const menu = option.parentElement;
+  if (!menu || menu.scrollHeight <= menu.clientHeight) return;
+
+  const optionTop = option.offsetTop;
+  const optionBottom = optionTop + option.offsetHeight;
+
+  if (optionTop < menu.scrollTop) {
+    menu.scrollTop = optionTop;
+  } else if (optionBottom > menu.scrollTop + menu.clientHeight) {
+    menu.scrollTop = optionBottom - menu.clientHeight;
+  }
+};
+
 export const useLandingFlowDemo = ({
   containerRef,
   triggerRef,
   optionRefs,
+  isActive,
 }: UseLandingFlowDemoOptions) => {
   const [flowIndex, setFlowIndex] = useState(0);
   const [phase, setPhase] = useState<DemoPhase>("on-trigger");
@@ -92,7 +108,7 @@ export const useLandingFlowDemo = ({
       const container = containerRef.current;
       const option = optionRefs.current?.[index];
       if (!container || !option) return null;
-      option.scrollIntoView({ block: "nearest", behavior: "instant" });
+      scrollOptionIntoMenu(option);
       return getRelativeCenter(option, container);
     },
     [containerRef, optionRefs],
@@ -108,9 +124,10 @@ export const useLandingFlowDemo = ({
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (prefersReducedMotion) {
+    if (!isActive || prefersReducedMotion) {
       setCursorPosition(null);
       setMenuOpen(false);
+      setHighlightedOption(null);
       return;
     }
 
@@ -170,7 +187,7 @@ export const useLandingFlowDemo = ({
     }
 
     return () => window.clearTimeout(timeoutId);
-  }, [measureOption, measureTrigger, phase, pulseClick]);
+  }, [isActive, measureOption, measureTrigger, phase, pulseClick]);
 
   useEffect(() => {
     const onResize = () => {

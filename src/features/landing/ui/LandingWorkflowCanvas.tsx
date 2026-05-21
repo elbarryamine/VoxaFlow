@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
@@ -25,6 +25,20 @@ const LandingFlowCanvasInner = () => {
   const demoContainerRef = useRef<HTMLDivElement>(null);
   const pickerTriggerRef = useRef<HTMLButtonElement>(null);
   const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const [demoActive, setDemoActive] = useState(false);
+
+  useEffect(() => {
+    const root = demoContainerRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setDemoActive(entry?.isIntersecting ?? false),
+      { threshold: 0.2 },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
 
   const handleOptionRef = useCallback((index: number, element: HTMLLIElement | null) => {
     optionRefs.current[index] = element;
@@ -44,6 +58,7 @@ const LandingFlowCanvasInner = () => {
     containerRef: demoContainerRef,
     triggerRef: pickerTriggerRef,
     optionRefs,
+    isActive: demoActive,
   });
 
   useEffect(() => {
@@ -93,9 +108,7 @@ const LandingFlowCanvasInner = () => {
           zoomOnScroll={false}
           zoomOnPinch={false}
           zoomOnDoubleClick={false}
-          preventScrolling
           proOptions={{ hideAttribution: true }}
-          fitView
           minZoom={0.45}
           maxZoom={0.85}
           defaultViewport={{ x: 0, y: 0, zoom: 0.72 }}

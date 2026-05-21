@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check } from "@phosphor-icons/react/dist/ssr";
+import { Check } from "@phosphor-icons/react/dist/ssr";
 import { LANDING_WHY } from "@/src/features/landing/constants/LANDING_COPY";
 import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
 
@@ -126,44 +126,6 @@ export const LandingWhy = () => (
             </li>
           ))}
         </ol>
-
-        <LandingRevealItem delay={200} className="mt-12">
-          <div className="overflow-hidden rounded-2xl border border-border/50 bg-surface-container-low">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/50 px-5 py-4 sm:px-6">
-              <p className="font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant">
-                {LANDING_WHY.templateStripLabel}
-              </p>
-              <span className="font-manrope text-[10px] font-bold uppercase tracking-[0.18em] text-secondary">
-                {LANDING_WHY.templateExamples.length} starters
-              </span>
-            </div>
-
-            <ol className="divide-y divide-border/50">
-              {LANDING_WHY.templateExamples.map((name, index) => (
-                <li key={name}>
-                  <LandingRevealItem delay={260 + index * 40}>
-                    <div className="group flex items-center gap-5 px-5 py-4 transition-colors duration-300 hover:bg-card sm:gap-6 sm:px-6 sm:py-4.5">
-                      <span
-                        className="w-8 shrink-0 font-newsreader text-xl font-bold text-primary/25 transition-colors duration-300 group-hover:text-secondary/80"
-                        aria-hidden
-                      >
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span className="min-w-0 flex-1 font-manrope text-[14px] font-semibold text-on-surface">
-                        {name}
-                      </span>
-                      <ArrowRight
-                        className="h-4 w-4 shrink-0 text-on-surface-variant opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-secondary group-hover:opacity-100 sm:opacity-35"
-                        weight="bold"
-                        aria-hidden
-                      />
-                    </div>
-                  </LandingRevealItem>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </LandingRevealItem>
       </LandingRevealGroup>
     </div>
   </section>

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { LandingFooter } from "@/src/features/landing/ui/LandingFooter";
 import { LandingNav } from "@/src/features/landing/ui/LandingNav";
+import { LandingScrollOnMount } from "@/src/features/landing/ui/LandingScrollOnMount";
 
 interface MarketingShellProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ export const MarketingShell = ({ children }: MarketingShellProps) => (
       aria-hidden
     />
 
+    <LandingScrollOnMount />
     <LandingNav />
     {children}
     <LandingFooter />

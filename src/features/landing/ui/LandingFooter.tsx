@@ -1,10 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 
 import { LANDING_FOOTER } from "@/src/features/landing/constants/LANDING_COPY";
+import {
+  LandingRouteLink,
+  LandingSectionLink,
+} from "@/src/features/landing/ui/LandingSectionLink";
 import { APP_NAME } from "@/src/shared/constants/BRAND";
 import { AurenLogo } from "@/src/shared/ui/AurenLogo";
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
+
+const footerLinkClass =
+  "font-manrope text-[14px] font-semibold text-on-surface-variant transition-colors hover:text-on-surface";
 
 export const LandingFooter = () => (
   <footer className="relative z-10 border-t border-border/50 bg-surface-container-lowest">
@@ -17,8 +26,8 @@ export const LandingFooter = () => (
       <div className="relative mx-auto max-w-360 px-5 py-14 sm:px-8 lg:px-12 lg:py-16">
         <div className="flex flex-col gap-10 border-b border-border/50 pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-16">
           <div className="max-w-md">
-            <Link
-              href="/"
+            <LandingSectionLink
+              sectionId="hero"
               className="inline-flex items-end gap-2.5"
               aria-label={`${APP_NAME} home`}
             >
@@ -26,7 +35,7 @@ export const LandingFooter = () => (
               <span className="font-newsreader text-xl font-bold tracking-tight text-on-surface">
                 {APP_NAME}
               </span>
-            </Link>
+            </LandingSectionLink>
             <p className="mt-4 font-newsreader text-2xl font-bold leading-snug tracking-tight text-on-surface sm:text-[1.75rem]">
               {LANDING_FOOTER.tagline}
             </p>
@@ -51,12 +60,18 @@ export const LandingFooter = () => (
                 <ul className="mt-4 space-y-2.5">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="font-manrope text-[14px] font-semibold text-on-surface-variant transition-colors hover:text-on-surface"
-                      >
-                        {link.label}
-                      </Link>
+                      {"sectionId" in link ? (
+                        <LandingSectionLink
+                          sectionId={link.sectionId}
+                          className={footerLinkClass}
+                        >
+                          {link.label}
+                        </LandingSectionLink>
+                      ) : (
+                        <LandingRouteLink href={link.href} className={footerLinkClass}>
+                          {link.label}
+                        </LandingRouteLink>
+                      )}
                     </li>
                   ))}
                 </ul>

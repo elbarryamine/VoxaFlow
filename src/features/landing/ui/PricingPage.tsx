@@ -8,7 +8,7 @@ import {
   PRICING_NOTES,
   PRICING_PLANS,
 } from "@/src/features/landing/constants/PRICING_COPY";
-import { LANDING_CTA } from "@/src/features/landing/constants/LANDING_COPY";
+import { LandingCtaPanel } from "@/src/features/landing/ui/LandingCtaPanel";
 import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
 import { MarketingShell } from "@/src/features/landing/ui/MarketingShell";
 import { TopBarLink } from "@/src/shared/ui/TopBarButton";
@@ -154,24 +154,9 @@ export const PricingPage = () => (
       </section>
 
       <section className="px-5 py-16 sm:px-8 lg:px-12 lg:py-20">
-        <LandingRevealGroup className="mx-auto max-w-360">
-          <div className="flex flex-col gap-8 rounded-4xl border border-border/50 bg-surface-container-low p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:p-12">
-            <LandingRevealItem>
-              <h2 className="max-w-xl font-newsreader text-[clamp(1.75rem,4vw,3rem)] font-bold leading-[1.08] tracking-tight text-on-surface">
-                {LANDING_CTA.line}
-              </h2>
-            </LandingRevealItem>
-            <LandingRevealItem delay={100}>
-              <TopBarLink
-                href="/auth/sign-in"
-                className="shrink-0 gap-2 px-8 py-3.5"
-              >
-                {LANDING_CTA.action}
-                <ArrowRight className="h-5 w-5" weight="bold" aria-hidden />
-              </TopBarLink>
-            </LandingRevealItem>
-          </div>
-        </LandingRevealGroup>
+        <div className="mx-auto max-w-360">
+          <LandingCtaPanel />
+        </div>
       </section>
     </main>
   </MarketingShell>

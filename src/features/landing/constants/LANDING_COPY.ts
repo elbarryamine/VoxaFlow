@@ -1,8 +1,8 @@
 export const LANDING_NAV = [
-  { label: "Home", href: "/#hero" },
-  { label: "About", href: "/#about" },
-  { label: "Why", href: "/#why" },
-  { label: "Features", href: "/#features" },
+  { label: "Home", sectionId: "hero" },
+  { label: "About", sectionId: "about" },
+  { label: "Why", sectionId: "why" },
+  { label: "Features", sectionId: "features" },
   { label: "Pricing", href: "/pricing" },
 ] as const;
 
@@ -15,12 +15,12 @@ export const LANDING_FOOTER = {
     {
       title: "Explore",
       links: [
-        { label: "Home", href: "/" },
-        { label: "About", href: "/#about" },
-        { label: "Why Auren", href: "/#why" },
-        { label: "Features", href: "/#features" },
+        { label: "Home", sectionId: "hero" },
+        { label: "About", sectionId: "about" },
+        { label: "Why Auren", sectionId: "why" },
+        { label: "Features", sectionId: "features" },
         { label: "Pricing", href: "/pricing" },
-        { label: "Get started", href: "/#get-started" },
+        { label: "Get started", sectionId: "get-started" },
       ],
     },
     {
@@ -68,8 +68,14 @@ export const LANDING_TAPE = [
 ] as const;
 
 export const LANDING_CTA = {
-  line: "The canvas is empty until you draw.",
-  action: "Claim your workspace",
+  kicker: "Get started",
+  figLabel: "Fig. Z — Open studio",
+  headline: "Start with a blank canvas",
+  headlineAccent: "or a template that ships.",
+  subheadline:
+    "Sign in with email or Google, connect your stack, and publish your first automation in minutes — not after a sprint of wiring webhooks.",
+  action: "Open the studio",
+  hint: "Free to start · no credit card",
 } as const;
 
 export const LANDING_WHY = {
@@ -115,14 +121,5 @@ export const LANDING_WHY = {
         "Start from proven flows — lead capture, support routing, enrichment — then tailor nodes to your brand. Customize in the studio, not in a repo.",
       tag: "Templates",
     },
-  ],
-  templateStripLabel: "Starter flows teams open first",
-  templateExamples: [
-    "Abandoned cart recovery",
-    "New order → Slack",
-    "Low stock alert",
-    "Lead → CRM sync",
-    "Refund routing",
-    "Post-purchase follow-up",
   ],
 } as const;
