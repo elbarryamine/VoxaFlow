@@ -78,12 +78,18 @@ export const LANDING_CTA = {
   hint: "Free to start · no credit card",
 } as const;
 
+export const LANDING_FEATURES = {
+  kicker: "Features",
+  title: "Seven things the studio does well",
+  subheadline: "Build workflows, connect your tools, and watch every run — all in one place.",
+} as const;
+
 export const LANDING_WHY = {
   kicker: "Why",
   headline: "Most automation tools speak developer.",
   headlineAccent: "Auren speaks business.",
   subheadline:
-    "You shouldn't need YAML, regex, or a weekend tutorial to recover an abandoned cart or ping Slack when inventory dips.",
+    "Set up cart recovery, Slack alerts, and more on a visual canvas — no code required.",
   contrast: {
     others: {
       label: "The usual stack",

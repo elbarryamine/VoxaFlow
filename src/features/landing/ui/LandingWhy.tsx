@@ -7,31 +7,25 @@ import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui
 const PILLAR_MARKERS = ["I", "II", "III"] as const;
 
 export const LandingWhy = () => (
-  <section id="why" className="scroll-mt-20 px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+  <section id="why" className="scroll-mt-20 px-5 py-14 sm:px-8 sm:py-16 lg:px-12 lg:py-20">
     <div className="mx-auto max-w-360">
       <LandingRevealGroup>
-        <div className="flex flex-col gap-6 border-b border-border/50 pb-8 lg:flex-row lg:items-end lg:justify-between">
-          <LandingRevealItem>
-            <div>
-              <p className="font-manrope text-[11px] font-bold uppercase tracking-[0.28em] text-secondary">
-                {LANDING_WHY.kicker}
-              </p>
-              <h2 className="mt-3 font-newsreader text-4xl font-bold tracking-tight text-on-surface sm:text-5xl">
-                {LANDING_WHY.headline}
-                <br />
-                <span className="text-secondary">{LANDING_WHY.headlineAccent}</span>
-              </h2>
-            </div>
-          </LandingRevealItem>
-          <LandingRevealItem delay={100} className="lg:max-w-md lg:justify-self-end">
-            <p className="font-manrope text-[14px] font-medium leading-relaxed text-on-surface-variant lg:text-right">
-              {LANDING_WHY.subheadline}
-            </p>
-          </LandingRevealItem>
-        </div>
+        <LandingRevealItem className="border-b border-border/50 pb-5">
+          <p className="font-manrope text-[11px] font-bold uppercase tracking-[0.28em] text-secondary">
+            {LANDING_WHY.kicker}
+          </p>
+          <h2 className="mt-2 font-newsreader text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">
+            {LANDING_WHY.headline}
+            <br />
+            <span className="text-secondary">{LANDING_WHY.headlineAccent}</span>
+          </h2>
+          <p className="mt-3 max-w-2xl font-manrope text-[15px] font-medium leading-relaxed text-on-surface-variant">
+            {LANDING_WHY.subheadline}
+          </p>
+        </LandingRevealItem>
 
-        <LandingRevealItem delay={70} className="mt-10">
-          <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card shadow-sm">
+        <LandingRevealItem delay={70} className="mt-6">
+          <div className="relative overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm">
             <div
               className="landing-blueprint-grid pointer-events-none absolute inset-0 opacity-45"
               aria-hidden
@@ -41,22 +35,22 @@ export const LandingWhy = () => (
               aria-hidden
             />
 
-            <div className="relative grid lg:grid-cols-2">
-              <div className="border-b border-border/50 p-6 sm:p-8 lg:border-r lg:border-b-0">
-                <div className="flex items-center justify-between gap-4 border-b border-border/40 pb-4">
+            <div className="relative grid sm:grid-cols-2">
+              <div className="border-b border-border/50 p-4 sm:border-r sm:border-b-0 sm:p-5">
+                <div className="border-b border-border/40 pb-3">
                   <p className="font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-surface-variant">
                     Fig. 01 — {LANDING_WHY.contrast.others.label}
                   </p>
                 </div>
-                <ul className="mt-5 space-y-4">
+                <ul className="mt-3 space-y-2.5">
                   {LANDING_WHY.contrast.others.points.map((point, index) => (
                     <li
                       key={point}
-                      className="landing-why-point flex gap-4 font-manrope text-[15px] font-medium leading-relaxed text-on-surface-variant"
+                      className="landing-why-point flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant"
                       style={{ transitionDelay: `${160 + index * 65}ms` }}
                     >
                       <span
-                        className="mt-0.5 shrink-0 font-newsreader text-lg leading-none text-on-surface-variant/35"
+                        className="shrink-0 font-newsreader text-base leading-none text-on-surface-variant/35"
                         aria-hidden
                       >
                         ×
@@ -67,24 +61,24 @@ export const LandingWhy = () => (
                 </ul>
               </div>
 
-              <div className="bg-secondary-container/20 p-6 sm:p-8">
-                <div className="flex items-center justify-between gap-4 border-b border-secondary/20 pb-4">
+              <div className="bg-secondary-container/20 p-4 sm:p-5">
+                <div className="flex items-center justify-between gap-3 border-b border-secondary/20 pb-3">
                   <p className="font-manrope text-[10px] font-bold uppercase tracking-[0.22em] text-on-secondary-container">
                     Fig. 02 — {LANDING_WHY.contrast.auren.label}
                   </p>
-                  <span className="rounded-full bg-success/15 px-2.5 py-1 font-manrope text-[10px] font-bold text-success">
+                  <span className="rounded-full bg-success/15 px-2 py-0.5 font-manrope text-[10px] font-bold text-success">
                     live
                   </span>
                 </div>
-                <ul className="mt-5 space-y-4">
+                <ul className="mt-3 space-y-2.5">
                   {LANDING_WHY.contrast.auren.points.map((point, index) => (
                     <li
                       key={point}
-                      className="landing-why-point flex gap-4 font-manrope text-[15px] font-medium leading-relaxed text-on-surface"
+                      className="landing-why-point flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface"
                       style={{ transitionDelay: `${240 + index * 65}ms` }}
                     >
                       <Check
-                        className="mt-0.5 h-4 w-4 shrink-0 text-secondary"
+                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary"
                         weight="bold"
                         aria-hidden
                       />
@@ -97,29 +91,31 @@ export const LandingWhy = () => (
           </div>
         </LandingRevealItem>
 
-        <ol className="mt-12 space-y-2">
+        <ol className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {LANDING_WHY.pillars.map(({ title, description, tag }, index) => (
-            <li key={title}>
-              <LandingRevealItem delay={100 + index * 75}>
-                <div className="group grid gap-5 rounded-2xl border border-transparent px-4 py-7 transition-all duration-500 hover:-translate-y-0.5 hover:border-border/50 hover:bg-card hover:shadow-sm sm:grid-cols-[4.5rem_1fr_auto] sm:items-start sm:gap-8 sm:px-6 sm:py-9 lg:grid-cols-[5.5rem_1fr_9rem]">
-                  <span
-                    className="font-newsreader text-4xl font-bold leading-none text-primary/20 transition-colors duration-300 group-hover:text-secondary/70 sm:text-5xl"
-                    aria-hidden
-                  >
-                    {PILLAR_MARKERS[index]}
-                  </span>
-
-                  <div className="min-w-0">
-                    <h3 className="font-newsreader text-2xl font-bold tracking-tight text-on-surface sm:text-[1.65rem]">
-                      {title}
-                    </h3>
-                    <p className="mt-2 max-w-2xl font-manrope text-[15px] font-medium leading-relaxed text-on-surface-variant">
-                      {description}
+            <li
+              key={title}
+              className="min-h-0 sm:last:col-span-2 sm:last:flex sm:last:justify-center sm:last:[&>div]:w-full sm:last:[&>div]:max-w-[calc((100%-0.75rem)/2)]"
+            >
+              <LandingRevealItem delay={100 + index * 55} className="h-full">
+                <div className="group flex h-full flex-col rounded-xl border border-transparent px-4 py-4 transition-all duration-500 hover:-translate-y-0.5 hover:border-border/50 hover:bg-card hover:shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <span
+                      className="font-newsreader text-4xl font-bold leading-none text-primary/20 transition-colors duration-300 group-hover:text-secondary/70"
+                      aria-hidden
+                    >
+                      {PILLAR_MARKERS[index]}
+                    </span>
+                    <p className="shrink-0 font-manrope text-[10px] font-bold uppercase tracking-[0.16em] text-on-surface-variant">
+                      {tag}
                     </p>
                   </div>
 
-                  <p className="w-fit font-manrope text-[11px] font-bold uppercase tracking-[0.18em] text-on-surface-variant sm:justify-self-end sm:border-l sm:border-border/50 sm:pl-6 sm:pt-1">
-                    {tag}
+                  <h3 className="mt-3 font-newsreader text-lg font-bold leading-snug tracking-tight text-on-surface">
+                    {title}
+                  </h3>
+                  <p className="mt-2 flex-1 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant">
+                    {description}
                   </p>
                 </div>
               </LandingRevealItem>
