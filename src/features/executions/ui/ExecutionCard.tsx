@@ -1,23 +1,35 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import {
   Pulse,
   GitBranch,
   ArrowSquareOut,
   CaretRight,
+  DotsThreeIcon,
+  TrashIcon,
+  ArrowClockwiseIcon,
+  StopCircleIcon,
+  SpinnerGapIcon,
 } from "@phosphor-icons/react/dist/ssr";
 import type {
   Execution,
   ExecutionNodeStep,
 } from "../types/Execution.types";
 import { cn } from "@/src/shared/utils/cn";
+import { useExecutionActions } from "../hooks/useExecutionActions";
+import { ConfirmationModal } from "@/src/shared/ui/ConfirmationModal";
 
 type ExecutionCardVariant = "default" | "compact";
 
 interface ExecutionCardProps {
   execution: Execution;
   variant?: ExecutionCardVariant;
+  onDeleted?: (id: string) => void;
+  onCancelled?: (id: string) => void;
+  onRerun?: () => void;
 }
 
 const STATUS_TAG = {
@@ -59,7 +71,11 @@ const sectionLabelClass =
 export const ExecutionCard = ({
   execution,
   variant = "default",
+  onDeleted,
+  onCancelled,
+  onRerun,
 }: ExecutionCardProps) => {
+  const router = useRouter();
   const status = STATUS_TAG[execution.status];
   const isCompact = variant === "compact";
   const shortId = execution.id.substring(0, 8).toUpperCase();
@@ -70,67 +86,94 @@ export const ExecutionCard = ({
   const workflowHref = `/dashboard/workflows/${execution.workflowId}`;
   const executionHref = `/dashboard/executions/${execution.id}`;
 
+  const { actionState, deleteExecution, cancelExecution, rerunExecution } =
+    useExecutionActions(onDeleted, onCancelled, (newId) => {
+      onRerun?.();
+      router.push(`/dashboard/executions/${newId}`);
+    });
+
+  const isActive =
+    execution.status === "running" || execution.status === "waiting";
+
+  const actions = (
+    <ExecutionActionsMenu
+      isLoading={actionState === "loading"}
+      canDelete={!isActive}
+      canCancel={isActive}
+      canRerun={!isActive}
+      onDelete={() => void deleteExecution(execution.id)}
+      onCancel={() => void cancelExecution(execution.id)}
+      onRerun={() => void rerunExecution(execution)}
+    />
+  );
+
   if (isCompact) {
     return (
       <article className={cardShell}>
-        <Link href={executionHref} className="flex flex-col gap-2 p-3">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <Pulse
-                weight="duotone"
-                className="h-4 w-4 shrink-0 text-secondary"
-              />
-              <span className="truncate font-mono text-[11px] font-bold text-on-surface-variant">
-                #{shortId}
-              </span>
-              <span className={cn(statusTagClass, status.className)}>
-                {status.label}
+        <div className="flex items-stretch">
+          <Link href={executionHref} className="flex flex-1 flex-col gap-2 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <Pulse
+                  weight="duotone"
+                  className="h-4 w-4 shrink-0 text-secondary"
+                />
+                <span className="truncate font-mono text-[11px] font-bold text-on-surface-variant">
+                  #{shortId}
+                </span>
+                <span className={cn(statusTagClass, status.className)}>
+                  {status.label}
+                </span>
+              </div>
+              <span className="shrink-0 font-manrope text-[11px] font-semibold text-on-surface-variant">
+                {execution.duration}
               </span>
             </div>
-            <span className="shrink-0 font-manrope text-[11px] font-semibold text-on-surface-variant">
-              {execution.duration}
-            </span>
-          </div>
 
-          <WorkflowRelation
-            workflowName={execution.workflowName}
-            workflowHref={workflowHref}
-            compact
-          />
+            <WorkflowRelation
+              workflowName={execution.workflowName}
+              workflowHref={workflowHref}
+              compact
+            />
 
-          <NodePathStrip
-            nodePath={execution.nodePath}
-            failedNodeId={execution.failedNodeId}
-            compact
-          />
-        </Link>
+            <NodePathStrip
+              nodePath={execution.nodePath}
+              failedNodeId={execution.failedNodeId}
+              compact
+            />
+          </Link>
+          <div className="flex shrink-0 items-start p-2 pt-2.5">{actions}</div>
+        </div>
       </article>
     );
   }
 
   return (
     <article className={cardShell}>
-      <Link href={executionHref} className="flex flex-col">
-        <header className="flex items-start justify-between gap-3 border-b border-border/40 px-3.5 py-3 sm:px-4">
-          <div className="flex min-w-0 items-start gap-2.5">
-            <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-secondary">
-              <Pulse weight="duotone" className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className={sectionLabelClass}>Execution run</p>
-              <p className="mt-0.5 font-mono text-[13px] font-bold text-on-surface sm:text-sm">
-                #{shortId}
-              </p>
-              <p className="mt-0.5 font-manrope text-[11px] font-medium text-on-surface-variant sm:text-[12px]">
-                {execution.trigger} · Started {startedAt} · {execution.duration}
-              </p>
-            </div>
+      <header className="flex items-start justify-between gap-3 border-b border-border/40 px-3.5 py-3 sm:px-4">
+        <Link href={executionHref} className="flex min-w-0 items-start gap-2.5">
+          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary-container/50 text-secondary">
+            <Pulse weight="duotone" className="h-4 w-4" />
           </div>
+          <div className="min-w-0">
+            <p className={sectionLabelClass}>Execution run</p>
+            <p className="mt-0.5 font-mono text-[13px] font-bold text-on-surface sm:text-sm">
+              #{shortId}
+            </p>
+            <p className="mt-0.5 font-manrope text-[11px] font-medium text-on-surface-variant sm:text-[12px]">
+              {execution.trigger} · Started {startedAt} · {execution.duration}
+            </p>
+          </div>
+        </Link>
+        <div className="flex shrink-0 items-center gap-2">
           <span className={cn(statusTagClass, status.className)}>
             {status.label}
           </span>
-        </header>
+          {actions}
+        </div>
+      </header>
 
+      <Link href={executionHref} className="flex flex-col">
         <div className="border-b border-border/40 bg-surface-variant/20 px-3.5 py-2.5 sm:px-4">
           <WorkflowRelation
             workflowName={execution.workflowName}
@@ -149,6 +192,161 @@ export const ExecutionCard = ({
     </article>
   );
 };
+
+// ---------------------------------------------------------------------------
+// Actions menu
+// ---------------------------------------------------------------------------
+
+interface ExecutionActionsMenuProps {
+  isLoading: boolean;
+  canDelete: boolean;
+  canCancel: boolean;
+  canRerun: boolean;
+  onDelete: () => void;
+  onCancel: () => void;
+  onRerun: () => void;
+}
+
+const ExecutionActionsMenu = ({
+  isLoading,
+  canDelete,
+  canCancel,
+  canRerun,
+  onDelete,
+  onCancel,
+  onRerun,
+}: ExecutionActionsMenuProps) => {
+  const [open, setOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  return (
+    <>
+      <div ref={ref} className="relative">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setOpen((o) => !o);
+          }}
+          disabled={isLoading}
+          className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-md border border-transparent text-on-surface-variant transition-colors",
+            "hover:border-border/50 hover:bg-surface-variant/50 hover:text-on-surface",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+            isLoading && "cursor-not-allowed opacity-50",
+          )}
+          aria-label="Execution actions"
+        >
+          {isLoading ? (
+            <SpinnerGapIcon className="h-4 w-4 animate-spin" />
+          ) : (
+            <DotsThreeIcon weight="bold" className="h-4 w-4" />
+          )}
+        </button>
+
+        {open && (
+          <div
+            className="absolute right-0 top-full z-50 mt-1 min-w-40 overflow-hidden rounded-lg border border-border/60 bg-card shadow-lg"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+            }}
+          >
+            {canRerun && (
+              <MenuAction
+                icon={<ArrowClockwiseIcon className="h-3.5 w-3.5" weight="bold" />}
+                label="Re-run"
+                onClick={() => {
+                  setOpen(false);
+                  onRerun();
+                }}
+              />
+            )}
+            {canCancel && (
+              <MenuAction
+                icon={<StopCircleIcon className="h-3.5 w-3.5" weight="bold" />}
+                label="Cancel"
+                onClick={() => {
+                  setOpen(false);
+                  onCancel();
+                }}
+                className="text-warning hover:bg-warning/5"
+              />
+            )}
+            {canDelete && (
+              <>
+                {(canRerun || canCancel) && (
+                  <div className="mx-2 my-1 border-t border-border/40" />
+                )}
+                <MenuAction
+                  icon={<TrashIcon className="h-3.5 w-3.5" weight="bold" />}
+                  label="Delete"
+                  onClick={() => {
+                    setOpen(false);
+                    setDeleteModalOpen(true);
+                  }}
+                  className="text-error/80 hover:bg-error/5 hover:text-error"
+                />
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={() => {
+          setDeleteModalOpen(false);
+          onDelete();
+        }}
+        title="Delete execution"
+        message="This execution and all its logs will be permanently deleted. This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
+    </>
+  );
+};
+
+interface MenuActionProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+  className?: string;
+}
+
+const MenuAction = ({ icon, label, onClick, className }: MenuActionProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      "flex w-full items-center gap-2 px-3 py-2 font-manrope text-[12px] font-semibold transition-colors",
+      "text-on-surface-variant hover:bg-surface-variant/50 hover:text-on-surface",
+      className,
+    )}
+  >
+    {icon}
+    {label}
+  </button>
+);
+
+// ---------------------------------------------------------------------------
+// Sub-components
+// ---------------------------------------------------------------------------
 
 interface WorkflowRelationProps {
   workflowName: string;

@@ -129,5 +129,13 @@ export function useExecutionsListLive({ initialExecutions, userId }: UseExecutio
     };
   }, [userId, refetchAll]);
 
-  return executions;
+  const removeExecution = (id: string) =>
+    setExecutions((prev) => prev.filter((e) => e.id !== id));
+
+  const cancelExecution = (id: string) =>
+    setExecutions((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, status: 'failed' as const } : e)),
+    );
+
+  return { executions, removeExecution, cancelExecution, refetchAll };
 }

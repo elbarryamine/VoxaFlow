@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { GitBranch } from "@phosphor-icons/react/dist/ssr";
 import { CardCollectionToolbar } from "@/src/shared/ui/CardCollectionToolbar";
+import { EmptyState } from "@/src/shared/ui/EmptyState";
 import { cn } from "@/src/shared/utils/cn";
 import type { CardCollectionViewMode } from "@/src/shared/types/CardCollectionView.types";
 import type { Workflow } from "../types/Workflow.types";
@@ -12,9 +14,13 @@ interface WorkflowsListProps {
   workflows: Workflow[];
 }
 
-export const WorkflowsList = ({ workflows }: WorkflowsListProps) => {
+export const WorkflowsList = ({ workflows: initialWorkflows }: WorkflowsListProps) => {
+  const [workflows, setWorkflows] = useState(initialWorkflows);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<CardCollectionViewMode>("grid");
+
+  const removeWorkflow = (id: string) =>
+    setWorkflows((prev) => prev.filter((w) => w.id !== id));
 
   const filtered = useMemo(
     () =>
@@ -29,6 +35,17 @@ export const WorkflowsList = ({ workflows }: WorkflowsListProps) => {
     searchQuery.trim().length > 0
       ? `${filtered.length} of ${workflows.length}`
       : `${workflows.length} total`;
+
+  if (workflows.length === 0) {
+    return (
+      <EmptyState
+        layout="page"
+        icon={GitBranch}
+        title="No workflows yet"
+        description="Create your first automation pipeline to process leads, send emails, or trigger AI actions."
+      />
+    );
+  }
 
   return (
     <>
@@ -58,6 +75,7 @@ export const WorkflowsList = ({ workflows }: WorkflowsListProps) => {
               key={workflow.id}
               workflow={workflow}
               variant={isListView ? "compact" : "default"}
+              onDeleted={removeWorkflow}
             />
           ))}
         </div>

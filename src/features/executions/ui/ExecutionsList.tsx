@@ -21,7 +21,8 @@ export const ExecutionsList = ({
   initialExecutions,
   userId,
 }: ExecutionsListProps) => {
-  const executions = useExecutionsListLive({ initialExecutions, userId });
+  const { executions, removeExecution, cancelExecution, refetchAll } =
+    useExecutionsListLive({ initialExecutions, userId });
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<CardCollectionViewMode>("grid");
 
@@ -81,6 +82,9 @@ export const ExecutionsList = ({
               key={execution.id}
               execution={execution}
               variant={isListView ? "compact" : "default"}
+              onDeleted={removeExecution}
+              onCancelled={cancelExecution}
+              onRerun={refetchAll}
             />
           ))}
         </div>
