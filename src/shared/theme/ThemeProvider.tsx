@@ -39,10 +39,8 @@ const applyTheme = (theme: Theme) => {
 };
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return "light";
-    return readStoredTheme();
-  });
+  // Keep SSR and the first client render aligned; sync real preference in useEffect.
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const initialTheme = readStoredTheme();

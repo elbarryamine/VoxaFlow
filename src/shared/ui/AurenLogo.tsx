@@ -1,7 +1,6 @@
 "use client";
 
-import { getBrandLogoSrc } from "@/src/shared/constants/BRAND";
-import { useTheme } from "@/src/shared/theme/ThemeProvider";
+import { BRAND_LOGO } from "@/src/shared/constants/BRAND";
 import { cn } from "@/src/shared/utils/cn";
 
 type AurenLogoSize = "sm" | "md" | "lg";
@@ -18,14 +17,16 @@ const LOGO_DIMENSIONS: Record<AurenLogoSize, { width: number; height: number }> 
   lg: { width: 63, height: 48 },
 };
 
+const logoImgClassName =
+  "h-full w-full max-h-full max-w-full object-contain object-left";
+
 export const AurenLogo = ({
   size = "md",
   className,
   priority = false,
 }: AurenLogoProps) => {
-  const { theme } = useTheme();
   const { width, height } = LOGO_DIMENSIONS[size];
-  const src = getBrandLogoSrc(theme);
+  const fetchPriority = priority ? "high" : "auto";
 
   return (
     <div
@@ -34,15 +35,26 @@ export const AurenLogo = ({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        key={src}
-        src={src}
+        src={BRAND_LOGO.forLightTheme}
         alt="Auren"
         width={width}
         height={height}
         decoding="async"
-        fetchPriority={priority ? "high" : "auto"}
+        fetchPriority={fetchPriority}
         draggable={false}
-        className="block h-full w-full max-h-full max-w-full object-contain object-left"
+        className={cn("block dark:hidden", logoImgClassName)}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={BRAND_LOGO.forDarkTheme}
+        alt=""
+        aria-hidden
+        width={width}
+        height={height}
+        decoding="async"
+        fetchPriority={fetchPriority}
+        draggable={false}
+        className={cn("hidden dark:block", logoImgClassName)}
       />
     </div>
   );

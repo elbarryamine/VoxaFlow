@@ -3,6 +3,9 @@
 import { Check } from "@phosphor-icons/react/dist/ssr";
 import { LANDING_WHY } from "@/src/features/landing/constants/LANDING_COPY";
 import { LandingRevealGroup, LandingRevealItem } from "@/src/features/landing/ui/LandingReveal";
+import { LandingStepGrid, useLandingStepCycleIndex } from "@/src/features/landing/ui/LandingStepGrid";
+import { LandingStepMarker } from "@/src/features/landing/ui/LandingStepMarker";
+import { cn } from "@/src/shared/utils/cn";
 
 const PILLAR_MARKERS = ["I", "II", "III"] as const;
 
@@ -44,18 +47,19 @@ export const LandingWhy = () => (
                 </div>
                 <ul className="mt-3 space-y-2.5">
                   {LANDING_WHY.contrast.others.points.map((point, index) => (
-                    <li
-                      key={point}
-                      className="landing-why-point flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant"
-                      style={{ transitionDelay: `${160 + index * 65}ms` }}
-                    >
-                      <span
-                        className="shrink-0 font-newsreader text-base leading-none text-on-surface-variant/35"
-                        aria-hidden
+                    <li key={point}>
+                      <LandingRevealItem
+                        delay={80 + index * 55}
+                        className="flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant"
                       >
-                        ×
-                      </span>
-                      {point}
+                        <span
+                          className="shrink-0 font-newsreader text-base leading-none text-on-surface-variant/35"
+                          aria-hidden
+                        >
+                          ×
+                        </span>
+                        {point}
+                      </LandingRevealItem>
                     </li>
                   ))}
                 </ul>
@@ -72,17 +76,18 @@ export const LandingWhy = () => (
                 </div>
                 <ul className="mt-3 space-y-2.5">
                   {LANDING_WHY.contrast.auren.points.map((point, index) => (
-                    <li
-                      key={point}
-                      className="landing-why-point flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface"
-                      style={{ transitionDelay: `${240 + index * 65}ms` }}
-                    >
-                      <Check
-                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary"
-                        weight="bold"
-                        aria-hidden
-                      />
-                      {point}
+                    <li key={point}>
+                      <LandingRevealItem
+                        delay={120 + index * 55}
+                        className="flex gap-3 font-manrope text-[14px] font-medium leading-snug text-on-surface"
+                      >
+                        <Check
+                          className="mt-0.5 h-3.5 w-3.5 shrink-0 text-secondary"
+                          weight="bold"
+                          aria-hidden
+                        />
+                        {point}
+                      </LandingRevealItem>
                     </li>
                   ))}
                 </ul>
@@ -91,38 +96,69 @@ export const LandingWhy = () => (
           </div>
         </LandingRevealItem>
 
-        <ol className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <LandingStepGrid
+          itemCount={LANDING_WHY.pillars.length}
+          className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2"
+        >
           {LANDING_WHY.pillars.map(({ title, description, tag }, index) => (
-            <li
+            <LandingWhyPillarCard
               key={title}
-              className="min-h-0 sm:last:col-span-2 sm:last:flex sm:last:justify-center sm:last:[&>div]:w-full sm:last:[&>div]:max-w-[calc((100%-0.75rem)/2)]"
-            >
-              <LandingRevealItem delay={100 + index * 55} className="h-full">
-                <div className="group flex h-full flex-col rounded-xl border border-transparent px-4 py-4 transition-all duration-500 hover:-translate-y-0.5 hover:border-border/50 hover:bg-card hover:shadow-sm">
-                  <div className="flex items-start justify-between gap-3">
-                    <span
-                      className="font-newsreader text-4xl font-bold leading-none text-primary/20 transition-colors duration-300 group-hover:text-secondary/70"
-                      aria-hidden
-                    >
-                      {PILLAR_MARKERS[index]}
-                    </span>
-                    <p className="shrink-0 font-manrope text-[10px] font-bold uppercase tracking-[0.16em] text-on-surface-variant">
-                      {tag}
-                    </p>
-                  </div>
-
-                  <h3 className="mt-3 font-newsreader text-lg font-bold leading-snug tracking-tight text-on-surface">
-                    {title}
-                  </h3>
-                  <p className="mt-2 flex-1 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant">
-                    {description}
-                  </p>
-                </div>
-              </LandingRevealItem>
-            </li>
+              index={index}
+              marker={PILLAR_MARKERS[index]}
+              title={title}
+              description={description}
+              tag={tag}
+            />
           ))}
-        </ol>
+        </LandingStepGrid>
       </LandingRevealGroup>
     </div>
   </section>
 );
+
+interface LandingWhyPillarCardProps {
+  index: number;
+  marker: (typeof PILLAR_MARKERS)[number];
+  title: string;
+  description: string;
+  tag: string;
+}
+
+const LandingWhyPillarCard = ({
+  index,
+  marker,
+  title,
+  description,
+  tag,
+}: LandingWhyPillarCardProps) => {
+  const isCycleActive = useLandingStepCycleIndex(index);
+
+  return (
+    <li
+      className="min-h-0 sm:last:col-span-2 sm:last:flex sm:last:justify-center sm:last:[&>div]:w-full sm:last:[&>div]:max-w-[calc((100%-0.75rem)/2)]"
+    >
+      <LandingRevealItem delay={100 + index * 55} className="h-full">
+        <div
+          className={cn(
+            "group flex h-full flex-col rounded-xl border border-transparent px-4 py-4 transition-all duration-500 hover:-translate-y-0.5 hover:border-border/50 hover:bg-card hover:shadow-sm",
+            isCycleActive && "landing-step-card--active",
+          )}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <LandingStepMarker>{marker}</LandingStepMarker>
+            <p className="shrink-0 font-manrope text-[10px] font-bold uppercase tracking-[0.16em] text-on-surface-variant">
+              {tag}
+            </p>
+          </div>
+
+          <h3 className="mt-3 font-newsreader text-lg font-bold leading-snug tracking-tight text-on-surface">
+            {title}
+          </h3>
+          <p className="mt-2 flex-1 font-manrope text-[14px] font-medium leading-snug text-on-surface-variant">
+            {description}
+          </p>
+        </div>
+      </LandingRevealItem>
+    </li>
+  );
+};

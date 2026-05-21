@@ -8,6 +8,7 @@ interface LandingRevealGroupProps {
   className?: string;
 }
 
+/** Optional wrapper; each {@link LandingRevealItem} reveals on its own when scrolled into view. */
 export const LandingRevealGroup = ({ children, className }: LandingRevealGroupProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -24,10 +25,9 @@ export const LandingRevealGroup = ({ children, className }: LandingRevealGroupPr
       ([entry]) => {
         if (entry?.isIntersecting) {
           root.classList.add("landing-is-visible");
-          observer.disconnect();
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -5% 0px" },
+      { threshold: 0.05, rootMargin: "0px" },
     );
 
     observer.observe(root);
@@ -44,7 +44,7 @@ export const LandingRevealGroup = ({ children, className }: LandingRevealGroupPr
 interface LandingRevealItemProps {
   children: ReactNode;
   className?: string;
-  /** Stagger delay in ms when the group enters view */
+  /** Stagger delay in ms when the item enters view */
   delay?: number;
   variant?: "up" | "scale";
 }
@@ -54,15 +54,42 @@ export const LandingRevealItem = ({
   className,
   delay = 0,
   variant = "up",
-}: LandingRevealItemProps) => (
-  <div
-    className={cn(
-      "landing-reveal-item",
-      variant === "scale" && "landing-reveal-item--scale",
-      className,
-    )}
-    style={delay > 0 ? { transitionDelay: `${delay}ms` } : undefined}
-  >
-    {children}
-  </div>
-);
+}: LandingRevealItemProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      root.classList.add("landing-reveal-item--visible");
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          root.classList.add("landing-reveal-item--visible");
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "landing-reveal-item",
+        variant === "scale" && "landing-reveal-item--scale",
+        className,
+      )}
+      style={delay > 0 ? { transitionDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </div>
+  );
+};
